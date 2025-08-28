@@ -1,0 +1,100 @@
+import { config, validateEnvironment } from './config/environment';
+import { logger } from './config/logger';
+import { connectRedis, disconnectRedis } from './config/redis';
+import { disconnectDatabase } from './config/database';
+import { createApp } from './app';
+
+// Global error handlers
+process.on('uncaughtException', (error: Error) => {
+  logger.error('Uncaught Exception:', {
+    error: error.message,
+    stack: error.stack,
+  });
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason: unknown, promise: Promise<any>) => {
+  logger.error('Unhandled Rejection at:', {
+    promise,
+    reason,
+  });
+  process.exit(1);
+});
+
+async function startServer(): Promise<void> {
+  try {
+    // Validate environment variables
+    validateEnvironment();
+    logger.info('Environment validation successful');
+
+    // Connect to Redis
+    await connectRedis();
+    logger.info('Redis connection established');
+
+    // Create Express application
+    const app = createApp();
+
+    // Start HTTP server
+    const server = app.listen(config.PORT, () => {
+      logger.info(`Server started successfully`, {
+        port: config.PORT,
+        environment: config.NODE_ENV,
+        corsOrigin: config.CORS_ORIGIN,
+        logLevel: config.LOG_LEVEL,
+      });
+
+      // Log available endpoints
+      logger.info('Available endpoints:', {
+        health: `http://localhost:${config.PORT}/health`,
+        api: `http://localhost:${config.PORT}/api`,
+        auth: `http://localhost:${config.PORT}/api/auth`,
+      });
+    });
+
+    // Graceful shutdown handlers
+    const gracefulShutdown = async (signal: string) => {
+      logger.info(`${signal} signal received: closing HTTP server`);
+      
+      server.close(async () => {
+        logger.info('HTTP server closed');
+        
+        try {
+          // Disconnect from Redis
+          await disconnectRedis();
+          logger.info('Redis connection closed');
+          
+          // Disconnect from database
+          await disconnectDatabase();
+          logger.info('Database connection closed');
+          
+          logger.info('Graceful shutdown completed');
+          process.exit(0);
+        } catch (error) {
+          logger.error('Error during shutdown:', error);
+          process.exit(1);
+        }
+      });
+    };
+
+    // Listen for termination signals
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+    // Handle server errors
+    server.on('error', (error: Error) => {
+      if (error.message.includes('EADDRINUSE')) {
+        logger.error(`Port ${config.PORT} is already in use`);
+      } else {
+        logger.error('Server error:', error);
+      }
+      process.exit(1);
+    });
+
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+// Start the server
+startServer();

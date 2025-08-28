@@ -1,0 +1,11 @@
+{
+  "name": "QuizMaster Pro",
+  "short_name": "QuizMaster",
+  "description": "Real-time multiplayer quiz platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": []
+}

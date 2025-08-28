@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: quizmaster-postgres
+    environment:
+      POSTGRES_DB: quizmaster
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: development_password_change_in_production
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d quizmaster"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quizmaster-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: quizmaster-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quizmaster-network
+
+  # Backend API (Development)
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: quizmaster-backend
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:development_password_change_in_production@postgres:5432/quizmaster
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: development_jwt_secret_change_in_production_256_bit_minimum
+      JWT_REFRESH_SECRET: development_refresh_secret_change_in_production_256_bit_minimum
+      PORT: 3001
+      CORS_ORIGIN: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/prisma:/app/prisma
+      - ./backend/package.json:/app/package.json
+      - ./backend/package-lock.json:/app/package-lock.json
+      - ./backend/tsconfig.json:/app/tsconfig.json
+    networks:
+      - quizmaster-network
+    develop:
+      watch:
+        - action: sync
+          path: ./backend/src
+          target: /app/src
+        - action: rebuild
+          path: ./backend/package.json
+
+  # Frontend (Development)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: quizmaster-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      NEXT_PUBLIC_WEBSOCKET_URL: ws://localhost:3001
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/package.json:/app/package.json
+      - ./frontend/package-lock.json:/app/package-lock.json
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+      - ./frontend/tailwind.config.ts:/app/tailwind.config.ts
+      - ./frontend/next.config.js:/app/next.config.js
+    networks:
+      - quizmaster-network
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/src
+          target: /app/src
+        - action: rebuild
+          path: ./frontend/package.json
+
+volumes:
+  postgres_data:
+    name: quizmaster_postgres_data
+  redis_data:
+    name: quizmaster_redis_data
+
+networks:
+  quizmaster-network:
+    name: quizmaster-network
+    driver: bridge
