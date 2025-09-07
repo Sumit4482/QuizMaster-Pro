@@ -1,14 +1,684 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String          @id @default(uuid()) @db.Uuid
+  email             String          @unique @db.VarChar(255)
+  username          String          @unique @db.VarChar(50)
+  passwordHash      String          @map("password_hash") @db.VarChar(255)
+  firstName         String?         @map("first_name") @db.VarChar(100)
+  lastName          String?         @map("last_name") @db.VarChar(100)
+  avatarUrl         String?         @map("avatar_url")
+  emailVerified     Boolean         @default(false) @map("email_verified")
+  role              UserRole        @default(PLAYER)
+  lastLoginAt       DateTime?       @map("last_login_at") @db.Timestamptz(6)
+  createdAt         DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Existing relations
+  questionAudits    QuestionAudit[] @relation("QuestionAuditor")
+  createdQuestions  Question[]      @relation("QuestionCreator")
+  modifiedQuestions Question[]      @relation("QuestionModifier")
+  quizResults       QuizResult[]
+  quizSessions      QuizSession[]
+  sessions          UserSession[]
+  statistics        UserStatistics?
+
+  // Phase 2.3 relations
+  powerUps         UserPowerUp[]         @relation("UserPowerUps")
+  friends          UserFriend[]          @relation("UserFriends")
+  friendRelations  UserFriend[]          @relation("FriendRelations")
+  hostedRooms      GameRoom[]            @relation("RoomHost")
+  participations   GameRoomParticipant[] @relation("GameParticipant")
+  chatMessages     ChatMessage[]         @relation("ChatMessages")
+  chatReactions    ChatReaction[]        @relation("ChatReactions")
+  achievements     UserAchievement[]     @relation("UserAchievements")
+  profile          UserProfile?          @relation("UserProfile")
+
+  @@index([email])
+  @@index([username])
+  @@index([role])
+  @@index([createdAt])
+  @@map("users")
+}
+
+model UserSession {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  tokenJti         String   @unique @map("token_jti") @db.VarChar(255)
+  refreshTokenHash String?  @map("refresh_token_hash") @db.VarChar(255)
+  expiresAt        DateTime @map("expires_at") @db.Timestamptz(6)
+  lastUsedAt       DateTime @default(now()) @map("last_used_at") @db.Timestamptz(6)
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([tokenJti])
+  @@map("user_sessions")
+}
+
+model Category {
+  id                 Int                @id @default(autoincrement())
+  name               String             @db.VarChar(100)
+  slug               String             @unique @db.VarChar(100)
+  description        String?
+  icon               String?            @db.VarChar(50)
+  color              String?            @db.VarChar(7)
+  parentId           Int?               @map("parent_id")
+  sortOrder          Int                @default(0) @map("sort_order") @db.SmallInt
+  isActive           Boolean            @default(true) @map("is_active")
+  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  parent             Category?          @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children           Category[]         @relation("CategoryHierarchy")
+  questionCategories QuestionCategory[]
+
+  @@index([slug])
+  @@index([isActive])
+  @@index([parentId])
+  @@index([sortOrder])
+  @@map("categories")
+}
+
+model Question {
+  id               String             @id @default(uuid()) @db.Uuid
+  questionText     String             @map("question_text")
+  questionType     QuestionType       @map("question_type")
+  options          Json?
+  correctAnswer    Json               @map("correct_answer")
+  explanation      String?
+  hints            Json?
+  difficultyLevel  Int                @default(1) @map("difficulty_level") @db.SmallInt
+  estimatedTime    Int?               @default(30) @map("estimated_time") @db.SmallInt
+  points           Int                @default(10) @db.SmallInt
+  source           String             @default("manual") @db.VarChar(50)
+  tags             String[]
+  metadata         Json?
+  version          Int                @default(1) @db.SmallInt
+  originalId       String?            @map("original_id") @db.Uuid
+  createdById      String             @map("created_by") @db.Uuid
+  lastModifiedById String?            @map("last_modified_by") @db.Uuid
+  isActive         Boolean            @default(true) @map("is_active")
+  isPublished      Boolean            @default(false) @map("is_published")
+  publishedAt      DateTime?          @map("published_at") @db.Timestamptz(6)
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  categories       QuestionCategory[]
+  usage            QuestionUsage[]
+  createdBy        User               @relation("QuestionCreator", fields: [createdById], references: [id])
+  lastModifiedBy   User?              @relation("QuestionModifier", fields: [lastModifiedById], references: [id])
+  originalQuestion Question?          @relation("QuestionVersions", fields: [originalId], references: [id])
+  versions         Question[]         @relation("QuestionVersions")
+
+  @@index([questionType])
+  @@index([difficultyLevel])
+  @@index([source])
+  @@index([isActive])
+  @@index([isPublished])
+  @@index([createdAt])
+  @@index([createdById])
+  @@index([tags])
+  @@index([points])
+  @@map("questions")
+}
+
+model QuestionCategory {
+  id         Int      @id @default(autoincrement())
+  questionId String   @map("question_id") @db.Uuid
+  categoryId Int      @map("category_id")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, categoryId])
+  @@index([questionId])
+  @@index([categoryId])
+  @@map("question_categories")
+}
+
+model QuestionUsage {
+  id           String    @id @default(uuid()) @db.Uuid
+  questionId   String    @map("question_id") @db.Uuid
+  gameId       String?   @map("game_id") @db.Uuid
+  timesUsed    Int       @default(0) @map("times_used")
+  timesCorrect Int       @default(0) @map("times_correct")
+  averageTime  Float?    @map("average_time")
+  lastUsed     DateTime? @map("last_used") @db.Timestamptz(6)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  question     Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, gameId])
+  @@index([questionId])
+  @@index([lastUsed])
+  @@map("question_usage")
+}
+
+model QuestionAudit {
+  id         String   @id @default(uuid()) @db.Uuid
+  questionId String   @map("question_id") @db.Uuid
+  action     String   @db.VarChar(50)
+  changes    Json?
+  userId     String   @map("user_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  user       User     @relation("QuestionAuditor", fields: [userId], references: [id])
+
+  @@index([questionId])
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("question_audits")
+}
+
+model QuizSession {
+  id                   String            @id @default(uuid()) @db.Uuid
+  userId               String            @map("user_id") @db.Uuid
+  title                String?           @db.VarChar(255)
+  description          String?
+  totalQuestions       Int               @map("total_questions") @db.SmallInt
+  timePerQuestion      Int?              @map("time_per_question") @db.SmallInt
+  totalTimeLimit       Int?              @map("total_time_limit")
+  categoryIds          Int[]             @map("category_ids")
+  difficultyLevels     Int[]             @map("difficulty_levels")
+  questionTypes        QuestionType[]    @map("question_types")
+  shuffleQuestions     Boolean           @default(true) @map("shuffle_questions")
+  allowPause           Boolean           @default(true) @map("allow_pause")
+  showExplanations     Boolean           @default(true) @map("show_explanations")
+  status               QuizSessionStatus @default(CREATED)
+  currentQuestionIndex Int               @default(0) @map("current_question_index")
+  questionIds          String[]          @map("question_ids")
+  startedAt            DateTime?         @map("started_at") @db.Timestamptz(6)
+  pausedAt             DateTime?         @map("paused_at") @db.Timestamptz(6)
+  completedAt          DateTime?         @map("completed_at") @db.Timestamptz(6)
+  expiresAt            DateTime?         @map("expires_at") @db.Timestamptz(6)
+  totalTimeTaken       Int               @default(0) @map("total_time_taken")
+  questionsAnswered    Int               @default(0) @map("questions_answered")
+  correctAnswers       Int               @default(0) @map("correct_answers")
+  totalScore           Int               @default(0) @map("total_score")
+  createdAt            DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  answers              QuizAnswer[]
+  result               QuizResult?
+  user                 User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([expiresAt])
+  @@map("quiz_sessions")
+}
+
+model QuizAnswer {
+  id              String      @id @default(uuid()) @db.Uuid
+  sessionId       String      @map("session_id") @db.Uuid
+  questionId      String      @map("question_id") @db.Uuid
+  questionIndex   Int         @map("question_index") @db.SmallInt
+  userAnswer      Json        @map("user_answer")
+  isCorrect       Boolean     @map("is_correct")
+  pointsEarned    Int         @map("points_earned")
+  timeTaken       Int         @map("time_taken")
+  basePoints      Int         @map("base_points")
+  timeBonus       Int         @default(0) @map("time_bonus")
+  streakBonus     Int         @default(0) @map("streak_bonus")
+  difficultyBonus Int         @default(0) @map("difficulty_bonus")
+  hintsUsed       Int         @default(0) @map("hints_used")
+  skipped         Boolean     @default(false)
+  answeredAt      DateTime    @default(now()) @map("answered_at") @db.Timestamptz(6)
+  createdAt       DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  session         QuizSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, questionIndex])
+  @@index([sessionId])
+  @@index([questionId])
+  @@index([isCorrect])
+  @@index([answeredAt])
+  @@map("quiz_answers")
+}
+
+model QuizResult {
+  id                     String      @id @default(uuid()) @db.Uuid
+  sessionId              String      @unique @map("session_id") @db.Uuid
+  userId                 String      @map("user_id") @db.Uuid
+  totalQuestions         Int         @map("total_questions")
+  questionsAnswered      Int         @map("questions_answered")
+  correctAnswers         Int         @map("correct_answers")
+  incorrectAnswers       Int         @map("incorrect_answers")
+  skippedQuestions       Int         @map("skipped_questions")
+  totalScore             Int         @map("total_score")
+  maxPossibleScore       Int         @map("max_possible_score")
+  scorePercentage        Float       @map("score_percentage")
+  totalTimeTaken         Int         @map("total_time_taken")
+  averageTimePerQuestion Float       @map("average_time_per_question")
+  accuracyRate           Float       @map("accuracy_rate")
+  streakCount            Int         @map("streak_count")
+  timeEfficiency         Float       @map("time_efficiency")
+  categoryStats          Json        @map("category_stats")
+  difficultyStats        Json        @map("difficulty_stats")
+  questionTypeStats      Json        @map("question_type_stats")
+  rank                   Int?
+  achievements           String[]
+  completedAt            DateTime    @map("completed_at") @db.Timestamptz(6)
+  createdAt              DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  session                QuizSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user                   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([totalScore])
+  @@index([scorePercentage])
+  @@index([completedAt])
+  @@index([accuracyRate])
+  @@map("quiz_results")
+}
+
+model UserStatistics {
+  id                     String    @id @default(uuid()) @db.Uuid
+  userId                 String    @unique @map("user_id") @db.Uuid
+  totalQuizzesCompleted  Int       @default(0) @map("total_quizzes_completed")
+  totalQuizzesStarted    Int       @default(0) @map("total_quizzes_started")
+  completionRate         Float     @default(0) @map("completion_rate")
+  totalQuestionsAnswered Int       @default(0) @map("total_questions_answered")
+  totalCorrectAnswers    Int       @default(0) @map("total_correct_answers")
+  overallAccuracy        Float     @default(0) @map("overall_accuracy")
+  averageScore           Float     @default(0) @map("average_score")
+  totalTimeSpent         Int       @default(0) @map("total_time_spent")
+  averageQuizTime        Float     @default(0) @map("average_quiz_time")
+  averageQuestionTime    Float     @default(0) @map("average_question_time")
+  bestScore              Int       @default(0) @map("best_score")
+  longestStreak          Int       @default(0) @map("longest_streak")
+  perfectQuizzes         Int       @default(0) @map("perfect_quizzes")
+  strongestCategories    Json      @map("strongest_categories")
+  weakestCategories      Json      @map("weakest_categories")
+  categoryProgress       Json      @map("category_progress")
+  lastQuizDate           DateTime? @map("last_quiz_date") @db.Timestamptz(6)
+  currentStreak          Int       @default(0) @map("current_streak")
+  longestDailyStreak     Int       @default(0) @map("longest_daily_streak")
+  experiencePoints       Int       @default(0) @map("experience_points")
+  level                  Int       @default(1)
+  rank                   Int?
+  createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([overallAccuracy])
+  @@index([averageScore])
+  @@index([totalQuizzesCompleted])
+  @@index([level])
+  @@index([rank])
+  @@map("user_statistics")
+}
+
+// ======================================
+// PHASE 2.3: ENHANCED MULTIPLAYER MODELS
+// ======================================
+
+// Power-ups System
+model PowerUp {
+  id              String           @id @default(uuid()) @db.Uuid
+  name            String           @unique @db.VarChar(100)
+  displayName     String           @map("display_name") @db.VarChar(100)
+  description     String
+  type            PowerUpType      @map("power_up_type")
+  rarity          PowerUpRarity
+  effects         Json             // PowerUpEffect[]
+  cooldownSeconds Int              @default(0) @map("cooldown_seconds")
+  maxUsesPerGame  Int?             @map("max_uses_per_game")
+  cost            Int              @default(0) // Cost in coins or points
+  iconUrl         String?          @map("icon_url")
+  animationData   Json?            @map("animation_data")
+  isActive        Boolean          @default(true) @map("is_active")
+  sortOrder       Int              @default(0) @map("sort_order")
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  usages          PowerUpUsage[]
+  userInventory   UserPowerUp[]
+
+  @@index([type])
+  @@index([rarity])
+  @@index([isActive])
+  @@index([sortOrder])
+  @@map("power_ups")
+}
+
+model UserPowerUp {
+  id         String     @id @default(uuid()) @db.Uuid
+  userId     String     @map("user_id") @db.Uuid
+  powerUpId  String     @map("power_up_id") @db.Uuid
+  quantity   Int        @default(1)
+  earnedAt   DateTime   @default(now()) @map("earned_at") @db.Timestamptz(6)
+  lastUsedAt DateTime?  @map("last_used_at") @db.Timestamptz(6)
+  user       User       @relation("UserPowerUps", fields: [userId], references: [id], onDelete: Cascade)
+  powerUp    PowerUp    @relation(fields: [powerUpId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, powerUpId])
+  @@index([userId])
+  @@index([powerUpId])
+  @@map("user_power_ups")
+}
+
+model PowerUpUsage {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  powerUpId        String    @map("power_up_id") @db.Uuid
+  gameId           String    @map("game_id") @db.VarChar(255)
+  roomId           String    @map("room_id") @db.VarChar(255)
+  questionIndex    Int?      @map("question_index")
+  effectData       Json?     @map("effect_data") // Store effect results
+  usedAt           DateTime  @default(now()) @map("used_at") @db.Timestamptz(6)
+  effectiveness    Float?    // How effective the power-up was (0.0-1.0)
+  powerUp          PowerUp   @relation(fields: [powerUpId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([powerUpId])
+  @@index([gameId])
+  @@index([usedAt])
+  @@map("power_up_usage")
+}
+
+// Social Features
+model UserFriend {
+  id          String             @id @default(uuid()) @db.Uuid
+  userId      String             @map("user_id") @db.Uuid
+  friendId    String             @map("friend_id") @db.Uuid
+  status      FriendshipStatus   @default(PENDING)
+  requestedBy String             @map("requested_by") @db.Uuid // Who sent the friend request
+  requestedAt DateTime           @default(now()) @map("requested_at") @db.Timestamptz(6)
+  acceptedAt  DateTime?          @map("accepted_at") @db.Timestamptz(6)
+  blockedAt   DateTime?          @map("blocked_at") @db.Timestamptz(6)
+  user        User               @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
+  friend      User               @relation("FriendRelations", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@index([userId])
+  @@index([friendId])
+  @@index([status])
+  @@index([requestedAt])
+  @@map("user_friends")
+}
+
+model GameRoom {
+  id               String              @id @default(uuid()) @db.Uuid
+  code             String              @unique @db.VarChar(10)
+  name             String              @db.VarChar(255)
+  description      String?
+  category         String?             @db.VarChar(100)
+  tags             String[]
+  hostId           String              @map("host_id") @db.Uuid
+  maxPlayers       Int                 @default(10) @map("max_players")
+  currentPlayers   Int                 @default(0) @map("current_players")
+  isPrivate        Boolean             @default(false) @map("is_private")
+  password         String?             @db.VarChar(255)
+  status           GameRoomStatus      @default(WAITING)
+  gameMode         GameMode            @default(CLASSIC) @map("game_mode")
+  settings         Json                // Room settings object
+  quizConfig       Json?               @map("quiz_config") // Quiz configuration
+  spectatorCount   Int                 @default(0) @map("spectator_count")
+  createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  lastActivity     DateTime            @default(now()) @map("last_activity") @db.Timestamptz(6)
+  startedAt        DateTime?           @map("started_at") @db.Timestamptz(6)
+  endedAt          DateTime?           @map("ended_at") @db.Timestamptz(6)
+  host             User                @relation("RoomHost", fields: [hostId], references: [id], onDelete: Cascade)
+  participants     GameRoomParticipant[]
+  chatMessages     ChatMessage[]
+  analytics        GameRoomAnalytics[]
+
+  @@index([code])
+  @@index([hostId])
+  @@index([status])
+  @@index([gameMode])
+  @@index([isPrivate])
+  @@index([createdAt])
+  @@index([lastActivity])
+  @@index([category])
+  @@map("game_rooms")
+}
+
+model GameRoomParticipant {
+  id            String             @id @default(uuid()) @db.Uuid
+  roomId        String             @map("room_id") @db.Uuid
+  userId        String             @map("user_id") @db.Uuid
+  role          ParticipantRole    @default(PLAYER)
+  status        ParticipantStatus  @default(WAITING)
+  joinedAt      DateTime           @default(now()) @map("joined_at") @db.Timestamptz(6)
+  leftAt        DateTime?          @map("left_at") @db.Timestamptz(6)
+  isReady       Boolean            @default(false) @map("is_ready")
+  score         Int                @default(0)
+  rank          Int?
+  powerUpsUsed  Int                @default(0) @map("power_ups_used")
+  room          GameRoom           @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user          User               @relation("GameParticipant", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+  @@index([roomId])
+  @@index([userId])
+  @@index([role])
+  @@index([status])
+  @@index([joinedAt])
+  @@map("game_room_participants")
+}
+
+model ChatMessage {
+  id        String      @id @default(uuid()) @db.Uuid
+  roomId    String      @map("room_id") @db.Uuid
+  userId    String      @map("user_id") @db.Uuid
+  content   String
+  type      MessageType @default(TEXT)
+  metadata  Json?       // For reactions, mentions, etc.
+  isDeleted Boolean     @default(false) @map("is_deleted")
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  editedAt  DateTime?   @map("edited_at") @db.Timestamptz(6)
+  room      GameRoom    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user      User        @relation("ChatMessages", fields: [userId], references: [id], onDelete: Cascade)
+  reactions ChatReaction[]
+
+  @@index([roomId])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([type])
+  @@map("chat_messages")
+}
+
+model ChatReaction {
+  id        String      @id @default(uuid()) @db.Uuid
+  messageId String      @map("message_id") @db.Uuid
+  userId    String      @map("user_id") @db.Uuid
+  emoji     String      @db.VarChar(10)
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  message   ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User        @relation("ChatReactions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+  @@index([userId])
+  @@map("chat_reactions")
+}
+
+// Achievements System
+model Achievement {
+  id            String           @id @default(uuid()) @db.Uuid
+  name          String           @unique @db.VarChar(100)
+  displayName   String           @map("display_name") @db.VarChar(100)
+  description   String
+  category      String           @db.VarChar(50)
+  type          AchievementType
+  criteria      Json             // Achievement criteria object
+  rewards       Json?            // Rewards for earning (XP, power-ups, etc.)
+  iconUrl       String?          @map("icon_url")
+  rarity        AchievementRarity
+  isActive      Boolean          @default(true) @map("is_active")
+  sortOrder     Int              @default(0) @map("sort_order")
+  createdAt     DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userAchievements UserAchievement[]
+
+  @@index([category])
+  @@index([type])
+  @@index([rarity])
+  @@index([isActive])
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String      @id @default(uuid()) @db.Uuid
+  userId        String      @map("user_id") @db.Uuid
+  achievementId String      @map("achievement_id") @db.Uuid
+  earnedAt      DateTime    @default(now()) @map("earned_at") @db.Timestamptz(6)
+  progress      Json?       // Progress data for partial achievements
+  gameId        String?     @map("game_id") @db.VarChar(255) // Game where achievement was earned
+  user          User        @relation("UserAchievements", fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+  @@index([achievementId])
+  @@index([earnedAt])
+  @@map("user_achievements")
+}
+
+// Game Analytics
+model GameRoomAnalytics {
+  id              String    @id @default(uuid()) @db.Uuid
+  roomId          String    @map("room_id") @db.Uuid
+  date            DateTime  @db.Date
+  playersJoined   Int       @default(0) @map("players_joined")
+  playersLeft     Int       @default(0) @map("players_left")
+  gamesCompleted  Int       @default(0) @map("games_completed")
+  averageScore    Float?    @map("average_score")
+  popularityScore Float     @default(0) @map("popularity_score")
+  retentionRate   Float?    @map("retention_rate")
+  chatMessages    Int       @default(0) @map("chat_messages")
+  powerUpsUsed    Int       @default(0) @map("power_ups_used")
+  spectatorMinutes Int      @default(0) @map("spectator_minutes")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  room            GameRoom  @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, date])
+  @@index([roomId])
+  @@index([date])
+  @@index([popularityScore])
+  @@map("game_room_analytics")
+}
+
+// User Social Profile Extensions
+model UserProfile {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @unique @map("user_id") @db.Uuid
+  displayName      String?   @map("display_name") @db.VarChar(100)
+  bio              String?   @db.VarChar(500)
+  location         String?   @db.VarChar(100)
+  website          String?   @db.VarChar(255)
+  socialLinks      Json?     @map("social_links")
+  preferences      Json      @default("{}") // User preferences
+  privacySettings  Json      @default("{}") @map("privacy_settings")
+  isOnline         Boolean   @default(false) @map("is_online")
+  lastSeenAt       DateTime? @map("last_seen_at") @db.Timestamptz(6)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user             User      @relation("UserProfile", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isOnline])
+  @@index([lastSeenAt])
+  @@map("user_profiles")
+}
+
+
+// Enums for Phase 2.3
+enum PowerUpType {
+  ELIMINATION     // Remove incorrect answers
+  TIME_EXTENSION  // Add extra time
+  POINT_MULTIPLIER // Double/triple points
+  FREEZE_OPPONENTS // Freeze other players
+  HINT_REVEAL     // Show hints
+  ANSWER_PEEK     // Briefly show answer
+  SCORE_SHIELD    // Protection from penalties
+  LIGHTNING_ROUND // Speed bonus
+}
+
+enum PowerUpRarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
+  DECLINED
+}
+
+enum GameRoomStatus {
+  WAITING
+  STARTING
+  IN_PROGRESS
+  PAUSED
+  FINISHED
+  ABANDONED
+}
+
+enum GameMode {
+  CLASSIC
+  SPEED_ROUND
+  ELIMINATION
+  TEAM_BATTLE
+  TOURNAMENT
+  SURVIVAL
+  BLITZ
+  CUSTOM
+}
+
+enum ParticipantRole {
+  HOST
+  CO_HOST
+  PLAYER
+  SPECTATOR
+  MODERATOR
+}
+
+enum ParticipantStatus {
+  WAITING
+  READY
+  PLAYING
+  FINISHED
+  DISCONNECTED
+  KICKED
+  BANNED
+}
+
+enum MessageType {
+  TEXT
+  REACTION
+  SYSTEM
+  POWER_UP
+  ACHIEVEMENT
+}
+
+enum AchievementType {
+  SCORE_BASED
+  STREAK_BASED
+  PARTICIPATION
+  SOCIAL
+  POWER_UP
+  SPECIAL_EVENT
+}
+
+enum AchievementRarity {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
 }
 
 enum UserRole {
@@ -23,116 +693,11 @@ enum QuestionType {
   TEXT_INPUT
 }
 
-model User {
-  id            String    @id @default(uuid()) @db.Uuid
-  email         String    @unique @db.VarChar(255)
-  username      String    @unique @db.VarChar(50)
-  passwordHash  String    @map("password_hash") @db.VarChar(255)
-  firstName     String?   @map("first_name") @db.VarChar(100)
-  lastName      String?   @map("last_name") @db.VarChar(100)
-  avatarUrl     String?   @map("avatar_url") @db.Text
-  emailVerified Boolean   @default(false) @map("email_verified")
-  role          UserRole  @default(PLAYER)
-  lastLoginAt   DateTime? @map("last_login_at") @db.Timestamptz(6)
-  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  // Relations
-  sessions      UserSession[]
-  createdQuestions Question[] @relation("QuestionCreator")
-
-  @@map("users")
-  @@index([email])
-  @@index([username])
-  @@index([role])
-  @@index([createdAt])
+enum QuizSessionStatus {
+  CREATED
+  IN_PROGRESS
+  PAUSED
+  COMPLETED
+  EXPIRED
+  ABANDONED
 }
-
-model UserSession {
-  id               String    @id @default(uuid()) @db.Uuid
-  userId           String    @map("user_id") @db.Uuid
-  tokenJti         String    @unique @map("token_jti") @db.VarChar(255)
-  refreshTokenHash String?   @map("refresh_token_hash") @db.VarChar(255)
-  expiresAt        DateTime  @map("expires_at") @db.Timestamptz(6)
-  lastUsedAt       DateTime  @default(now()) @map("last_used_at") @db.Timestamptz(6)
-  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("user_sessions")
-  @@index([userId])
-  @@index([expiresAt])
-  @@index([tokenJti])
-}
-
-model Category {
-  id          Int       @id @default(autoincrement())
-  name        String    @db.VarChar(100)
-  slug        String    @unique @db.VarChar(100)
-  description String?   @db.Text
-  icon        String?   @db.VarChar(50)
-  isActive    Boolean   @default(true) @map("is_active")
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  // Relations
-  questions Question[]
-
-  @@map("categories")
-  @@index([slug])
-  @@index([isActive])
-}
-
-model Question {
-  id             String       @id @default(uuid()) @db.Uuid
-  categoryId     Int?         @map("category_id")
-  questionText   String       @map("question_text") @db.Text
-  questionType   QuestionType @map("question_type")
-  options        Json?        // For multiple choice options
-  correctAnswer  String       @map("correct_answer") @db.Text
-  explanation    String?      @db.Text
-  difficultyLevel Int         @default(1) @map("difficulty_level") @db.SmallInt
-  source         String       @default("manual") @db.VarChar(50) // 'manual', 'ai_generated'
-  createdById    String?      @map("created_by") @db.Uuid
-  isActive       Boolean      @default(true) @map("is_active")
-  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  // Relations
-  category  Category? @relation(fields: [categoryId], references: [id])
-  createdBy User?     @relation("QuestionCreator", fields: [createdById], references: [id])
-
-  @@map("questions")
-  @@index([categoryId])
-  @@index([questionType])
-  @@index([difficultyLevel])
-  @@index([source])
-  @@index([isActive])
-  @@index([createdAt])
-}
-
-// Future tables for game functionality (Phase 2)
-// These are commented out for Phase 1.1 but planned for future phases
-
-// model GameRoom {
-//   id          String      @id @default(uuid()) @db.Uuid
-//   roomCode    String      @unique @db.VarChar(6)
-//   hostId      String      @map("host_id") @db.Uuid
-//   name        String?     @db.VarChar(255)
-//   isPublic    Boolean     @default(false) @map("is_public")
-//   maxPlayers  Int         @default(20) @map("max_players") @db.SmallInt
-//   settings    Json        // Game configuration
-//   status      GameStatus  @default(WAITING)
-//   createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-//   startedAt   DateTime?   @map("started_at") @db.Timestamptz(6)
-//   endedAt     DateTime?   @map("ended_at") @db.Timestamptz(6)
-
-//   @@map("game_rooms")
-// }
-
-// enum GameStatus {
-//   WAITING
-//   IN_PROGRESS
-//   FINISHED
-//   CANCELLED
-// }

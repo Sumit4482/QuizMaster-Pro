@@ -350,27 +350,16 @@ export class AuthController {
         return;
       }
 
-      const existingUser = await this.authService.getUserProfile(email as string);
+      const isAvailable = await this.authService.checkEmailAvailability(email as string);
       
       successResponse(
         res,
-        { available: !existingUser },
-        'Email availability checked',
+        { available: isAvailable },
+        isAvailable ? 'Email is available' : 'Email is already taken',
         HttpStatus.OK,
         req.correlationId
       );
     } catch (error) {
-      // If user not found, email is available
-      if (error instanceof Error && error.message === 'USER_NOT_FOUND') {
-        successResponse(
-          res,
-          { available: true },
-          'Email is available',
-          HttpStatus.OK,
-          req.correlationId
-        );
-        return;
-      }
       next(error);
     }
   };

@@ -4,7 +4,7 @@ import { InputType } from '@/types/common';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  error?: string;
+  error?: string | undefined;
   helperText?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
@@ -29,7 +29,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     },
     ref
   ) => {
-    const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+    const reactId = React.useId();
+    const inputId = id || `input-${reactId}`;
     const hasError = Boolean(error) || isInvalid;
 
     return (

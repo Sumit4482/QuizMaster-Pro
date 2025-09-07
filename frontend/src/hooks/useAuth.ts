@@ -64,6 +64,38 @@ export const useRedirectIfAuthenticated = (redirectTo: string = '/dashboard') =>
   return { isAuthenticated, isLoading, isInitialized };
 };
 
+// Hook to require specific roles (redirects if not authenticated or doesn't have required role)
+export const useRequireRole = (requiredRoles: string[], redirectTo: string = '/dashboard') => {
+  const { user, isAuthenticated, isLoading, isInitialized } = useAuth();
+  const router = useRouter();
+
+  const hasRequiredRole = user && requiredRoles.includes(user.role);
+
+  useEffect(() => {
+    // Wait for auth to initialize
+    if (!isInitialized) return;
+
+    // If not authenticated, redirect to login
+    if (!isAuthenticated && !isLoading) {
+      router.push('/auth/login');
+      return;
+    }
+
+    // If authenticated but doesn't have required role, redirect
+    if (isAuthenticated && !isLoading && !hasRequiredRole) {
+      router.push(redirectTo);
+      return;
+    }
+  }, [isAuthenticated, isLoading, isInitialized, hasRequiredRole, router, redirectTo]);
+
+  return { 
+    isAuthenticated: isAuthenticated && hasRequiredRole, 
+    isLoading, 
+    isInitialized,
+    hasRequiredRole 
+  };
+};
+
 // Hook to check if user has specific role
 export const useHasRole = (roles: string | string[]) => {
   const user = useUser();

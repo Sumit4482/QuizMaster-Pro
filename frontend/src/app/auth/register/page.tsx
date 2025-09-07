@@ -30,6 +30,11 @@ export default function RegisterPage() {
   const passwordStrength = getPasswordStrength(watchedPassword || '');
 
   const onSubmit = async (data: RegisterFormData) => {
+    // Clear previous errors
+    Object.keys(errors).forEach(key => {
+      setError(key as keyof RegisterFormData, { message: '' });
+    });
+
     // Validate form data
     const validation = validateRegisterForm(data);
     if (!validation.isValid) {
@@ -37,7 +42,7 @@ export default function RegisterPage() {
       Object.entries(validation.errors).forEach(([field, fieldErrors]) => {
         setError(field as keyof RegisterFormData, {
           type: 'manual',
-          message: fieldErrors[0],
+          message: fieldErrors[0] || 'Invalid value',
         });
       });
       return;
@@ -48,14 +53,40 @@ export default function RegisterPage() {
         email: data.email,
         username: data.username,
         password: data.password,
-        firstName: data.firstName,
-        lastName: data.lastName,
+        ...(data.firstName && { firstName: data.firstName }),
+        ...(data.lastName && { lastName: data.lastName }),
       });
-      // Redirect will happen automatically after successful registration
+      
+      // Show success message and redirect
+      console.log('Registration successful! Redirecting to dashboard...');
       router.push('/dashboard');
-    } catch (error) {
-      // Error handling is done in the auth store
+    } catch (error: any) {
+      // Enhanced error handling with specific field errors
       console.error('Registration failed:', error);
+      
+      // Handle specific field errors from API
+      if (error.code === 'RESOURCE_ALREADY_EXISTS') {
+        if (error.message?.toLowerCase().includes('email')) {
+          setError('email', {
+            type: 'manual',
+            message: 'This email is already registered. Try logging in instead.',
+          });
+        } else if (error.message?.toLowerCase().includes('username')) {
+          setError('username', {
+            type: 'manual',
+            message: 'This username is already taken. Please choose a different one.',
+          });
+        }
+      } else if (error.code === 'VALIDATION_FAILED' && error.details?.fields) {
+        // Handle backend validation errors
+        Object.entries(error.details.fields).forEach(([field, message]) => {
+          setError(field as keyof RegisterFormData, {
+            type: 'manual',
+            message: message as string,
+          });
+        });
+      }
+      // The auth store will handle showing the toast error message
     }
   };
 

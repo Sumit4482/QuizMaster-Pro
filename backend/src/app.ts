@@ -3,9 +3,11 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
+import swaggerUi from 'swagger-ui-express';
 
 import { config } from './config/environment';
 import { logger } from './config/logger';
+import { swaggerSpec } from './config/swagger';
 
 // Middleware imports
 import {
@@ -20,6 +22,9 @@ import {
 // Route imports
 import authRoutes from './routes/authRoutes';
 import healthRoutes from './routes/healthRoutes';
+import questionRoutes from './routes/questionRoutes';
+import categoryRoutes from './routes/categoryRoutes';
+import { quizRoutes } from './routes/quizRoutes';
 
 export function createApp(): Application {
   const app = express();
@@ -54,8 +59,9 @@ export function createApp(): Application {
       'Accept',
       'Authorization',
       'X-Correlation-ID',
+      'Socket-ID',
     ],
-    exposedHeaders: ['X-Correlation-ID'],
+    exposedHeaders: ['X-Correlation-ID', 'Socket-ID'],
   }));
 
   // Compression middleware
@@ -90,8 +96,20 @@ export function createApp(): Application {
   // Health check routes (before rate limiting)
   app.use('/health', healthRoutes);
 
+  // Swagger documentation
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'QuizMaster Pro API Documentation',
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  }));
+
   // API routes
   app.use('/api/auth', authRoutes);
+  app.use('/api/questions', questionRoutes);
+  app.use('/api/categories', categoryRoutes);
+  app.use('/api/quiz', quizRoutes);
 
   // API documentation endpoint
   app.get('/api', (req, res) => {
@@ -106,6 +124,9 @@ export function createApp(): Application {
         documentation: {
           health: '/health',
           auth: '/api/auth',
+          questions: '/api/questions',
+          categories: '/api/categories',
+          quiz: '/api/quiz',
         },
         status: 'operational',
       },
@@ -126,6 +147,9 @@ export function createApp(): Application {
           api: '/api',
           health: '/health',
           auth: '/api/auth',
+          questions: '/api/questions',
+          categories: '/api/categories',
+          quiz: '/api/quiz',
         },
       },
       correlationId: (req as any).correlationId,

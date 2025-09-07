@@ -108,9 +108,13 @@ export class AuthService {
         throw new Error('REFRESH_TOKEN_EXPIRED');
       }
 
-      // Hash the provided refresh token and compare
-      const refreshTokenHash = await hashPassword(data.refreshToken);
-      if (session.refreshTokenHash !== refreshTokenHash) {
+      // Verify the provided refresh token against stored hash
+      if (!session.refreshTokenHash) {
+        throw new Error('REFRESH_TOKEN_INVALID');
+      }
+      
+      const isValidRefreshToken = await verifyPassword(data.refreshToken, session.refreshTokenHash);
+      if (!isValidRefreshToken) {
         throw new Error('REFRESH_TOKEN_INVALID');
       }
 
@@ -122,10 +126,13 @@ export class AuthService {
         role: session.user.role,
       });
 
-      // Update session last used time
+      // Update session last used time AND the new access token JTI
       await prisma.userSession.update({
         where: { id: session.id },
-        data: { lastUsedAt: new Date() }
+        data: { 
+          lastUsedAt: new Date(),
+          tokenJti: accessTokenData.jti  // Update to new access token JTI
+        }
       });
 
       return {
@@ -166,6 +173,15 @@ export class AuthService {
     }
 
     return this.mapUserToResponse(user);
+  }
+
+  // Check if email is available
+  async checkEmailAvailability(email: string): Promise<boolean> {
+    const existingUser = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() }
+    });
+    
+    return !existingUser; // Return true if email is available (no user found)
   }
 
   // Update user profile
@@ -243,7 +259,7 @@ export class AuthService {
     await prisma.userSession.create({
       data: {
         userId: user.id,
-        tokenJti: accessTokenData.jti,
+        tokenJti: accessTokenData.jti,  // FIXED: Use access token JTI for auth middleware lookup
         refreshTokenHash,
         expiresAt: refreshTokenData.expiresAt,
       }

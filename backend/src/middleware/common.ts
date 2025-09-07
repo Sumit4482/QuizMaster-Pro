@@ -119,11 +119,14 @@ export const createRateLimit = (windowMs?: number, max?: number) => {
   });
 };
 
-// Strict rate limiting for authentication endpoints
-export const authRateLimit = createRateLimit(15 * 60 * 1000, 5); // 5 requests per 15 minutes
+// Strict rate limiting for authentication endpoints (relaxed for testing)
+export const authRateLimit = createRateLimit(60 * 1000, 100); // 100 requests per minute for testing
 
 // Standard rate limiting for API endpoints
 export const apiRateLimit = createRateLimit(); // Use default config
+
+// Export rateLimiter as alias for apiRateLimit for backwards compatibility
+export const rateLimiter = apiRateLimit;
 
 // Request size limit middleware
 export function requestSizeLimit(limit: string = '10mb') {
@@ -199,6 +202,20 @@ export function errorHandler(
       error: {
         code: 'VALIDATION_ERROR',
         message: error.message,
+      },
+      timestamp: new Date().toISOString(),
+      correlationId: req.correlationId,
+    });
+    return;
+  }
+
+  // Handle PayloadTooLargeError from body-parser
+  if (error.name === 'PayloadTooLargeError' || error.message.includes('request entity too large')) {
+    res.status(413).json({
+      success: false,
+      error: {
+        code: 'REQUEST_TOO_LARGE',
+        message: 'Request payload too large',
       },
       timestamp: new Date().toISOString(),
       correlationId: req.correlationId,

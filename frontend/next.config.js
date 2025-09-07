@@ -3,15 +3,10 @@ const nextConfig = {
   // Enable React strict mode
   reactStrictMode: true,
   
-  // Experimental features
-  experimental: {
-    // Enable Server Actions
-    serverActions: true,
-  },
-  
   // Environment variables
   env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
+    // Add environment variables here if needed
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
   },
   
   // Image optimization

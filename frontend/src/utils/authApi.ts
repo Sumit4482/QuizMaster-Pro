@@ -36,8 +36,22 @@ export const authApi = {
         return response.data;
       }
       
+      // Handle API error response (when success: false)
+      if (!response.success && response.error) {
+        throw new AuthApiError(
+          response.error.message || 'Registration failed', 
+          response.error.code || 'REGISTRATION_FAILED',
+          response.error
+        );
+      }
+      
       throw new AuthApiError('Registration failed', 'REGISTRATION_FAILED');
     } catch (error: any) {
+      // If it's already an AuthApiError, re-throw it
+      if (error instanceof AuthApiError) {
+        throw error;
+      }
+      
       const errorMessage = handleApiError(error);
       const errorCode = error.response?.data?.error?.code || 'REGISTRATION_FAILED';
       throw new AuthApiError(errorMessage, errorCode, error.response?.data?.error?.details);
@@ -55,8 +69,22 @@ export const authApi = {
         return response.data;
       }
       
+      // Handle API error response (when success: false)
+      if (!response.success && response.error) {
+        throw new AuthApiError(
+          response.error.message || 'Login failed', 
+          response.error.code || 'LOGIN_FAILED',
+          response.error
+        );
+      }
+      
       throw new AuthApiError('Login failed', 'LOGIN_FAILED');
     } catch (error: any) {
+      // If it's already an AuthApiError, re-throw it
+      if (error instanceof AuthApiError) {
+        throw error;
+      }
+      
       const errorMessage = handleApiError(error);
       const errorCode = error.response?.data?.error?.code || 'LOGIN_FAILED';
       throw new AuthApiError(errorMessage, errorCode, error.response?.data?.error?.details);

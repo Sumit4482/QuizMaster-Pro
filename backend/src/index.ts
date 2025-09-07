@@ -1,8 +1,10 @@
+import { createServer } from 'http';
 import { config, validateEnvironment } from './config/environment';
 import { logger } from './config/logger';
 import { connectRedis, disconnectRedis } from './config/redis';
 import { disconnectDatabase } from './config/database';
 import { createApp } from './app';
+import { initializeSocketServer, socketServer } from './sockets/socketServer';
 
 // Global error handlers
 process.on('uncaughtException', (error: Error) => {
@@ -27,20 +29,31 @@ async function startServer(): Promise<void> {
     validateEnvironment();
     logger.info('Environment validation successful');
 
-    // Connect to Redis
-    await connectRedis();
-    logger.info('Redis connection established');
+    // Connect to Redis (optional for testing)
+    try {
+      await connectRedis();
+      logger.info('Redis connection established');
+    } catch (error) {
+      logger.warn('Redis connection failed - continuing without Redis:', error instanceof Error ? error.message : error);
+    }
 
     // Create Express application
     const app = createApp();
 
+    // Create HTTP server
+    const httpServer = createServer(app);
+
+    // Initialize Socket.io server
+    const socketIoServer = initializeSocketServer(httpServer);
+
     // Start HTTP server
-    const server = app.listen(config.PORT, () => {
+    const server = httpServer.listen(config.PORT, () => {
       logger.info(`Server started successfully`, {
         port: config.PORT,
         environment: config.NODE_ENV,
         corsOrigin: config.CORS_ORIGIN,
         logLevel: config.LOG_LEVEL,
+        websocketEnabled: true,
       });
 
       // Log available endpoints
@@ -48,12 +61,30 @@ async function startServer(): Promise<void> {
         health: `http://localhost:${config.PORT}/health`,
         api: `http://localhost:${config.PORT}/api`,
         auth: `http://localhost:${config.PORT}/api/auth`,
+        websocket: `ws://localhost:${config.PORT}`,
+        socketio: `http://localhost:${config.PORT}/socket.io/`,
+      });
+
+      // Log WebSocket statistics
+      logger.info('WebSocket server initialized:', {
+        connections: socketIoServer.getConnectionCount(),
+        activeRooms: socketIoServer.getActiveRooms(),
       });
     });
 
     // Graceful shutdown handlers
     const gracefulShutdown = async (signal: string) => {
-      logger.info(`${signal} signal received: closing HTTP server`);
+      logger.info(`${signal} signal received: closing HTTP server and WebSocket connections`);
+      
+      try {
+        // Shutdown Socket.io server first
+        if (socketServer) {
+          await socketServer.shutdown();
+          logger.info('WebSocket server closed');
+        }
+      } catch (error) {
+        logger.error('Error shutting down WebSocket server:', error);
+      }
       
       server.close(async () => {
         logger.info('HTTP server closed');

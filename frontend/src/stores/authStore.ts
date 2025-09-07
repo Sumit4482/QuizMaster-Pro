@@ -69,6 +69,15 @@ export const useAuthStore = create<AuthState>()(
           });
 
           toast.error(errorMessage);
+          
+          // Auto-clear error after 10 seconds to improve UX
+          setTimeout(() => {
+            const currentState = get();
+            if (currentState.error === errorMessage) {
+              set({ error: null });
+            }
+          }, 10000);
+          
           throw error;
         }
       },
@@ -222,14 +231,15 @@ export const useAuthStore = create<AuthState>()(
           
           // If no access token, user is not authenticated
           if (!tokens.accessToken) {
-            set({
-              user: null,
-              isAuthenticated: false,
-              isLoading: false,
-              isInitialized: true,
-              error: null,
-            });
-            return;
+          set({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+            isInitialized: true,
+            // Don't clear existing error during initialization
+            // error: null,
+          });
+          return;
           }
 
           // Try to fetch user profile
@@ -240,7 +250,7 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true,
             isLoading: false,
             isInitialized: true,
-            error: null,
+            error: null, // Clear error on successful auth
           });
         } catch (error) {
           // If profile fetch fails, clear tokens and auth state
@@ -251,7 +261,8 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: false,
             isLoading: false,
             isInitialized: true,
-            error: null,
+            // Don't clear error during failed profile fetch
+            // error: null,
           });
 
           // Don't show error toast for profile fetch failures (usually token expiry)

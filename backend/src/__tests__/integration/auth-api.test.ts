@@ -2,10 +2,10 @@ import request from 'supertest';
 import { createApp } from '@/app';
 import { testDb, createTestUser, generateTestToken } from '../setup';
 import { hashPassword } from '@/utils/auth';
-import { Express } from 'express';
+import { Application } from 'express';
 
 describe('Authentication API - Integration Tests', () => {
-  let app: Express;
+  let app: Application;
 
   beforeAll(async () => {
     app = createApp();

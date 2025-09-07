@@ -1,0 +1,627 @@
+2025-09-07 05:54:34,872 - [05:54:34] NOTE: Human-like testing framework initialized
+2025-09-07 05:54:34,873 - [05:54:34] NOTE: Target application: http://localhost:3000
+2025-09-07 05:54:34,873 - [05:54:34] NOTE: Setting up browser environment...
+2025-09-07 05:54:34,873 - [05:54:34] NOTE: Running with visible browser for realistic testing
+2025-09-07 05:54:34,873 - ====== WebDriver manager ======
+2025-09-07 05:54:35,271 - Get LATEST chromedriver version for google-chrome
+2025-09-07 05:54:37,282 - Get LATEST chromedriver version for google-chrome
+2025-09-07 05:54:39,011 - Driver [/Users/igdclt0379/.wdm/drivers/chromedriver/mac64/139.0.7258.154/chromedriver-mac-arm64/chromedriver] found in cache
+2025-09-07 05:54:40,994 - [05:54:40] ✓ SUCCESS: Browser setup completed successfully
+2025-09-07 05:54:40,994 - [05:54:40] NOTE: === Starting QuizMaster Pro Human-like Testing ===
+2025-09-07 05:54:40,994 - [05:54:40] NAVIGATE: About to navigate to http://localhost:3000/ → Starting navigation
+2025-09-07 05:54:43,296 - [05:54:43] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/)
+2025-09-07 05:54:43,445 - [05:54:43] NOTE: Screenshot saved: page_loaded_20250907_055443.png
+2025-09-07 05:54:43,446 - [05:54:43] OBSERVING: Taking time to examine landing page → In progress...
+2025-09-07 05:55:00,529 - [05:55:00] PAGE_ANALYSIS: Completed examination of landing page → SUCCESS (Notes: Page contains 4 buttons, 5 links, 0 input fields)
+2025-09-07 05:55:00,671 - [05:55:00] NOTE: Screenshot saved: page_observation_20250907_055500.png
+2025-09-07 05:55:00,671 - [05:55:00] NOTE: === Testing User Registration Flow ===
+2025-09-07 05:55:00,671 - [05:55:00] LOOKING_FOR: Searching for registration link using selector: a[href*='register'], button:contains('Sign Up'), a:contains('Register') → In progress...
+2025-09-07 05:55:00,680 - [05:55:00] CONCERN: Unexpected error while searching for registration link: Message: invalid selector: An invalid or illegal selector was specified
+  (Session info: chrome=139.0.7258.155); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidselectorexception
+Stacktrace:
+0   chromedriver                        0x0000000102e12e00 cxxbridge1$str$ptr + 2742224
+1   chromedriver                        0x0000000102e0ad00 cxxbridge1$str$ptr + 2709200
+2   chromedriver                        0x00000001029550b8 cxxbridge1$string$len + 90520
+3   chromedriver                        0x000000010295ad70 cxxbridge1$string$len + 114256
+4   chromedriver                        0x000000010295d0b4 cxxbridge1$string$len + 123284
+5   chromedriver                        0x000000010295d15c cxxbridge1$string$len + 123452
+6   chromedriver                        0x000000010299c1d4 cxxbridge1$string$len + 381620
+7   chromedriver                        0x00000001029dd980 cxxbridge1$string$len + 649824
+8   chromedriver                        0x00000001029908f4 cxxbridge1$string$len + 334292
+9   chromedriver                        0x0000000102dd6478 cxxbridge1$str$ptr + 2494024
+10  chromedriver                        0x0000000102dd96a4 cxxbridge1$str$ptr + 2506868
+11  chromedriver                        0x0000000102db73b0 cxxbridge1$str$ptr + 2366848
+12  chromedriver                        0x0000000102dd9f4c cxxbridge1$str$ptr + 2509084
+13  chromedriver                        0x0000000102da84a8 cxxbridge1$str$ptr + 2305656
+14  chromedriver                        0x0000000102df9644 cxxbridge1$str$ptr + 2637844
+15  chromedriver                        0x0000000102df97d0 cxxbridge1$str$ptr + 2638240
+16  chromedriver                        0x0000000102e0a94c cxxbridge1$str$ptr + 2708252
+17  libsystem_pthread.dylib             0x000000018fb2fc0c _pthread_start + 136
+18  libsystem_pthread.dylib             0x000000018fb2ab80 thread_start + 8
+
+2025-09-07 05:55:00,681 - [05:55:00] CONCERN: Registration link not immediately visible, trying direct navigation
+2025-09-07 05:55:00,681 - [05:55:00] NAVIGATE: About to navigate to http://localhost:3000/auth/register → Starting navigation
+2025-09-07 05:55:03,020 - [05:55:03] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/auth/register)
+2025-09-07 05:55:03,132 - [05:55:03] NOTE: Screenshot saved: page_loaded_20250907_055503.png
+2025-09-07 05:55:03,132 - [05:55:03] OBSERVING: Taking time to examine registration form → In progress...
+2025-09-07 05:55:14,168 - [05:55:14] PAGE_ANALYSIS: Completed examination of registration form → SUCCESS (Notes: Page contains 1 buttons, 6 links, 6 input fields | Found 4 potential error/warning indicators)
+2025-09-07 05:55:14,270 - [05:55:14] NOTE: Screenshot saved: page_observation_20250907_055514.png
+2025-09-07 05:55:14,270 - [05:55:14] LOOKING_FOR: Searching for email input field using selector: input[name='email'], input[type='email'] → In progress...
+2025-09-07 05:55:14,905 - [05:55:14] FOUND_ELEMENT: Located email input field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 05:55:14,906 - [05:55:14] TYPING: About to type 'humantest@example.com' into email field → Starting to type...
+2025-09-07 05:55:14,906 - [05:55:14] PREPARING_CLICK: About to click on email field (to focus) → Positioning mouse...
+2025-09-07 05:55:15,597 - [05:55:15] CLICKED: Successfully clicked on email field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 05:55:21,119 - [05:55:21] TYPING_COMPLETE: Successfully typed 'humantest@example.com' into email field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 05:55:21,119 - [05:55:21] LOOKING_FOR: Searching for username input field using selector: input[name='username'] → In progress...
+2025-09-07 05:55:21,633 - [05:55:21] FOUND_ELEMENT: Located username input field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 05:55:21,633 - [05:55:21] TYPING: About to type 'HumanTester' into username field → Starting to type...
+2025-09-07 05:55:21,633 - [05:55:21] PREPARING_CLICK: About to click on username field (to focus) → Positioning mouse...
+2025-09-07 05:55:22,649 - [05:55:22] CLICKED: Successfully clicked on username field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 05:55:27,647 - [05:55:27] TYPING_COMPLETE: Successfully typed 'HumanTester' into username field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 05:55:27,647 - [05:55:27] LOOKING_FOR: Searching for password input field using selector: input[name='password'], input[type='password'] → In progress...
+2025-09-07 05:55:28,109 - [05:55:28] FOUND_ELEMENT: Located password input field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 05:55:28,109 - [05:55:28] TYPING: About to type 'HumanTest123!' into password field → Starting to type...
+2025-09-07 05:55:28,110 - [05:55:28] PREPARING_CLICK: About to click on password field (to focus) → Positioning mouse...
+2025-09-07 05:55:28,935 - [05:55:28] CLICKED: Successfully clicked on password field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 05:55:30,608 - [05:55:30] NOTE: Making a natural typing correction
+2025-09-07 05:55:33,749 - [05:55:33] TYPING_COMPLETE: Successfully typed 'HumanTest123!' into password field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 05:55:33,749 - [05:55:33] LOOKING_FOR: Searching for first name field (optional) using selector: input[name='firstName'] → In progress...
+2025-09-07 05:55:34,235 - [05:55:34] FOUND_ELEMENT: Located first name field (optional) successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 05:55:34,235 - [05:55:34] TYPING: About to type 'Human' into first name field → Starting to type...
+2025-09-07 05:55:34,236 - [05:55:34] PREPARING_CLICK: About to click on first name field (to focus) → Positioning mouse...
+2025-09-07 05:55:35,066 - [05:55:35] CLICKED: Successfully clicked on first name field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 05:55:37,261 - [05:55:37] TYPING_COMPLETE: Successfully typed 'Human' into first name field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 05:55:37,261 - [05:55:37] LOOKING_FOR: Searching for last name field (optional) using selector: input[name='lastName'] → In progress...
+2025-09-07 05:55:37,856 - [05:55:37] FOUND_ELEMENT: Located last name field (optional) successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 05:55:37,857 - [05:55:37] TYPING: About to type 'Tester' into last name field → Starting to type...
+2025-09-07 05:55:37,857 - [05:55:37] PREPARING_CLICK: About to click on last name field (to focus) → Positioning mouse...
+2025-09-07 05:55:38,947 - [05:55:38] CLICKED: Successfully clicked on last name field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 05:55:41,907 - [05:55:41] TYPING_COMPLETE: Successfully typed 'Tester' into last name field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 05:55:41,907 - [05:55:41] LOOKING_FOR: Searching for registration submit button using selector: button[type='submit'], input[type='submit'] → In progress...
+2025-09-07 05:55:42,531 - [05:55:42] FOUND_ELEMENT: Located registration submit button successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 05:55:42,651 - [05:55:42] NOTE: Screenshot saved: before_registration_submit_20250907_055542.png
+2025-09-07 05:55:42,651 - [05:55:42] PREPARING_CLICK: About to click on registration submit button → Positioning mouse...
+2025-09-07 05:55:43,500 - [05:55:43] CLICKED: Successfully clicked on registration submit button → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 05:55:44,792 - [05:55:44] NOTE: Screenshot saved: after_registration_submit_20250907_055544.png
+2025-09-07 05:55:44,792 - [05:55:44] TEXT_VERIFICATION: Looking for text: 'success' (case insensitive) → Searching...
+2025-09-07 05:55:44,801 - [05:55:44] TEXT_FOUND: Text 'success' is present on the page → SUCCESS (Notes: Found in 1 elements)
+2025-09-07 05:55:44,801 - [05:55:44] TEXT_VERIFICATION: Looking for text: 'error' (case insensitive) → Searching...
+2025-09-07 05:55:44,809 - [05:55:44] TEXT_FOUND: Text 'error' is present on the page → SUCCESS (Notes: Found in 4 elements)
+2025-09-07 05:55:44,809 - [05:55:44] NOTE: === Testing User Login Flow ===
+2025-09-07 05:55:44,811 - [05:55:44] NAVIGATE: About to navigate to http://localhost:3000/auth/login → Starting navigation
+2025-09-07 05:55:46,780 - [05:55:46] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/auth/login)
+2025-09-07 05:55:46,865 - [05:55:46] NOTE: Screenshot saved: page_loaded_20250907_055546.png
+2025-09-07 05:55:46,865 - [05:55:46] OBSERVING: Taking time to examine login form → In progress...
+2025-09-07 05:55:57,948 - [05:55:57] PAGE_ANALYSIS: Completed examination of login form → SUCCESS (Notes: Page contains 1 buttons, 5 links, 3 input fields | Found 2 potential error/warning indicators)
+2025-09-07 05:55:58,056 - [05:55:58] NOTE: Screenshot saved: page_observation_20250907_055557.png
+2025-09-07 05:55:58,056 - [05:55:58] LOOKING_FOR: Searching for login email field using selector: input[name='email'], input[type='email'] → In progress...
+2025-09-07 05:55:58,749 - [05:55:58] FOUND_ELEMENT: Located login email field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 05:55:58,749 - [05:55:58] TYPING: About to type 'humantest@example.com' into login email field → Starting to type...
+2025-09-07 05:55:58,749 - [05:55:58] PREPARING_CLICK: About to click on login email field (to focus) → Positioning mouse...
+2025-09-07 05:56:00,040 - [05:56:00] CLICKED: Successfully clicked on login email field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 05:56:05,715 - [05:56:05] TYPING_COMPLETE: Successfully typed 'humantest@example.com' into login email field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 05:56:05,715 - [05:56:05] LOOKING_FOR: Searching for login password field using selector: input[name='password'], input[type='password'] → In progress...
+2025-09-07 05:56:06,408 - [05:56:06] FOUND_ELEMENT: Located login password field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 05:56:06,408 - [05:56:06] TYPING: About to type 'HumanTest123!' into login password field → Starting to type...
+2025-09-07 05:56:06,409 - [05:56:06] PREPARING_CLICK: About to click on login password field (to focus) → Positioning mouse...
+2025-09-07 05:56:07,301 - [05:56:07] CLICKED: Successfully clicked on login password field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 05:56:11,751 - [05:56:11] TYPING_COMPLETE: Successfully typed 'HumanTest123!' into login password field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 05:56:11,751 - [05:56:11] LOOKING_FOR: Searching for login submit button using selector: button[type='submit'], input[type='submit'] → In progress...
+2025-09-07 05:56:12,438 - [05:56:12] FOUND_ELEMENT: Located login submit button successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 05:56:12,557 - [05:56:12] NOTE: Screenshot saved: before_login_submit_20250907_055612.png
+2025-09-07 05:56:12,557 - [05:56:12] PREPARING_CLICK: About to click on login submit button → Positioning mouse...
+2025-09-07 05:56:13,378 - [05:56:13] CLICKED: Successfully clicked on login submit button → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 05:56:18,233 - [05:56:18] NOTE: Screenshot saved: after_login_submit_20250907_055618.png
+2025-09-07 05:56:18,234 - [05:56:18] TEXT_VERIFICATION: Looking for text: 'dashboard' (case insensitive) → Searching...
+2025-09-07 05:56:18,236 - [05:56:18] TEXT_MISSING: Text 'dashboard' was not found on the page → NOT_FOUND (Notes: May indicate missing functionality or navigation issue)
+2025-09-07 05:56:18,236 - [05:56:18] TEXT_VERIFICATION: Looking for text: 'welcome' (case insensitive) → Searching...
+2025-09-07 05:56:21,279 - [05:56:21] TEXT_FOUND: Text 'welcome' is present on the page → SUCCESS (Notes: Found in page source)
+2025-09-07 05:56:21,280 - [05:56:21] TEXT_VERIFICATION: Looking for text: 'logout' (case insensitive) → Searching...
+2025-09-07 05:56:21,283 - [05:56:21] TEXT_MISSING: Text 'logout' was not found on the page → NOT_FOUND (Notes: May indicate missing functionality or navigation issue)
+2025-09-07 05:56:21,283 - [05:56:21] NOTE: === Exploring User Dashboard ===
+2025-09-07 05:56:21,283 - [05:56:21] OBSERVING: Taking time to examine user dashboard → In progress...
+2025-09-07 05:56:32,321 - [05:56:32] PAGE_ANALYSIS: Completed examination of user dashboard → SUCCESS (Notes: Page contains 1 buttons, 5 links, 3 input fields | Found 2 potential error/warning indicators)
+2025-09-07 05:56:32,428 - [05:56:32] NOTE: Screenshot saved: page_observation_20250907_055632.png
+2025-09-07 05:56:32,428 - [05:56:32] LOOKING_FOR: Searching for create room functionality using selector: button:contains('Create Room'), a:contains('Create Room') → In progress...
+2025-09-07 05:56:32,437 - [05:56:32] CONCERN: Unexpected error while searching for create room functionality: Message: invalid selector: An invalid or illegal selector was specified
+  (Session info: chrome=139.0.7258.155); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidselectorexception
+Stacktrace:
+0   chromedriver                        0x0000000102e12e00 cxxbridge1$str$ptr + 2742224
+1   chromedriver                        0x0000000102e0ad00 cxxbridge1$str$ptr + 2709200
+2   chromedriver                        0x00000001029550b8 cxxbridge1$string$len + 90520
+3   chromedriver                        0x000000010295ad70 cxxbridge1$string$len + 114256
+4   chromedriver                        0x000000010295d0b4 cxxbridge1$string$len + 123284
+5   chromedriver                        0x000000010295d15c cxxbridge1$string$len + 123452
+6   chromedriver                        0x000000010299c1d4 cxxbridge1$string$len + 381620
+7   chromedriver                        0x00000001029dd980 cxxbridge1$string$len + 649824
+8   chromedriver                        0x00000001029908f4 cxxbridge1$string$len + 334292
+9   chromedriver                        0x0000000102dd6478 cxxbridge1$str$ptr + 2494024
+10  chromedriver                        0x0000000102dd96a4 cxxbridge1$str$ptr + 2506868
+11  chromedriver                        0x0000000102db73b0 cxxbridge1$str$ptr + 2366848
+12  chromedriver                        0x0000000102dd9f4c cxxbridge1$str$ptr + 2509084
+13  chromedriver                        0x0000000102da84a8 cxxbridge1$str$ptr + 2305656
+14  chromedriver                        0x0000000102df9644 cxxbridge1$str$ptr + 2637844
+15  chromedriver                        0x0000000102df97d0 cxxbridge1$str$ptr + 2638240
+16  chromedriver                        0x0000000102e0a94c cxxbridge1$str$ptr + 2708252
+17  libsystem_pthread.dylib             0x000000018fb2fc0c _pthread_start + 136
+18  libsystem_pthread.dylib             0x000000018fb2ab80 thread_start + 8
+
+2025-09-07 05:56:32,438 - [05:56:32] LOOKING_FOR: Searching for join room functionality using selector: button:contains('Join'), input[placeholder*='room'], input[placeholder*='code'] → In progress...
+2025-09-07 05:56:32,452 - [05:56:32] CONCERN: Unexpected error while searching for join room functionality: Message: invalid selector: An invalid or illegal selector was specified
+  (Session info: chrome=139.0.7258.155); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidselectorexception
+Stacktrace:
+0   chromedriver                        0x0000000102e12e00 cxxbridge1$str$ptr + 2742224
+1   chromedriver                        0x0000000102e0ad00 cxxbridge1$str$ptr + 2709200
+2   chromedriver                        0x00000001029550b8 cxxbridge1$string$len + 90520
+3   chromedriver                        0x000000010295ad70 cxxbridge1$string$len + 114256
+4   chromedriver                        0x000000010295d0b4 cxxbridge1$string$len + 123284
+5   chromedriver                        0x000000010295d15c cxxbridge1$string$len + 123452
+6   chromedriver                        0x000000010299c1d4 cxxbridge1$string$len + 381620
+7   chromedriver                        0x00000001029dd980 cxxbridge1$string$len + 649824
+8   chromedriver                        0x00000001029908f4 cxxbridge1$string$len + 334292
+9   chromedriver                        0x0000000102dd6478 cxxbridge1$str$ptr + 2494024
+10  chromedriver                        0x0000000102dd96a4 cxxbridge1$str$ptr + 2506868
+11  chromedriver                        0x0000000102db73b0 cxxbridge1$str$ptr + 2366848
+12  chromedriver                        0x0000000102dd9f4c cxxbridge1$str$ptr + 2509084
+13  chromedriver                        0x0000000102da84a8 cxxbridge1$str$ptr + 2305656
+14  chromedriver                        0x0000000102df9644 cxxbridge1$str$ptr + 2637844
+15  chromedriver                        0x0000000102df97d0 cxxbridge1$str$ptr + 2638240
+16  chromedriver                        0x0000000102e0a94c cxxbridge1$str$ptr + 2708252
+17  libsystem_pthread.dylib             0x000000018fb2fc0c _pthread_start + 136
+18  libsystem_pthread.dylib             0x000000018fb2ab80 thread_start + 8
+
+2025-09-07 05:56:32,532 - [05:56:32] NOTE: Screenshot saved: final_dashboard_view_20250907_055632.png
+2025-09-07 05:56:32,532 - [05:56:32] NOTE: === Human-like Testing Session Completed ===
+2025-09-07 05:56:32,532 - [05:56:32] NOTE: Cleaning up testing session...
+2025-09-07 05:56:32,728 - [05:56:32] ✓ SUCCESS: Browser closed successfully
+2025-09-07 06:04:55,828 - [06:04:55] NOTE: Human-like testing framework initialized
+2025-09-07 06:04:55,828 - [06:04:55] NOTE: Target application: http://localhost:3000
+2025-09-07 06:04:55,828 - [06:04:55] NOTE: === COMPREHENSIVE QUIZMASTER PRO TESTING INITIALIZED ===
+2025-09-07 06:04:55,828 - [06:04:55] NOTE: Setting up browser environment...
+2025-09-07 06:04:55,828 - [06:04:55] NOTE: Running with visible browser for realistic testing
+2025-09-07 06:04:55,828 - ====== WebDriver manager ======
+2025-09-07 06:04:56,075 - Get LATEST chromedriver version for google-chrome
+2025-09-07 06:04:58,036 - Get LATEST chromedriver version for google-chrome
+2025-09-07 06:04:59,798 - Driver [/Users/igdclt0379/.wdm/drivers/chromedriver/mac64/139.0.7258.154/chromedriver-mac-arm64/chromedriver] found in cache
+2025-09-07 06:05:01,087 - [06:05:01] ✓ SUCCESS: Browser setup completed successfully
+2025-09-07 06:05:01,087 - [06:05:01] NOTE: 🚀 STARTING COMPREHENSIVE QUIZMASTER PRO APPLICATION TESTING
+2025-09-07 06:05:01,087 - [06:05:01] NOTE: === TESTING USER MANAGEMENT FLOWS ===
+2025-09-07 06:05:01,087 - [06:05:01] NOTE: Testing user management for SinglePlayer
+2025-09-07 06:05:01,088 - [06:05:01] NAVIGATE: About to navigate to http://localhost:3000/auth/register → Starting navigation
+2025-09-07 06:05:03,011 - [06:05:03] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/auth/register)
+2025-09-07 06:05:03,121 - [06:05:03] NOTE: Screenshot saved: page_loaded_20250907_060503.png
+2025-09-07 06:05:03,121 - [06:05:03] OBSERVING: Taking time to examine registration page for SinglePlayer → In progress...
+2025-09-07 06:05:14,171 - [06:05:14] PAGE_ANALYSIS: Completed examination of registration page for SinglePlayer → SUCCESS (Notes: Page contains 1 buttons, 6 links, 6 input fields | Found 4 potential error/warning indicators)
+2025-09-07 06:05:14,279 - [06:05:14] NOTE: Screenshot saved: page_observation_20250907_060514.png
+2025-09-07 06:05:14,279 - [06:05:14] LOOKING_FOR: Searching for submit button using selector: button[type='submit'] → In progress...
+2025-09-07 06:05:14,995 - [06:05:14] FOUND_ELEMENT: Located submit button successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:05:14,995 - [06:05:14] PREPARING_CLICK: About to click on submit button (empty form) → Positioning mouse...
+2025-09-07 06:05:15,005 - [06:05:15] NOTE: Element not fully visible, scrolling to bring it into view
+2025-09-07 06:05:15,005 - [06:05:15] NOTE: Scrolling to bring element into better view
+2025-09-07 06:05:16,630 - [06:05:16] ✓ SUCCESS: Element brought into view
+2025-09-07 06:05:17,805 - [06:05:17] CLICKED: Successfully clicked on submit button (empty form) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:05:19,815 - [06:05:19] TEXT_VERIFICATION: Looking for text: 'required' (case insensitive) → Searching...
+2025-09-07 06:05:19,820 - [06:05:19] TEXT_MISSING: Text 'required' was not found on the page → NOT_FOUND (Notes: May indicate missing functionality or navigation issue)
+2025-09-07 06:05:19,820 - [06:05:19] TEXT_VERIFICATION: Looking for text: 'invalid' (case insensitive) → Searching...
+2025-09-07 06:05:19,824 - [06:05:19] TEXT_MISSING: Text 'invalid' was not found on the page → NOT_FOUND (Notes: May indicate missing functionality or navigation issue)
+2025-09-07 06:05:19,825 - [06:05:19] CONCERN: MEDIUM ISSUE in Registration Validation: Form validation may not be working properly
+2025-09-07 06:05:19,825 - [06:05:19] LOOKING_FOR: Searching for email field using selector: input[name='email'] → In progress...
+2025-09-07 06:05:20,505 - [06:05:20] FOUND_ELEMENT: Located email field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:05:20,506 - [06:05:20] TYPING: About to type 'singleplayer@test.com' into email field → Starting to type...
+2025-09-07 06:05:20,506 - [06:05:20] PREPARING_CLICK: About to click on email field (to focus) → Positioning mouse...
+2025-09-07 06:05:21,239 - [06:05:21] CLICKED: Successfully clicked on email field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:05:28,389 - [06:05:28] TYPING_COMPLETE: Successfully typed 'singleplayer@test.com' into email field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:05:28,389 - [06:05:28] LOOKING_FOR: Searching for username field using selector: input[name='username'] → In progress...
+2025-09-07 06:05:28,768 - [06:05:28] FOUND_ELEMENT: Located username field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:05:28,768 - [06:05:28] TYPING: About to type 'SinglePlayer' into username field → Starting to type...
+2025-09-07 06:05:28,768 - [06:05:28] PREPARING_CLICK: About to click on username field (to focus) → Positioning mouse...
+2025-09-07 06:05:29,569 - [06:05:29] CLICKED: Successfully clicked on username field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:05:33,124 - [06:05:33] TYPING_COMPLETE: Successfully typed 'SinglePlayer' into username field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:05:33,124 - [06:05:33] LOOKING_FOR: Searching for password field using selector: input[type='password'] → In progress...
+2025-09-07 06:05:33,819 - [06:05:33] FOUND_ELEMENT: Located password field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:05:33,819 - [06:05:33] TYPING: About to type 'TestPass123!' into password field → Starting to type...
+2025-09-07 06:05:33,819 - [06:05:33] PREPARING_CLICK: About to click on password field (to focus) → Positioning mouse...
+2025-09-07 06:05:34,675 - [06:05:34] CLICKED: Successfully clicked on password field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:05:38,064 - [06:05:38] TYPING_COMPLETE: Successfully typed 'TestPass123!' into password field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:05:38,065 - [06:05:38] LOOKING_FOR: Searching for first name field using selector: input[name='firstName'] → In progress...
+2025-09-07 06:05:38,718 - [06:05:38] FOUND_ELEMENT: Located first name field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:05:38,718 - [06:05:38] TYPING: About to type 'SinglePlayer' into first name field → Starting to type...
+2025-09-07 06:05:38,718 - [06:05:38] PREPARING_CLICK: About to click on first name field (to focus) → Positioning mouse...
+2025-09-07 06:05:39,702 - [06:05:39] CLICKED: Successfully clicked on first name field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:05:42,961 - [06:05:42] NOTE: Making a natural typing correction
+2025-09-07 06:05:44,208 - [06:05:44] TYPING_COMPLETE: Successfully typed 'SinglePlayer' into first name field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:05:44,209 - [06:05:44] LOOKING_FOR: Searching for last name field using selector: input[name='lastName'] → In progress...
+2025-09-07 06:05:44,868 - [06:05:44] FOUND_ELEMENT: Located last name field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:05:44,868 - [06:05:44] TYPING: About to type 'Tester' into last name field → Starting to type...
+2025-09-07 06:05:44,868 - [06:05:44] PREPARING_CLICK: About to click on last name field (to focus) → Positioning mouse...
+2025-09-07 06:05:45,826 - [06:05:45] CLICKED: Successfully clicked on last name field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:05:47,842 - [06:05:47] TYPING_COMPLETE: Successfully typed 'Tester' into last name field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:05:47,960 - [06:05:47] NOTE: Screenshot saved: before_registration_SinglePlayer_20250907_060547.png
+2025-09-07 06:05:47,960 - [06:05:47] LOOKING_FOR: Searching for registration submit using selector: button[type='submit'] → In progress...
+2025-09-07 06:05:48,366 - [06:05:48] FOUND_ELEMENT: Located registration submit successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:05:48,366 - [06:05:48] PREPARING_CLICK: About to click on registration submit button → Positioning mouse...
+2025-09-07 06:05:49,437 - [06:05:49] CLICKED: Successfully clicked on registration submit button → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:05:52,123 - [06:05:52] NOTE: Screenshot saved: after_registration_SinglePlayer_20250907_060551.png
+2025-09-07 06:05:52,123 - [06:05:52] TEXT_VERIFICATION: Looking for text: 'success' (case insensitive) → Searching...
+2025-09-07 06:05:52,130 - [06:05:52] TEXT_FOUND: Text 'success' is present on the page → SUCCESS (Notes: Found in 1 elements)
+2025-09-07 06:05:52,130 - [06:05:52] ✓ SUCCESS: User Registration: Successfully registered SinglePlayer
+2025-09-07 06:05:54,136 - [06:05:54] NAVIGATE: About to navigate to http://localhost:3000/auth/login → Starting navigation
+2025-09-07 06:05:55,624 - [06:05:55] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/auth/login)
+2025-09-07 06:05:55,733 - [06:05:55] NOTE: Screenshot saved: page_loaded_20250907_060555.png
+2025-09-07 06:05:55,733 - [06:05:55] OBSERVING: Taking time to examine login page for SinglePlayer → In progress...
+2025-09-07 06:06:06,848 - [06:06:06] PAGE_ANALYSIS: Completed examination of login page for SinglePlayer → SUCCESS (Notes: Page contains 1 buttons, 5 links, 3 input fields | Found 2 potential error/warning indicators)
+2025-09-07 06:06:06,969 - [06:06:06] NOTE: Screenshot saved: page_observation_20250907_060606.png
+2025-09-07 06:06:06,969 - [06:06:06] LOOKING_FOR: Searching for login email field using selector: input[name='email'] → In progress...
+2025-09-07 06:06:07,477 - [06:06:07] FOUND_ELEMENT: Located login email field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:06:07,477 - [06:06:07] LOOKING_FOR: Searching for login password field using selector: input[type='password'] → In progress...
+2025-09-07 06:06:08,014 - [06:06:08] FOUND_ELEMENT: Located login password field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:06:08,014 - [06:06:08] TYPING: About to type 'singleplayer@test.com' into login email → Starting to type...
+2025-09-07 06:06:08,014 - [06:06:08] PREPARING_CLICK: About to click on login email (to focus) → Positioning mouse...
+2025-09-07 06:06:09,257 - [06:06:09] CLICKED: Successfully clicked on login email (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:06:16,776 - [06:06:16] TYPING_COMPLETE: Successfully typed 'singleplayer@test.com' into login email → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:06:16,776 - [06:06:16] TYPING: About to type 'TestPass123!' into login password → Starting to type...
+2025-09-07 06:06:16,776 - [06:06:16] PREPARING_CLICK: About to click on login password (to focus) → Positioning mouse...
+2025-09-07 06:06:17,566 - [06:06:17] CLICKED: Successfully clicked on login password (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:06:22,003 - [06:06:22] TYPING_COMPLETE: Successfully typed 'TestPass123!' into login password → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:06:22,112 - [06:06:22] NOTE: Screenshot saved: before_login_SinglePlayer_20250907_060622.png
+2025-09-07 06:06:22,112 - [06:06:22] LOOKING_FOR: Searching for login submit using selector: button[type='submit'] → In progress...
+2025-09-07 06:06:22,496 - [06:06:22] FOUND_ELEMENT: Located login submit successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:06:22,496 - [06:06:22] PREPARING_CLICK: About to click on login submit button → Positioning mouse...
+2025-09-07 06:06:23,681 - [06:06:23] CLICKED: Successfully clicked on login submit button → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:06:27,190 - [06:06:27] NOTE: Screenshot saved: after_login_SinglePlayer_20250907_060627.png
+2025-09-07 06:06:27,193 - [06:06:27] TEXT_VERIFICATION: Looking for text: 'welcome' (case insensitive) → Searching...
+2025-09-07 06:06:30,251 - [06:06:30] TEXT_FOUND: Text 'welcome' is present on the page → SUCCESS (Notes: Found in page source)
+2025-09-07 06:06:30,251 - [06:06:30] ✓ SUCCESS: User Login: Successfully logged in SinglePlayer
+2025-09-07 06:06:30,252 - [06:06:30] NOTE: Testing logout functionality
+2025-09-07 06:06:48,430 - [06:06:48] CONCERN: MEDIUM ISSUE in User Logout: Logout button/link not easily discoverable
+2025-09-07 06:06:50,436 - [06:06:50] NOTE: Testing user management for MultiHost
+2025-09-07 06:06:50,436 - [06:06:50] NAVIGATE: About to navigate to http://localhost:3000/auth/register → Starting navigation
+2025-09-07 06:06:52,730 - [06:06:52] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/auth/register)
+2025-09-07 06:06:52,830 - [06:06:52] NOTE: Screenshot saved: page_loaded_20250907_060652.png
+2025-09-07 06:06:52,830 - [06:06:52] OBSERVING: Taking time to examine registration page for MultiHost → In progress...
+2025-09-07 06:07:03,910 - [06:07:03] PAGE_ANALYSIS: Completed examination of registration page for MultiHost → SUCCESS (Notes: Page contains 1 buttons, 6 links, 6 input fields | Found 4 potential error/warning indicators)
+2025-09-07 06:07:04,029 - [06:07:04] NOTE: Screenshot saved: page_observation_20250907_060703.png
+2025-09-07 06:07:04,029 - [06:07:04] LOOKING_FOR: Searching for submit button using selector: button[type='submit'] → In progress...
+2025-09-07 06:07:04,739 - [06:07:04] FOUND_ELEMENT: Located submit button successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:07:04,739 - [06:07:04] PREPARING_CLICK: About to click on submit button (empty form) → Positioning mouse...
+2025-09-07 06:07:04,746 - [06:07:04] NOTE: Element not fully visible, scrolling to bring it into view
+2025-09-07 06:07:04,746 - [06:07:04] NOTE: Scrolling to bring element into better view
+2025-09-07 06:07:06,530 - [06:07:06] ✓ SUCCESS: Element brought into view
+2025-09-07 06:07:07,440 - [06:07:07] CLICKED: Successfully clicked on submit button (empty form) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:07:09,445 - [06:07:09] TEXT_VERIFICATION: Looking for text: 'required' (case insensitive) → Searching...
+2025-09-07 06:07:09,453 - [06:07:09] TEXT_MISSING: Text 'required' was not found on the page → NOT_FOUND (Notes: May indicate missing functionality or navigation issue)
+2025-09-07 06:07:09,453 - [06:07:09] TEXT_VERIFICATION: Looking for text: 'invalid' (case insensitive) → Searching...
+2025-09-07 06:07:09,459 - [06:07:09] TEXT_MISSING: Text 'invalid' was not found on the page → NOT_FOUND (Notes: May indicate missing functionality or navigation issue)
+2025-09-07 06:07:09,459 - [06:07:09] CONCERN: MEDIUM ISSUE in Registration Validation: Form validation may not be working properly
+2025-09-07 06:07:09,459 - [06:07:09] LOOKING_FOR: Searching for email field using selector: input[name='email'] → In progress...
+2025-09-07 06:07:10,133 - [06:07:10] FOUND_ELEMENT: Located email field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:07:10,133 - [06:07:10] TYPING: About to type 'multihost@test.com' into email field → Starting to type...
+2025-09-07 06:07:10,134 - [06:07:10] PREPARING_CLICK: About to click on email field (to focus) → Positioning mouse...
+2025-09-07 06:07:11,180 - [06:07:11] CLICKED: Successfully clicked on email field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:07:15,662 - [06:07:15] TYPING_COMPLETE: Successfully typed 'multihost@test.com' into email field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:07:15,662 - [06:07:15] LOOKING_FOR: Searching for username field using selector: input[name='username'] → In progress...
+2025-09-07 06:07:16,156 - [06:07:16] FOUND_ELEMENT: Located username field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:07:16,156 - [06:07:16] TYPING: About to type 'MultiHost' into username field → Starting to type...
+2025-09-07 06:07:16,156 - [06:07:16] PREPARING_CLICK: About to click on username field (to focus) → Positioning mouse...
+2025-09-07 06:07:16,850 - [06:07:16] CLICKED: Successfully clicked on username field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:07:19,807 - [06:07:19] TYPING_COMPLETE: Successfully typed 'MultiHost' into username field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:07:19,807 - [06:07:19] LOOKING_FOR: Searching for password field using selector: input[type='password'] → In progress...
+2025-09-07 06:07:20,223 - [06:07:20] FOUND_ELEMENT: Located password field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:07:20,224 - [06:07:20] TYPING: About to type 'TestPass123!' into password field → Starting to type...
+2025-09-07 06:07:20,224 - [06:07:20] PREPARING_CLICK: About to click on password field (to focus) → Positioning mouse...
+2025-09-07 06:07:20,988 - [06:07:20] CLICKED: Successfully clicked on password field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:07:24,483 - [06:07:24] NOTE: Making a natural typing correction
+2025-09-07 06:07:25,535 - [06:07:25] TYPING_COMPLETE: Successfully typed 'TestPass123!' into password field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:07:25,535 - [06:07:25] LOOKING_FOR: Searching for first name field using selector: input[name='firstName'] → In progress...
+2025-09-07 06:07:25,880 - [06:07:25] FOUND_ELEMENT: Located first name field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:07:25,881 - [06:07:25] TYPING: About to type 'MultiHost' into first name field → Starting to type...
+2025-09-07 06:07:25,881 - [06:07:25] PREPARING_CLICK: About to click on first name field (to focus) → Positioning mouse...
+2025-09-07 06:07:26,973 - [06:07:26] CLICKED: Successfully clicked on first name field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:07:30,326 - [06:07:30] TYPING_COMPLETE: Successfully typed 'MultiHost' into first name field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:07:30,326 - [06:07:30] LOOKING_FOR: Searching for last name field using selector: input[name='lastName'] → In progress...
+2025-09-07 06:07:30,971 - [06:07:30] FOUND_ELEMENT: Located last name field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:07:30,971 - [06:07:30] TYPING: About to type 'Tester' into last name field → Starting to type...
+2025-09-07 06:07:30,972 - [06:07:30] PREPARING_CLICK: About to click on last name field (to focus) → Positioning mouse...
+2025-09-07 06:07:31,866 - [06:07:31] CLICKED: Successfully clicked on last name field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:07:33,537 - [06:07:33] TYPING_COMPLETE: Successfully typed 'Tester' into last name field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:07:33,639 - [06:07:33] NOTE: Screenshot saved: before_registration_MultiHost_20250907_060733.png
+2025-09-07 06:07:33,639 - [06:07:33] LOOKING_FOR: Searching for registration submit using selector: button[type='submit'] → In progress...
+2025-09-07 06:07:34,150 - [06:07:34] FOUND_ELEMENT: Located registration submit successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:07:34,151 - [06:07:34] PREPARING_CLICK: About to click on registration submit button → Positioning mouse...
+2025-09-07 06:07:34,846 - [06:07:34] CLICKED: Successfully clicked on registration submit button → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:07:37,032 - [06:07:37] NOTE: Screenshot saved: after_registration_MultiHost_20250907_060736.png
+2025-09-07 06:07:37,033 - [06:07:37] TEXT_VERIFICATION: Looking for text: 'success' (case insensitive) → Searching...
+2025-09-07 06:07:37,041 - [06:07:37] TEXT_FOUND: Text 'success' is present on the page → SUCCESS (Notes: Found in 1 elements)
+2025-09-07 06:07:37,041 - [06:07:37] ✓ SUCCESS: User Registration: Successfully registered MultiHost
+2025-09-07 06:07:39,041 - [06:07:39] NAVIGATE: About to navigate to http://localhost:3000/auth/login → Starting navigation
+2025-09-07 06:07:40,901 - [06:07:40] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/auth/login)
+2025-09-07 06:07:40,990 - [06:07:40] NOTE: Screenshot saved: page_loaded_20250907_060740.png
+2025-09-07 06:07:40,990 - [06:07:40] OBSERVING: Taking time to examine login page for MultiHost → In progress...
+2025-09-07 06:07:52,071 - [06:07:52] PAGE_ANALYSIS: Completed examination of login page for MultiHost → SUCCESS (Notes: Page contains 1 buttons, 5 links, 3 input fields | Found 2 potential error/warning indicators)
+2025-09-07 06:07:52,189 - [06:07:52] NOTE: Screenshot saved: page_observation_20250907_060752.png
+2025-09-07 06:07:52,189 - [06:07:52] LOOKING_FOR: Searching for login email field using selector: input[name='email'] → In progress...
+2025-09-07 06:07:52,847 - [06:07:52] FOUND_ELEMENT: Located login email field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:07:52,847 - [06:07:52] LOOKING_FOR: Searching for login password field using selector: input[type='password'] → In progress...
+2025-09-07 06:07:53,518 - [06:07:53] FOUND_ELEMENT: Located login password field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:07:53,519 - [06:07:53] TYPING: About to type 'multihost@test.com' into login email → Starting to type...
+2025-09-07 06:07:53,519 - [06:07:53] PREPARING_CLICK: About to click on login email (to focus) → Positioning mouse...
+2025-09-07 06:07:54,511 - [06:07:54] CLICKED: Successfully clicked on login email (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:08:00,484 - [06:08:00] TYPING_COMPLETE: Successfully typed 'multihost@test.com' into login email → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:08:00,486 - [06:08:00] TYPING: About to type 'TestPass123!' into login password → Starting to type...
+2025-09-07 06:08:00,486 - [06:08:00] PREPARING_CLICK: About to click on login password (to focus) → Positioning mouse...
+2025-09-07 06:08:01,500 - [06:08:01] CLICKED: Successfully clicked on login password (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:08:05,091 - [06:08:05] TYPING_COMPLETE: Successfully typed 'TestPass123!' into login password → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:08:05,200 - [06:08:05] NOTE: Screenshot saved: before_login_MultiHost_20250907_060805.png
+2025-09-07 06:08:05,200 - [06:08:05] LOOKING_FOR: Searching for login submit using selector: button[type='submit'] → In progress...
+2025-09-07 06:08:05,632 - [06:08:05] FOUND_ELEMENT: Located login submit successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:08:05,633 - [06:08:05] PREPARING_CLICK: About to click on login submit button → Positioning mouse...
+2025-09-07 06:08:06,450 - [06:08:06] CLICKED: Successfully clicked on login submit button → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:08:09,795 - [06:08:09] NOTE: Screenshot saved: after_login_MultiHost_20250907_060809.png
+2025-09-07 06:08:09,797 - [06:08:09] TEXT_VERIFICATION: Looking for text: 'welcome' (case insensitive) → Searching...
+2025-09-07 06:08:12,828 - [06:08:12] TEXT_FOUND: Text 'welcome' is present on the page → SUCCESS (Notes: Found in page source)
+2025-09-07 06:08:12,828 - [06:08:12] ✓ SUCCESS: User Login: Successfully logged in MultiHost
+2025-09-07 06:08:12,829 - [06:08:12] NOTE: Testing logout functionality
+2025-09-07 06:08:31,039 - [06:08:31] CONCERN: MEDIUM ISSUE in User Logout: Logout button/link not easily discoverable
+2025-09-07 06:08:33,045 - [06:08:33] NOTE: Testing user management for MultiPlayer1
+2025-09-07 06:08:33,045 - [06:08:33] NAVIGATE: About to navigate to http://localhost:3000/auth/register → Starting navigation
+2025-09-07 06:08:35,550 - [06:08:35] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/auth/register)
+2025-09-07 06:08:35,646 - [06:08:35] NOTE: Screenshot saved: page_loaded_20250907_060835.png
+2025-09-07 06:08:35,646 - [06:08:35] OBSERVING: Taking time to examine registration page for MultiPlayer1 → In progress...
+2025-09-07 06:08:46,725 - [06:08:46] PAGE_ANALYSIS: Completed examination of registration page for MultiPlayer1 → SUCCESS (Notes: Page contains 1 buttons, 6 links, 6 input fields | Found 4 potential error/warning indicators)
+2025-09-07 06:08:46,841 - [06:08:46] NOTE: Screenshot saved: page_observation_20250907_060846.png
+2025-09-07 06:08:46,841 - [06:08:46] LOOKING_FOR: Searching for submit button using selector: button[type='submit'] → In progress...
+2025-09-07 06:08:47,153 - [06:08:47] FOUND_ELEMENT: Located submit button successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:08:47,154 - [06:08:47] PREPARING_CLICK: About to click on submit button (empty form) → Positioning mouse...
+2025-09-07 06:08:47,160 - [06:08:47] NOTE: Element not fully visible, scrolling to bring it into view
+2025-09-07 06:08:47,161 - [06:08:47] NOTE: Scrolling to bring element into better view
+2025-09-07 06:08:48,668 - [06:08:48] ✓ SUCCESS: Element brought into view
+2025-09-07 06:08:49,532 - [06:08:49] CLICKED: Successfully clicked on submit button (empty form) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:08:51,536 - [06:08:51] TEXT_VERIFICATION: Looking for text: 'required' (case insensitive) → Searching...
+2025-09-07 06:08:51,542 - [06:08:51] TEXT_MISSING: Text 'required' was not found on the page → NOT_FOUND (Notes: May indicate missing functionality or navigation issue)
+2025-09-07 06:08:51,542 - [06:08:51] TEXT_VERIFICATION: Looking for text: 'invalid' (case insensitive) → Searching...
+2025-09-07 06:08:51,547 - [06:08:51] TEXT_MISSING: Text 'invalid' was not found on the page → NOT_FOUND (Notes: May indicate missing functionality or navigation issue)
+2025-09-07 06:08:51,547 - [06:08:51] CONCERN: MEDIUM ISSUE in Registration Validation: Form validation may not be working properly
+2025-09-07 06:08:51,547 - [06:08:51] LOOKING_FOR: Searching for email field using selector: input[name='email'] → In progress...
+2025-09-07 06:08:52,068 - [06:08:52] FOUND_ELEMENT: Located email field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:08:52,068 - [06:08:52] TYPING: About to type 'multiplayer1@test.com' into email field → Starting to type...
+2025-09-07 06:08:52,068 - [06:08:52] PREPARING_CLICK: About to click on email field (to focus) → Positioning mouse...
+2025-09-07 06:08:53,085 - [06:08:53] CLICKED: Successfully clicked on email field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:09:01,339 - [06:09:01] TYPING_COMPLETE: Successfully typed 'multiplayer1@test.com' into email field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:09:01,340 - [06:09:01] LOOKING_FOR: Searching for username field using selector: input[name='username'] → In progress...
+2025-09-07 06:09:01,774 - [06:09:01] FOUND_ELEMENT: Located username field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:09:01,774 - [06:09:01] TYPING: About to type 'MultiPlayer1' into username field → Starting to type...
+2025-09-07 06:09:01,774 - [06:09:01] PREPARING_CLICK: About to click on username field (to focus) → Positioning mouse...
+2025-09-07 06:09:02,838 - [06:09:02] CLICKED: Successfully clicked on username field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:09:05,722 - [06:09:05] NOTE: Making a natural typing correction
+2025-09-07 06:09:08,238 - [06:09:08] TYPING_COMPLETE: Successfully typed 'MultiPlayer1' into username field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:09:08,238 - [06:09:08] LOOKING_FOR: Searching for password field using selector: input[type='password'] → In progress...
+2025-09-07 06:09:08,753 - [06:09:08] FOUND_ELEMENT: Located password field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:09:08,753 - [06:09:08] TYPING: About to type 'TestPass123!' into password field → Starting to type...
+2025-09-07 06:09:08,753 - [06:09:08] PREPARING_CLICK: About to click on password field (to focus) → Positioning mouse...
+2025-09-07 06:09:10,011 - [06:09:10] CLICKED: Successfully clicked on password field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:09:14,299 - [06:09:14] TYPING_COMPLETE: Successfully typed 'TestPass123!' into password field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:09:14,299 - [06:09:14] LOOKING_FOR: Searching for first name field using selector: input[name='firstName'] → In progress...
+2025-09-07 06:09:14,752 - [06:09:14] FOUND_ELEMENT: Located first name field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:09:14,752 - [06:09:14] TYPING: About to type 'MultiPlayer1' into first name field → Starting to type...
+2025-09-07 06:09:14,752 - [06:09:14] PREPARING_CLICK: About to click on first name field (to focus) → Positioning mouse...
+2025-09-07 06:09:15,727 - [06:09:15] CLICKED: Successfully clicked on first name field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:09:22,037 - [06:09:22] TYPING_COMPLETE: Successfully typed 'MultiPlayer1' into first name field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:09:22,038 - [06:09:22] LOOKING_FOR: Searching for last name field using selector: input[name='lastName'] → In progress...
+2025-09-07 06:09:22,453 - [06:09:22] FOUND_ELEMENT: Located last name field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:09:22,453 - [06:09:22] TYPING: About to type 'Tester' into last name field → Starting to type...
+2025-09-07 06:09:22,453 - [06:09:22] PREPARING_CLICK: About to click on last name field (to focus) → Positioning mouse...
+2025-09-07 06:09:23,547 - [06:09:23] CLICKED: Successfully clicked on last name field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:09:26,585 - [06:09:26] TYPING_COMPLETE: Successfully typed 'Tester' into last name field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:09:26,679 - [06:09:26] NOTE: Screenshot saved: before_registration_MultiPlayer1_20250907_060926.png
+2025-09-07 06:09:26,679 - [06:09:26] LOOKING_FOR: Searching for registration submit using selector: button[type='submit'] → In progress...
+2025-09-07 06:09:27,163 - [06:09:27] FOUND_ELEMENT: Located registration submit successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:09:27,163 - [06:09:27] PREPARING_CLICK: About to click on registration submit button → Positioning mouse...
+2025-09-07 06:09:27,856 - [06:09:27] CLICKED: Successfully clicked on registration submit button → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:09:30,021 - [06:09:30] NOTE: Screenshot saved: after_registration_MultiPlayer1_20250907_060929.png
+2025-09-07 06:09:30,021 - [06:09:30] TEXT_VERIFICATION: Looking for text: 'success' (case insensitive) → Searching...
+2025-09-07 06:09:30,029 - [06:09:30] TEXT_FOUND: Text 'success' is present on the page → SUCCESS (Notes: Found in 1 elements)
+2025-09-07 06:09:30,030 - [06:09:30] ✓ SUCCESS: User Registration: Successfully registered MultiPlayer1
+2025-09-07 06:09:32,035 - [06:09:32] NAVIGATE: About to navigate to http://localhost:3000/auth/login → Starting navigation
+2025-09-07 06:09:34,890 - [06:09:34] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/auth/login)
+2025-09-07 06:09:34,998 - [06:09:34] NOTE: Screenshot saved: page_loaded_20250907_060934.png
+2025-09-07 06:09:34,998 - [06:09:34] OBSERVING: Taking time to examine login page for MultiPlayer1 → In progress...
+2025-09-07 06:09:46,041 - [06:09:46] PAGE_ANALYSIS: Completed examination of login page for MultiPlayer1 → SUCCESS (Notes: Page contains 1 buttons, 5 links, 3 input fields | Found 2 potential error/warning indicators)
+2025-09-07 06:09:46,223 - [06:09:46] NOTE: Screenshot saved: page_observation_20250907_060946.png
+2025-09-07 06:09:46,223 - [06:09:46] LOOKING_FOR: Searching for login email field using selector: input[name='email'] → In progress...
+2025-09-07 06:09:46,843 - [06:09:46] FOUND_ELEMENT: Located login email field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:09:46,843 - [06:09:46] LOOKING_FOR: Searching for login password field using selector: input[type='password'] → In progress...
+2025-09-07 06:09:47,392 - [06:09:47] FOUND_ELEMENT: Located login password field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:09:47,393 - [06:09:47] TYPING: About to type 'multiplayer1@test.com' into login email → Starting to type...
+2025-09-07 06:09:47,393 - [06:09:47] PREPARING_CLICK: About to click on login email (to focus) → Positioning mouse...
+2025-09-07 06:09:48,546 - [06:09:48] CLICKED: Successfully clicked on login email (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:09:55,768 - [06:09:55] TYPING_COMPLETE: Successfully typed 'multiplayer1@test.com' into login email → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:09:55,768 - [06:09:55] TYPING: About to type 'TestPass123!' into login password → Starting to type...
+2025-09-07 06:09:55,768 - [06:09:55] PREPARING_CLICK: About to click on login password (to focus) → Positioning mouse...
+2025-09-07 06:09:56,946 - [06:09:56] CLICKED: Successfully clicked on login password (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:10:00,859 - [06:10:00] TYPING_COMPLETE: Successfully typed 'TestPass123!' into login password → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:10:00,969 - [06:10:00] NOTE: Screenshot saved: before_login_MultiPlayer1_20250907_061000.png
+2025-09-07 06:10:00,969 - [06:10:00] LOOKING_FOR: Searching for login submit using selector: button[type='submit'] → In progress...
+2025-09-07 06:10:01,596 - [06:10:01] FOUND_ELEMENT: Located login submit successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:10:01,596 - [06:10:01] PREPARING_CLICK: About to click on login submit button → Positioning mouse...
+2025-09-07 06:10:02,536 - [06:10:02] CLICKED: Successfully clicked on login submit button → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:10:06,179 - [06:10:06] NOTE: Screenshot saved: after_login_MultiPlayer1_20250907_061006.png
+2025-09-07 06:10:06,182 - [06:10:06] TEXT_VERIFICATION: Looking for text: 'welcome' (case insensitive) → Searching...
+2025-09-07 06:10:09,235 - [06:10:09] TEXT_FOUND: Text 'welcome' is present on the page → SUCCESS (Notes: Found in page source)
+2025-09-07 06:10:09,235 - [06:10:09] ✓ SUCCESS: User Login: Successfully logged in MultiPlayer1
+2025-09-07 06:10:09,235 - [06:10:09] NOTE: Testing logout functionality
+2025-09-07 06:10:27,508 - [06:10:27] CONCERN: MEDIUM ISSUE in User Logout: Logout button/link not easily discoverable
+2025-09-07 06:10:29,514 - [06:10:29] NOTE: Testing user management for MultiPlayer2
+2025-09-07 06:10:29,514 - [06:10:29] NAVIGATE: About to navigate to http://localhost:3000/auth/register → Starting navigation
+2025-09-07 06:10:31,366 - [06:10:31] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/auth/register)
+2025-09-07 06:10:31,469 - [06:10:31] NOTE: Screenshot saved: page_loaded_20250907_061031.png
+2025-09-07 06:10:31,469 - [06:10:31] OBSERVING: Taking time to examine registration page for MultiPlayer2 → In progress...
+2025-09-07 06:10:42,565 - [06:10:42] PAGE_ANALYSIS: Completed examination of registration page for MultiPlayer2 → SUCCESS (Notes: Page contains 1 buttons, 6 links, 6 input fields | Found 4 potential error/warning indicators)
+2025-09-07 06:10:42,689 - [06:10:42] NOTE: Screenshot saved: page_observation_20250907_061042.png
+2025-09-07 06:10:42,690 - [06:10:42] LOOKING_FOR: Searching for submit button using selector: button[type='submit'] → In progress...
+2025-09-07 06:10:43,192 - [06:10:43] FOUND_ELEMENT: Located submit button successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:10:43,192 - [06:10:43] PREPARING_CLICK: About to click on submit button (empty form) → Positioning mouse...
+2025-09-07 06:10:43,197 - [06:10:43] NOTE: Element not fully visible, scrolling to bring it into view
+2025-09-07 06:10:43,197 - [06:10:43] NOTE: Scrolling to bring element into better view
+2025-09-07 06:10:44,860 - [06:10:44] ✓ SUCCESS: Element brought into view
+2025-09-07 06:10:46,140 - [06:10:46] CLICKED: Successfully clicked on submit button (empty form) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:10:48,145 - [06:10:48] TEXT_VERIFICATION: Looking for text: 'required' (case insensitive) → Searching...
+2025-09-07 06:10:48,153 - [06:10:48] TEXT_MISSING: Text 'required' was not found on the page → NOT_FOUND (Notes: May indicate missing functionality or navigation issue)
+2025-09-07 06:10:48,153 - [06:10:48] TEXT_VERIFICATION: Looking for text: 'invalid' (case insensitive) → Searching...
+2025-09-07 06:10:48,158 - [06:10:48] TEXT_MISSING: Text 'invalid' was not found on the page → NOT_FOUND (Notes: May indicate missing functionality or navigation issue)
+2025-09-07 06:10:48,158 - [06:10:48] CONCERN: MEDIUM ISSUE in Registration Validation: Form validation may not be working properly
+2025-09-07 06:10:48,158 - [06:10:48] LOOKING_FOR: Searching for email field using selector: input[name='email'] → In progress...
+2025-09-07 06:10:48,596 - [06:10:48] FOUND_ELEMENT: Located email field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:10:48,596 - [06:10:48] TYPING: About to type 'multiplayer2@test.com' into email field → Starting to type...
+2025-09-07 06:10:48,596 - [06:10:48] PREPARING_CLICK: About to click on email field (to focus) → Positioning mouse...
+2025-09-07 06:10:49,538 - [06:10:49] CLICKED: Successfully clicked on email field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:10:50,930 - [06:10:50] NOTE: Making a natural typing correction
+2025-09-07 06:10:56,701 - [06:10:56] TYPING_COMPLETE: Successfully typed 'multiplayer2@test.com' into email field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:10:56,701 - [06:10:56] LOOKING_FOR: Searching for username field using selector: input[name='username'] → In progress...
+2025-09-07 06:10:57,401 - [06:10:57] FOUND_ELEMENT: Located username field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:10:57,402 - [06:10:57] TYPING: About to type 'MultiPlayer2' into username field → Starting to type...
+2025-09-07 06:10:57,402 - [06:10:57] PREPARING_CLICK: About to click on username field (to focus) → Positioning mouse...
+2025-09-07 06:10:58,327 - [06:10:58] CLICKED: Successfully clicked on username field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:11:02,674 - [06:11:02] TYPING_COMPLETE: Successfully typed 'MultiPlayer2' into username field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:11:02,675 - [06:11:02] LOOKING_FOR: Searching for password field using selector: input[type='password'] → In progress...
+2025-09-07 06:11:03,310 - [06:11:03] FOUND_ELEMENT: Located password field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:11:03,315 - [06:11:03] TYPING: About to type 'TestPass123!' into password field → Starting to type...
+2025-09-07 06:11:03,315 - [06:11:03] PREPARING_CLICK: About to click on password field (to focus) → Positioning mouse...
+2025-09-07 06:11:04,325 - [06:11:04] CLICKED: Successfully clicked on password field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:11:08,449 - [06:11:08] TYPING_COMPLETE: Successfully typed 'TestPass123!' into password field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:11:08,449 - [06:11:08] LOOKING_FOR: Searching for first name field using selector: input[name='firstName'] → In progress...
+2025-09-07 06:11:08,914 - [06:11:08] FOUND_ELEMENT: Located first name field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:11:08,915 - [06:11:08] TYPING: About to type 'MultiPlayer2' into first name field → Starting to type...
+2025-09-07 06:11:08,915 - [06:11:08] PREPARING_CLICK: About to click on first name field (to focus) → Positioning mouse...
+2025-09-07 06:11:10,008 - [06:11:10] CLICKED: Successfully clicked on first name field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:11:14,442 - [06:11:14] TYPING_COMPLETE: Successfully typed 'MultiPlayer2' into first name field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:11:14,442 - [06:11:14] LOOKING_FOR: Searching for last name field using selector: input[name='lastName'] → In progress...
+2025-09-07 06:11:14,793 - [06:11:14] FOUND_ELEMENT: Located last name field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:11:14,794 - [06:11:14] TYPING: About to type 'Tester' into last name field → Starting to type...
+2025-09-07 06:11:14,794 - [06:11:14] PREPARING_CLICK: About to click on last name field (to focus) → Positioning mouse...
+2025-09-07 06:11:15,732 - [06:11:15] CLICKED: Successfully clicked on last name field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:11:17,813 - [06:11:17] TYPING_COMPLETE: Successfully typed 'Tester' into last name field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:11:17,919 - [06:11:17] NOTE: Screenshot saved: before_registration_MultiPlayer2_20250907_061117.png
+2025-09-07 06:11:17,919 - [06:11:17] LOOKING_FOR: Searching for registration submit using selector: button[type='submit'] → In progress...
+2025-09-07 06:11:18,434 - [06:11:18] FOUND_ELEMENT: Located registration submit successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:11:18,434 - [06:11:18] PREPARING_CLICK: About to click on registration submit button → Positioning mouse...
+2025-09-07 06:11:19,289 - [06:11:19] CLICKED: Successfully clicked on registration submit button → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:11:22,900 - [06:11:22] NOTE: Screenshot saved: after_registration_MultiPlayer2_20250907_061122.png
+2025-09-07 06:11:22,900 - [06:11:22] TEXT_VERIFICATION: Looking for text: 'success' (case insensitive) → Searching...
+2025-09-07 06:11:22,908 - [06:11:22] TEXT_FOUND: Text 'success' is present on the page → SUCCESS (Notes: Found in 1 elements)
+2025-09-07 06:11:22,909 - [06:11:22] ✓ SUCCESS: User Registration: Successfully registered MultiPlayer2
+2025-09-07 06:11:24,912 - [06:11:24] NAVIGATE: About to navigate to http://localhost:3000/auth/login → Starting navigation
+2025-09-07 06:11:26,843 - [06:11:26] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/auth/login)
+2025-09-07 06:11:26,950 - [06:11:26] NOTE: Screenshot saved: page_loaded_20250907_061126.png
+2025-09-07 06:11:26,950 - [06:11:26] OBSERVING: Taking time to examine login page for MultiPlayer2 → In progress...
+2025-09-07 06:11:38,029 - [06:11:38] PAGE_ANALYSIS: Completed examination of login page for MultiPlayer2 → SUCCESS (Notes: Page contains 1 buttons, 5 links, 3 input fields | Found 2 potential error/warning indicators)
+2025-09-07 06:11:38,143 - [06:11:38] NOTE: Screenshot saved: page_observation_20250907_061138.png
+2025-09-07 06:11:38,143 - [06:11:38] LOOKING_FOR: Searching for login email field using selector: input[name='email'] → In progress...
+2025-09-07 06:11:38,544 - [06:11:38] FOUND_ELEMENT: Located login email field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:11:38,544 - [06:11:38] LOOKING_FOR: Searching for login password field using selector: input[type='password'] → In progress...
+2025-09-07 06:11:38,917 - [06:11:38] FOUND_ELEMENT: Located login password field successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:11:38,918 - [06:11:38] TYPING: About to type 'multiplayer2@test.com' into login email → Starting to type...
+2025-09-07 06:11:38,918 - [06:11:38] PREPARING_CLICK: About to click on login email (to focus) → Positioning mouse...
+2025-09-07 06:11:39,596 - [06:11:39] CLICKED: Successfully clicked on login email (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:11:46,624 - [06:11:46] TYPING_COMPLETE: Successfully typed 'multiplayer2@test.com' into login email → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:11:46,624 - [06:11:46] TYPING: About to type 'TestPass123!' into login password → Starting to type...
+2025-09-07 06:11:46,624 - [06:11:46] PREPARING_CLICK: About to click on login password (to focus) → Positioning mouse...
+2025-09-07 06:11:47,489 - [06:11:47] CLICKED: Successfully clicked on login password (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:11:49,833 - [06:11:49] NOTE: Making a natural typing correction
+2025-09-07 06:11:52,863 - [06:11:52] TYPING_COMPLETE: Successfully typed 'TestPass123!' into login password → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:11:52,971 - [06:11:52] NOTE: Screenshot saved: before_login_MultiPlayer2_20250907_061152.png
+2025-09-07 06:11:52,971 - [06:11:52] LOOKING_FOR: Searching for login submit using selector: button[type='submit'] → In progress...
+2025-09-07 06:11:53,612 - [06:11:53] FOUND_ELEMENT: Located login submit successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:11:53,612 - [06:11:53] PREPARING_CLICK: About to click on login submit button → Positioning mouse...
+2025-09-07 06:11:54,597 - [06:11:54] CLICKED: Successfully clicked on login submit button → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:11:56,884 - [06:11:56] NOTE: Screenshot saved: after_login_MultiPlayer2_20250907_061156.png
+2025-09-07 06:11:56,886 - [06:11:56] TEXT_VERIFICATION: Looking for text: 'welcome' (case insensitive) → Searching...
+2025-09-07 06:11:59,907 - [06:11:59] TEXT_FOUND: Text 'welcome' is present on the page → SUCCESS (Notes: Found in page source)
+2025-09-07 06:11:59,907 - [06:11:59] ✓ SUCCESS: User Login: Successfully logged in MultiPlayer2
+2025-09-07 06:11:59,907 - [06:11:59] NOTE: Testing logout functionality
+2025-09-07 06:12:18,116 - [06:12:18] CONCERN: MEDIUM ISSUE in User Logout: Logout button/link not easily discoverable
+2025-09-07 06:12:20,125 - [06:12:20] NOTE: === TESTING SINGLE PLAYER QUIZ FLOWS ===
+2025-09-07 06:12:20,129 - [06:12:20] NAVIGATE: About to navigate to http://localhost:3000/auth/login → Starting navigation
+2025-09-07 06:12:22,878 - [06:12:22] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/auth/login)
+2025-09-07 06:12:23,009 - [06:12:23] NOTE: Screenshot saved: page_loaded_20250907_061222.png
+2025-09-07 06:12:23,009 - [06:12:23] LOOKING_FOR: Searching for login email using selector: input[name='email'] → In progress...
+2025-09-07 06:12:23,360 - [06:12:23] FOUND_ELEMENT: Located login email successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:12:23,360 - [06:12:23] LOOKING_FOR: Searching for login password using selector: input[type='password'] → In progress...
+2025-09-07 06:12:23,987 - [06:12:23] FOUND_ELEMENT: Located login password successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:12:23,988 - [06:12:23] TYPING: About to type 'singleplayer@test.com' into email field → Starting to type...
+2025-09-07 06:12:23,988 - [06:12:23] PREPARING_CLICK: About to click on email field (to focus) → Positioning mouse...
+2025-09-07 06:12:25,114 - [06:12:25] CLICKED: Successfully clicked on email field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:12:31,512 - [06:12:31] TYPING_COMPLETE: Successfully typed 'singleplayer@test.com' into email field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:12:31,512 - [06:12:31] TYPING: About to type 'TestPass123!' into password field → Starting to type...
+2025-09-07 06:12:31,512 - [06:12:31] PREPARING_CLICK: About to click on password field (to focus) → Positioning mouse...
+2025-09-07 06:12:32,383 - [06:12:32] CLICKED: Successfully clicked on password field (to focus) → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:12:35,634 - [06:12:35] TYPING_COMPLETE: Successfully typed 'TestPass123!' into password field → SUCCESS (Notes: Text matches expected input exactly)
+2025-09-07 06:12:35,634 - [06:12:35] LOOKING_FOR: Searching for login submit using selector: button[type='submit'] → In progress...
+2025-09-07 06:12:36,084 - [06:12:36] FOUND_ELEMENT: Located login submit successfully → SUCCESS (Notes: Element is visible and ready for interaction)
+2025-09-07 06:12:36,084 - [06:12:36] PREPARING_CLICK: About to click on login button → Positioning mouse...
+2025-09-07 06:12:37,247 - [06:12:37] CLICKED: Successfully clicked on login button → SUCCESS (Notes: Click appeared to register normally)
+2025-09-07 06:12:40,257 - [06:12:40] TEXT_VERIFICATION: Looking for text: 'welcome' (case insensitive) → Searching...
+2025-09-07 06:12:43,292 - [06:12:43] TEXT_FOUND: Text 'welcome' is present on the page → SUCCESS (Notes: Found in page source)
+2025-09-07 06:12:43,292 - [06:12:43] NAVIGATE: About to navigate to http://localhost:3000/dashboard → Starting navigation
+2025-09-07 06:12:45,231 - [06:12:45] PAGE_LOAD: Page loaded with title: 'QuizMaster Pro' → SUCCESS (Notes: Current URL: http://localhost:3000/auth/login)
+2025-09-07 06:12:45,337 - [06:12:45] NOTE: Screenshot saved: page_loaded_20250907_061245.png
+2025-09-07 06:12:45,337 - [06:12:45] OBSERVING: Taking time to examine dashboard for single player testing → In progress...
+2025-09-07 06:12:56,388 - [06:12:56] PAGE_ANALYSIS: Completed examination of dashboard for single player testing → SUCCESS (Notes: Page contains 1 buttons, 5 links, 3 input fields | Found 2 potential error/warning indicators)
+2025-09-07 06:12:56,521 - [06:12:56] NOTE: Screenshot saved: page_observation_20250907_061256.png
+2025-09-07 06:13:12,162 - [06:13:12] NAVIGATE: About to navigate to http://localhost:3000/quiz → Starting navigation
+2025-09-07 06:13:12,177 - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041c6c10>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/url
+2025-09-07 06:13:12,232 - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041c62b0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/url
+2025-09-07 06:13:12,237 - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2100>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/url
+2025-09-07 06:13:12,237 - [06:13:12] NAVIGATE: Failed to load http://localhost:3000/quiz → FAILED (Notes: Error: HTTPConnectionPool(host='localhost', port=57289): Max retries exceeded with url: /session/4e2f5bca52415c2c379fd506c5625008/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d22e0>: Failed to establish a new connection: [Errno 61] Connection refused')))
+2025-09-07 06:13:12,237 - [06:13:12] OBSERVING: Taking time to examine direct quiz page navigation → In progress...
+2025-09-07 06:13:12,238 - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2550>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/title
+2025-09-07 06:13:12,239 - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d26a0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/title
+2025-09-07 06:13:12,239 - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041c6040>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/title
+2025-09-07 06:13:12,245 - [06:13:12] CONCERN: Error during page observation: HTTPConnectionPool(host='localhost', port=57289): Max retries exceeded with url: /session/4e2f5bca52415c2c379fd506c5625008/title (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041c6b80>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-09-07 06:13:12,249 - [06:13:12] TEXT_VERIFICATION: Looking for text: 'question' (case insensitive) → Searching...
+2025-09-07 06:13:12,278 - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d23d0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/source
+2025-09-07 06:13:12,280 - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2310>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/source
+2025-09-07 06:13:12,283 - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2100>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/source
+2025-09-07 06:13:12,288 - [06:13:12] CONCERN: Error during text verification: HTTPConnectionPool(host='localhost', port=57289): Max retries exceeded with url: /session/4e2f5bca52415c2c379fd506c5625008/source (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2790>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-09-07 06:13:12,288 - [06:13:12] TEXT_VERIFICATION: Looking for text: 'category' (case insensitive) → Searching...
+2025-09-07 06:13:12,291 - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2910>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/source
+2025-09-07 06:13:12,293 - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2a60>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/source
+2025-09-07 06:13:12,294 - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2be0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/source
+2025-09-07 06:13:12,296 - [06:13:12] CONCERN: Error during text verification: HTTPConnectionPool(host='localhost', port=57289): Max retries exceeded with url: /session/4e2f5bca52415c2c379fd506c5625008/source (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2d60>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-09-07 06:13:12,296 - [06:13:12] CONCERN: HIGH ISSUE in Single Player Quiz: Cannot access single player quiz functionality
+2025-09-07 06:13:12,296 - [06:13:12] NOTE: === TESTING MULTIPLAYER GAME FLOWS ===
+2025-09-07 06:13:12,296 - [06:13:12] NAVIGATE: About to navigate to http://localhost:3000/auth/login → Starting navigation
+2025-09-07 06:13:12,298 - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2fd0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/url
+2025-09-07 06:13:12,299 - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e71f0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/url
+2025-09-07 06:13:12,301 - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e7400>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/url
+2025-09-07 06:13:12,303 - [06:13:12] NAVIGATE: Failed to load http://localhost:3000/auth/login → FAILED (Notes: Error: HTTPConnectionPool(host='localhost', port=57289): Max retries exceeded with url: /session/4e2f5bca52415c2c379fd506c5625008/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e7610>: Failed to establish a new connection: [Errno 61] Connection refused')))
+2025-09-07 06:13:12,304 - [06:13:12] LOOKING_FOR: Searching for login email using selector: input[name='email'] → In progress...
+2025-09-07 06:13:12,304 - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e7910>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/element
+2025-09-07 06:13:12,305 - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041c6fa0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/element
+2025-09-07 06:13:12,306 - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041c6c10>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/element
+2025-09-07 06:13:12,321 - [06:13:12] CONCERN: Unexpected error while searching for login email: HTTPConnectionPool(host='localhost', port=57289): Max retries exceeded with url: /session/4e2f5bca52415c2c379fd506c5625008/element (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2fd0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-09-07 06:13:12,322 - [06:13:12] LOOKING_FOR: Searching for login password using selector: input[type='password'] → In progress...
+2025-09-07 06:13:12,325 - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2d90>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/element
+2025-09-07 06:13:12,335 - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2bb0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/element
+2025-09-07 06:13:12,337 - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d29a0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/element
+2025-09-07 06:13:12,344 - [06:13:12] CONCERN: Unexpected error while searching for login password: HTTPConnectionPool(host='localhost', port=57289): Max retries exceeded with url: /session/4e2f5bca52415c2c379fd506c5625008/element (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2790>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-09-07 06:13:12,345 - [06:13:12] CONCERN: CRITICAL ISSUE in Multiplayer Setup: Cannot test multiplayer - host login failed
+2025-09-07 06:13:12,345 - [06:13:12] NOTE: === TESTING NAVIGATION AND UI COMPONENTS ===
+2025-09-07 06:13:12,345 - [06:13:12] NOTE: Testing navigation to Home page
+2025-09-07 06:13:12,345 - [06:13:12] NAVIGATE: About to navigate to http://localhost:3000/ → Starting navigation
+2025-09-07 06:13:12,351 - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2370>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/url
+2025-09-07 06:13:12,361 - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041d2730>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/url
+2025-09-07 06:13:12,362 - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e7580>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/url
+2025-09-07 06:13:12,363 - [06:13:12] NAVIGATE: Failed to load http://localhost:3000/ → FAILED (Notes: Error: HTTPConnectionPool(host='localhost', port=57289): Max retries exceeded with url: /session/4e2f5bca52415c2c379fd506c5625008/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e74c0>: Failed to establish a new connection: [Errno 61] Connection refused')))
+2025-09-07 06:13:12,365 - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e7160>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/title
+2025-09-07 06:13:12,368 - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e7b80>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/title
+2025-09-07 06:13:12,369 - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e7d00>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/title
+2025-09-07 06:13:12,369 - [06:13:12] CONCERN: Critical error during comprehensive testing: HTTPConnectionPool(host='localhost', port=57289): Max retries exceeded with url: /session/4e2f5bca52415c2c379fd506c5625008/title (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e7e80>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-09-07 06:13:12,370 - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041920d0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/screenshot
+2025-09-07 06:13:12,371 - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x104192220>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/screenshot
+2025-09-07 06:13:12,372 - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041923a0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008/screenshot
+2025-09-07 06:13:12,372 - [06:13:12] CONCERN: Could not take screenshot: HTTPConnectionPool(host='localhost', port=57289): Max retries exceeded with url: /session/4e2f5bca52415c2c379fd506c5625008/screenshot (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x104192580>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-09-07 06:13:12,372 - [06:13:12] NOTE: Cleaning up testing session...
+2025-09-07 06:13:12,373 - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e7190>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008
+2025-09-07 06:13:12,374 - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e75e0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008
+2025-09-07 06:13:12,374 - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1041e7100>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/4e2f5bca52415c2c379fd506c5625008
+2025-09-07 06:13:12,375 - [06:13:12] ✓ SUCCESS: Browser closed successfully

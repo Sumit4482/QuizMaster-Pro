@@ -209,3 +209,29 @@ export function paginatedResponse<T>(
     correlationId
   );
 }
+
+// Simple wrapper functions for easier use in controllers
+export function sendSuccessResponse<T>(
+  res: Response,
+  statusCode: number,
+  data: T,
+  message?: string,
+  correlationId?: string
+): Response {
+  return successResponse(res, data, message, statusCode, correlationId);
+}
+
+export function sendErrorResponse(
+  res: Response,
+  statusCode: number,
+  code: string,
+  message: string,
+  correlationId?: string
+): Response {
+  return errorResponse(
+    res,
+    { code, message },
+    statusCode,
+    correlationId
+  );
+}

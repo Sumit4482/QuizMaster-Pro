@@ -1,0 +1,1447 @@
+{
+  "test_duration": 61.871410846710205,
+  "testing_approach": "Enhanced Real User with Natural Mouse Movements",
+  "issues": [
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-redis     | 1:M 06 Sep 2025 23:15:24.249 * Done loading RDB, keys loaded: 0, keys expired: 0.",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.112467",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-postgres  | 2025-09-06 20:27:39.304 UTC [64] STATEMENT:  SELECT \"public\".\"users\".\"id\", \"public\".\"users\".\"email\", \"public\".\"users\".\"username\", \"public\".\"users\".\"password_hash\", \"public\".\"users\".\"first_name\", \"public\".\"users\".\"last_name\", \"public\".\"users\".\"avatar_url\", \"public\".\"users\".\"email_verified\", \"public\".\"users\".\"role\"::text, \"public\".\"users\".\"last_login_at\", \"public\".\"users\".\"created_at\", \"public\".\"users\".\"updated_at\" FROM \"public\".\"users\" WHERE (\"public\".\"users\".\"email\" = $1 AND 1=1) LIMIT $2 OFFSET $3",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.112662",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-postgres  | 2025-09-06 20:27:40.960 UTC [64] STATEMENT:  SELECT \"public\".\"users\".\"id\", \"public\".\"users\".\"email\", \"public\".\"users\".\"username\", \"public\".\"users\".\"password_hash\", \"public\".\"users\".\"first_name\", \"public\".\"users\".\"last_name\", \"public\".\"users\".\"avatar_url\", \"public\".\"users\".\"email_verified\", \"public\".\"users\".\"role\"::text, \"public\".\"users\".\"last_login_at\", \"public\".\"users\".\"created_at\", \"public\".\"users\".\"updated_at\" FROM \"public\".\"users\" WHERE (\"public\".\"users\".\"email\" = $1 AND 1=1) LIMIT $2 OFFSET $3",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.112696",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/register 200 in 546ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.112874",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 95ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.112957",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 99ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.112995",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/register 200 in 84ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113034",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 64ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113132",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 83ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113147",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/register 200 in 96ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113159",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 93ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113194",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 276ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113212",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/register 200 in 78ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113229",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 97ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113244",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 74ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113262",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 194ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113324",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 52ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113348",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/register 200 in 200ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113464",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 110ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113471",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 59ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113491",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/register 200 in 79ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113497",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 88ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113504",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 54ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113510",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/login 200 in 49ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113527",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/register 200 in 54ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:31:59.113532",
+      "session_data": {
+        "error": "'NoneType' object has no attribute 'execute_script'"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Authentication",
+      "description": "Auth-related log: quizmaster-frontend  |  GET /auth/register 200 in 663ms",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:32:05.418640",
+      "session_data": {
+        "localStorage": {
+          "auth-store": "{\"state\":{\"user\":null,\"isAuthenticated\":false},\"version\":0}",
+          "clear": {},
+          "getItem": {},
+          "key": {},
+          "length": 1,
+          "removeItem": {},
+          "setItem": {}
+        },
+        "sessionStorage": {
+          "clear": {},
+          "getItem": {},
+          "key": {},
+          "length": 0,
+          "removeItem": {},
+          "setItem": {}
+        },
+        "cookies": [],
+        "current_url": "http://localhost:3000/auth/register",
+        "page_title": "QuizMaster Pro"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "HIGH",
+      "component": "Registration",
+      "description": "Unclear registration result for RealUser1863",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:33:06.555667",
+      "session_data": {
+        "localStorage": {
+          "auth-store": "{\"state\":{\"user\":null,\"isAuthenticated\":false},\"version\":0}",
+          "clear": {},
+          "getItem": {},
+          "key": {},
+          "length": 1,
+          "removeItem": {},
+          "setItem": {}
+        },
+        "sessionStorage": {
+          "clear": {},
+          "getItem": {},
+          "key": {},
+          "length": 0,
+          "removeItem": {},
+          "setItem": {}
+        },
+        "cookies": [],
+        "current_url": "http://localhost:3000/auth/register",
+        "page_title": "QuizMaster Pro"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    },
+    {
+      "severity": "CRITICAL",
+      "component": "User Registration",
+      "description": "Cannot test login/features - registration failed",
+      "screenshot": "",
+      "timestamp": "2025-09-07T06:33:06.567258",
+      "session_data": {
+        "localStorage": {
+          "auth-store": "{\"state\":{\"user\":null,\"isAuthenticated\":false},\"version\":0}",
+          "clear": {},
+          "getItem": {},
+          "key": {},
+          "length": 1,
+          "removeItem": {},
+          "setItem": {}
+        },
+        "sessionStorage": {
+          "clear": {},
+          "getItem": {},
+          "key": {},
+          "length": 0,
+          "removeItem": {},
+          "setItem": {}
+        },
+        "cookies": [],
+        "current_url": "http://localhost:3000/auth/register",
+        "page_title": "QuizMaster Pro"
+      },
+      "console_logs": [
+        {
+          "level": "SEVERE",
+          "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1757206928325
+        }
+      ],
+      "network_errors": []
+    }
+  ],
+  "successes": [
+    {
+      "component": "User Interaction",
+      "description": "Successfully clicked email input",
+      "timestamp": "2025-09-07T06:32:11.519399"
+    },
+    {
+      "component": "Text Input",
+      "description": "Accurately typed 'realuser2753@test.com' into email",
+      "timestamp": "2025-09-07T06:32:12.971389"
+    },
+    {
+      "component": "User Interaction",
+      "description": "Successfully clicked username input",
+      "timestamp": "2025-09-07T06:32:18.667890"
+    },
+    {
+      "component": "Text Input",
+      "description": "Accurately typed 'RealUser1863' into username",
+      "timestamp": "2025-09-07T06:32:20.562388"
+    },
+    {
+      "component": "User Interaction",
+      "description": "Successfully clicked password input",
+      "timestamp": "2025-09-07T06:32:26.895777"
+    },
+    {
+      "component": "Text Input",
+      "description": "Accurately typed 'RealPass123!' into password",
+      "timestamp": "2025-09-07T06:32:27.898867"
+    },
+    {
+      "component": "User Interaction",
+      "description": "Successfully clicked first name input",
+      "timestamp": "2025-09-07T06:32:39.828659"
+    },
+    {
+      "component": "Text Input",
+      "description": "Accurately typed 'Real' into first name",
+      "timestamp": "2025-09-07T06:32:40.014127"
+    },
+    {
+      "component": "User Interaction",
+      "description": "Successfully clicked last name input",
+      "timestamp": "2025-09-07T06:32:44.352255"
+    },
+    {
+      "component": "Text Input",
+      "description": "Accurately typed 'User' into last name",
+      "timestamp": "2025-09-07T06:32:44.548561"
+    },
+    {
+      "component": "User Interaction",
+      "description": "Successfully clicked registration submit button",
+      "timestamp": "2025-09-07T06:33:01.499292"
+    }
+  ],
+  "console_logs": [
+    {
+      "level": "SEVERE",
+      "message": "http://localhost:3000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": 1757206928325
+    }
+  ],
+  "docker_logs": [
+    {
+      "timestamp": "2025-09-07T06:31:59.112943",
+      "log": "quizmaster-postgres  | 2025-09-06 23:15:22.648 UTC [27] LOG:  checkpoint starting: shutdown immediate"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112946",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:09 [\u001b[32MINFO\u001b[39M] [24d9aebd-2235-4549-aec8-008f406c354e]: Request completed | {\"method\":\"GET\",\"url\":\"/ready\",\"statusCode\":200,\"responseTime\":\"1ms\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112950",
+      "log": "quizmaster-frontend  |  GET / 200 in 38ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112952",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:09 [\u001b[32MINFO\u001b[39M]: ::ffff:127.0.0.1 - - [07/Sep/2025:00:59:09 +0000] \"GET /health/ready HTTP/1.1\" 200 180 \"-\" \"-\" | {\"component\":\"http\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112955",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 95ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112963",
+      "log": "quizmaster-postgres  | 2025-09-06 23:15:22.656 UTC [27] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.010 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=1878 kB"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112968",
+      "log": "quizmaster-frontend  |  GET / 200 in 42ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112973",
+      "log": "quizmaster-postgres  | 2025-09-06 23:15:22.662 UTC [1] LOG:  database system is shut down"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112976",
+      "log": "quizmaster-postgres  |"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112978",
+      "log": "quizmaster-postgres  | PostgreSQL Database directory appears to contain a database; Skipping initialization"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112981",
+      "log": "quizmaster-postgres  |"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112983",
+      "log": "quizmaster-postgres  | 2025-09-06 23:15:24.386 UTC [1] LOG:  starting PostgreSQL 15.14 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112987",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:13 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112990",
+      "log": "quizmaster-postgres  | 2025-09-06 23:15:24.386 UTC [1] LOG:  listening on IPv4 address \"0.0.0.0\", port 5432"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.112993",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 99ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113018",
+      "log": "quizmaster-postgres  | 2025-09-06 23:15:24.386 UTC [1] LOG:  listening on IPv6 address \"::\", port 5432"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113023",
+      "log": "quizmaster-postgres  | 2025-09-06 23:15:24.390 UTC [1] LOG:  listening on Unix socket \"/var/run/postgresql/.s.PGSQL.5432\""
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113026",
+      "log": "quizmaster-frontend  |  GET / 200 in 33ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113028",
+      "log": "quizmaster-postgres  | 2025-09-06 23:15:24.398 UTC [29] LOG:  database system was shut down at 2025-09-06 23:15:22 UTC"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113031",
+      "log": "quizmaster-frontend  |  GET /auth/register 200 in 84ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113038",
+      "log": "quizmaster-frontend  |  GET / 200 in 70ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113041",
+      "log": "quizmaster-postgres  | 2025-09-06 23:15:24.426 UTC [1] LOG:  database system is ready to accept connections"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113044",
+      "log": "quizmaster-postgres  | 2025-09-06 23:20:24.456 UTC [27] LOG:  checkpoint starting: time"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113046",
+      "log": "quizmaster-postgres  | 2025-09-06 23:20:24.468 UTC [27] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.002 s, total=0.012 s; sync files=2, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=0 kB"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113051",
+      "log": "quizmaster-postgres  | 2025-09-06 23:40:41.364 UTC [27] LOG:  checkpoint starting: time"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113054",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:18 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113057",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:23 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113060",
+      "log": "quizmaster-postgres  | 2025-09-06 23:40:42.110 UTC [27] LOG:  checkpoint complete: wrote 8 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.738 s, sync=0.004 s, total=0.746 s; sync files=8, longest=0.003 s, average=0.001 s; distance=11 kB, estimate=11 kB"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113064",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:26 [\u001b[34MDEBUG\u001b[39M]: Connection heartbeat | {\"totalConnections\":2,\"uniqueUsers\":2,\"activeConnections\":2,\"totalRooms\":1,\"averageConnectionTime\":4344479.5}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113070",
+      "log": "quizmaster-postgres  | 2025-09-06 23:50:41.151 UTC [27] LOG:  checkpoint starting: time"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113073",
+      "log": "quizmaster-postgres  | 2025-09-06 23:50:41.896 UTC [27] LOG:  checkpoint complete: wrote 8 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.734 s, sync=0.004 s, total=0.745 s; sync files=8, longest=0.003 s, average=0.001 s; distance=11 kB, estimate=11 kB"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113078",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:28 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113081",
+      "log": "quizmaster-postgres  | 2025-09-07 00:00:42.079 UTC [27] LOG:  checkpoint starting: time"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113084",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:33 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113087",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:38 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113090",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:39 [\u001b[32MINFO\u001b[39M] [6cac1d75-a968-4264-9844-a54d2202e219]: Incoming request | {\"method\":\"GET\",\"url\":\"/health/ready\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113093",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113096",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113098",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:39 [\u001b[32MINFO\u001b[39M] [6cac1d75-a968-4264-9844-a54d2202e219]: Request completed | {\"method\":\"GET\",\"url\":\"/ready\",\"statusCode\":200,\"responseTime\":\"3ms\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113102",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:39 [\u001b[32MINFO\u001b[39M]: ::ffff:127.0.0.1 - - [07/Sep/2025:00:59:39 +0000] \"GET /health/ready HTTP/1.1\" 200 180 \"-\" \"-\" | {\"component\":\"http\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113105",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:43 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113108",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:48 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113112",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:53 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113115",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:56 [\u001b[34MDEBUG\u001b[39M]: Connection heartbeat | {\"totalConnections\":2,\"uniqueUsers\":2,\"activeConnections\":0,\"totalRooms\":1,\"averageConnectionTime\":4374484.5}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113118",
+      "log": "quizmaster-backend   | 2025-09-07 00:59:58 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113121",
+      "log": "quizmaster-frontend  |  GET / 200 in 39ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113123",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:03 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113126",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:08 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113130",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 64ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113137",
+      "log": "quizmaster-frontend  |  GET / 200 in 59ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113142",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:09 [\u001b[32MINFO\u001b[39M] [c510bfee-8967-41b2-969a-dacc57bff15a]: Incoming request | {\"method\":\"GET\",\"url\":\"/health/ready\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113146",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 83ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113152",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113155",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113157",
+      "log": "quizmaster-frontend  |  GET /auth/register 200 in 96ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113162",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:09 [\u001b[32MINFO\u001b[39M] [c510bfee-8967-41b2-969a-dacc57bff15a]: Request completed | {\"method\":\"GET\",\"url\":\"/ready\",\"statusCode\":200,\"responseTime\":\"2ms\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113176",
+      "log": "quizmaster-frontend  |  GET / 200 in 30ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113181",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:09 [\u001b[32MINFO\u001b[39M]: ::ffff:127.0.0.1 - - [07/Sep/2025:01:00:09 +0000] \"GET /health/ready HTTP/1.1\" 200 180 \"-\" \"-\" | {\"component\":\"http\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113185",
+      "log": "quizmaster-frontend  |  GET / 200 in 69ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113187",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:13 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113190",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 93ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113204",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:18 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113208",
+      "log": "quizmaster-frontend  |  GET / 200 in 27ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113211",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 276ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113217",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:23 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113221",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:26 [\u001b[34MDEBUG\u001b[39M]: Connection heartbeat | {\"totalConnections\":2,\"uniqueUsers\":2,\"activeConnections\":2,\"totalRooms\":1,\"averageConnectionTime\":4404489.5}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113225",
+      "log": "quizmaster-frontend  |  GET / 200 in 37ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113227",
+      "log": "quizmaster-frontend  |  GET /auth/register 200 in 78ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113233",
+      "log": "quizmaster-frontend  |  GET / 200 in 32ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113235",
+      "log": "quizmaster-frontend  |  GET / 200 in 90ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113237",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:28 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113243",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 97ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113248",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:33 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113252",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:38 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113255",
+      "log": "quizmaster-frontend  |  GET / 200 in 41ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113257",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:39 [\u001b[32MINFO\u001b[39M] [6b87dbe6-11f9-4073-835a-5310231f9a99]: Incoming request | {\"method\":\"GET\",\"url\":\"/health/ready\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113260",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 74ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113266",
+      "log": "quizmaster-frontend  |  GET / 200 in 33ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113268",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113295",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113300",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:39 [\u001b[32MINFO\u001b[39M] [6b87dbe6-11f9-4073-835a-5310231f9a99]: Request completed | {\"method\":\"GET\",\"url\":\"/ready\",\"statusCode\":200,\"responseTime\":\"2ms\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113304",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:39 [\u001b[32MINFO\u001b[39M]: ::ffff:127.0.0.1 - - [07/Sep/2025:01:00:39 +0000] \"GET /health/ready HTTP/1.1\" 200 180 \"-\" \"-\" | {\"component\":\"http\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113308",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:43 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113311",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:48 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113315",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:53 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113318",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:56 [\u001b[34MDEBUG\u001b[39M]: Connection heartbeat | {\"totalConnections\":2,\"uniqueUsers\":2,\"activeConnections\":0,\"totalRooms\":1,\"averageConnectionTime\":4434500.5}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113322",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 194ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113330",
+      "log": "quizmaster-backend   | 2025-09-07 01:00:58 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113334",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:03 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113337",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:08 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113340",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 52ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113353",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:09 [\u001b[32MINFO\u001b[39M] [981b9852-5657-484e-ae47-90fb47a0e669]: Incoming request | {\"method\":\"GET\",\"url\":\"/health/ready\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113356",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113359",
+      "log": "quizmaster-frontend  |  GET / 200 in 29ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113361",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113363",
+      "log": "quizmaster-frontend  |  GET /dashboard 200 in 121ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113366",
+      "log": "quizmaster-postgres  | 2025-09-07 00:00:43.555 UTC [27] LOG:  checkpoint complete: wrote 15 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.462 s, sync=0.005 s, total=1.476 s; sync files=15, longest=0.003 s, average=0.001 s; distance=14 kB, estimate=14 kB"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113370",
+      "log": "quizmaster-frontend  |  \u25cb Compiling /_not-found ..."
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113376",
+      "log": "quizmaster-frontend  |  \u2713 Compiled /_not-found in 627ms (938 modules)"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113382",
+      "log": "quizmaster-frontend  |  GET /.well-known/appspecific/com.chrome.devtools.json 404 in 821ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113384",
+      "log": "quizmaster-frontend  |  GET / 200 in 93ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113387",
+      "log": "quizmaster-frontend  |  GET / 200 in 67ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113389",
+      "log": "quizmaster-frontend  |  GET / 200 in 37ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113391",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:09 [\u001b[32MINFO\u001b[39M] [981b9852-5657-484e-ae47-90fb47a0e669]: Request completed | {\"method\":\"GET\",\"url\":\"/ready\",\"statusCode\":200,\"responseTime\":\"5ms\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113395",
+      "log": "quizmaster-frontend  |  GET / 200 in 42ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113397",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:09 [\u001b[32MINFO\u001b[39M]: ::ffff:127.0.0.1 - - [07/Sep/2025:01:01:09 +0000] \"GET /health/ready HTTP/1.1\" 200 180 \"-\" \"-\" | {\"component\":\"http\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113401",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:13 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113404",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:18 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113407",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:23 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113410",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:26 [\u001b[34MDEBUG\u001b[39M]: Connection heartbeat | {\"totalConnections\":2,\"uniqueUsers\":2,\"activeConnections\":2,\"totalRooms\":1,\"averageConnectionTime\":4464507.5}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113414",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:28 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113417",
+      "log": "quizmaster-frontend  |  GET / 200 in 29ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113419",
+      "log": "quizmaster-frontend  |  GET / 200 in 56ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113421",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:33 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113424",
+      "log": "quizmaster-frontend  |  GET / 200 in 42ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113427",
+      "log": "quizmaster-frontend  |  GET / 200 in 47ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113429",
+      "log": "quizmaster-frontend  |  GET / 200 in 40ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113431",
+      "log": "quizmaster-frontend  |  GET / 200 in 32ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113433",
+      "log": "quizmaster-frontend  |  GET / 200 in 36ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113435",
+      "log": "quizmaster-frontend  |  GET / 200 in 52ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113437",
+      "log": "quizmaster-frontend  |  GET / 200 in 40ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113439",
+      "log": "quizmaster-frontend  |  GET / 200 in 44ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113441",
+      "log": "quizmaster-frontend  |  GET / 200 in 43ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113443",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:38 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113447",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:39 [\u001b[32MINFO\u001b[39M] [ec461c75-4498-406d-a48f-2657696bbed0]: Incoming request | {\"method\":\"GET\",\"url\":\"/health/ready\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113450",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113452",
+      "log": "quizmaster-frontend  |  GET / 200 in 39ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113454",
+      "log": "quizmaster-frontend  |  GET / 200 in 37ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113456",
+      "log": "quizmaster-frontend  |  GET / 200 in 36ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113458",
+      "log": "quizmaster-frontend  |  GET / 200 in 60ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113460",
+      "log": "quizmaster-frontend  |  GET / 200 in 50ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113462",
+      "log": "quizmaster-frontend  |  GET /auth/register 200 in 200ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113469",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 110ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113476",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113479",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:39 [\u001b[32MINFO\u001b[39M] [ec461c75-4498-406d-a48f-2657696bbed0]: Request completed | {\"method\":\"GET\",\"url\":\"/ready\",\"statusCode\":200,\"responseTime\":\"6ms\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113483",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:39 [\u001b[32MINFO\u001b[39M]: ::ffff:127.0.0.1 - - [07/Sep/2025:01:01:39 +0000] \"GET /health/ready HTTP/1.1\" 200 180 \"-\" \"-\" | {\"component\":\"http\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113486",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:43 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113490",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 59ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113495",
+      "log": "quizmaster-frontend  |  GET /auth/register 200 in 79ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113503",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 88ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113508",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 54ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113513",
+      "log": "quizmaster-frontend  |  GET / 200 in 72ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113515",
+      "log": "quizmaster-frontend  |  GET /dashboard 200 in 139ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113518",
+      "log": "quizmaster-frontend  |  GET /dashboard 200 in 95ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113520",
+      "log": "quizmaster-frontend  |  GET / 200 in 45ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113523",
+      "log": "quizmaster-frontend  |  GET /auth/login 200 in 49ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113530",
+      "log": "quizmaster-frontend  |  GET /auth/register 200 in 54ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113536",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:48 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113540",
+      "log": "quizmaster-frontend  |  GET /dashboard 200 in 55ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113542",
+      "log": "quizmaster-frontend  |  \u2713 Compiled /room/[roomId] in 455ms (540 modules)"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113547",
+      "log": "quizmaster-frontend  |  GET /room/TESTROOM 200 in 674ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113550",
+      "log": "quizmaster-frontend  |  \u2713 Compiled /_not-found in 278ms (961 modules)"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113555",
+      "log": "quizmaster-frontend  |  GET /nonexistent 404 in 381ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113558",
+      "log": "quizmaster-frontend  |  GET / 200 in 48ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113560",
+      "log": "quizmaster-frontend  |  GET / 200 in 42ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113562",
+      "log": "quizmaster-frontend  |  GET / 200 in 43ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113564",
+      "log": "quizmaster-frontend  |  GET / 200 in 37ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113567",
+      "log": "quizmaster-frontend  |  GET / 200 in 64ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113569",
+      "log": "quizmaster-frontend  |  GET / 200 in 46ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113571",
+      "log": "quizmaster-frontend  |  GET / 200 in 40ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113572",
+      "log": "quizmaster-frontend  |  GET / 200 in 44ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113575",
+      "log": "quizmaster-frontend  |  GET / 200 in 69ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113577",
+      "log": "quizmaster-frontend  |  GET / 200 in 41ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113579",
+      "log": "quizmaster-frontend  |  GET / 200 in 46ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113581",
+      "log": "quizmaster-frontend  |  GET / 200 in 33ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113583",
+      "log": "quizmaster-frontend  |  GET / 200 in 54ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113585",
+      "log": "quizmaster-frontend  |  GET / 200 in 47ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113587",
+      "log": "quizmaster-frontend  |  GET / 200 in 42ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113589",
+      "log": "quizmaster-frontend  |  GET / 200 in 51ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113591",
+      "log": "quizmaster-frontend  |  GET / 200 in 54ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113593",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:53 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113597",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:56 [\u001b[34MDEBUG\u001b[39M]: Connection heartbeat | {\"totalConnections\":2,\"uniqueUsers\":2,\"activeConnections\":0,\"totalRooms\":1,\"averageConnectionTime\":4494508.5}"
+    },
+    {
+      "timestamp": "2025-09-07T06:31:59.113602",
+      "log": "quizmaster-backend   | 2025-09-07 01:01:58 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:03.774495",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:03 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:05.418605",
+      "log": "quizmaster-frontend  |  GET /auth/register 200 in 663ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:08.789554",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:08 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:09.836848",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:09 [\u001b[32MINFO\u001b[39M] [c092a4fd-a4c9-4551-af1d-f0da0ffd283e]: Incoming request | {\"method\":\"GET\",\"url\":\"/health/ready\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:09.838724",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:09.838754",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:09.839821",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:09 [\u001b[32MINFO\u001b[39M] [c092a4fd-a4c9-4551-af1d-f0da0ffd283e]: Request completed | {\"method\":\"GET\",\"url\":\"/ready\",\"statusCode\":200,\"responseTime\":\"4ms\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:09.840472",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:09 [\u001b[32MINFO\u001b[39M]: ::ffff:127.0.0.1 - - [07/Sep/2025:01:02:09 +0000] \"GET /health/ready HTTP/1.1\" 200 180 \"-\" \"-\" | {\"component\":\"http\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:11.889761",
+      "log": "quizmaster-frontend  |  GET / 200 in 137ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:13.785183",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:13 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:18.784236",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:18 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:23.790966",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:23 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:26.815741",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:26 [\u001b[34MDEBUG\u001b[39M]: Connection heartbeat | {\"totalConnections\":2,\"uniqueUsers\":2,\"activeConnections\":2,\"totalRooms\":1,\"averageConnectionTime\":4524512.5}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:28.790435",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:28 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:33.796714",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:33 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:38.804322",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:38 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:39.957326",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:39 [\u001b[32MINFO\u001b[39M] [54a0730e-3b97-4083-b1fa-9a61ff116736]: Incoming request | {\"method\":\"GET\",\"url\":\"/health/ready\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:39.978184",
+      "log": "quizmaster-backend   | prisma:query SELECT 1"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:39.980345",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:39 [\u001b[32MINFO\u001b[39M] [54a0730e-3b97-4083-b1fa-9a61ff116736]: Request completed | {\"method\":\"GET\",\"url\":\"/ready\",\"statusCode\":200,\"responseTime\":\"23ms\",\"ip\":\"::ffff:127.0.0.1\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:39.981049",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:39 [\u001b[32MINFO\u001b[39M]: ::ffff:127.0.0.1 - - [07/Sep/2025:01:02:39 +0000] \"GET /health/ready HTTP/1.1\" 200 180 \"-\" \"-\" | {\"component\":\"http\"}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:42.042266",
+      "log": "quizmaster-frontend  |  GET / 200 in 67ms"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:43.806217",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:43 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:48.808125",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:48 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:53.814032",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:53 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:56.817414",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:56 [\u001b[34MDEBUG\u001b[39M]: Connection heartbeat | {\"totalConnections\":2,\"uniqueUsers\":2,\"activeConnections\":0,\"totalRooms\":1,\"averageConnectionTime\":4554516.5}"
+    },
+    {
+      "timestamp": "2025-09-07T06:32:58.819432",
+      "log": "quizmaster-backend   | 2025-09-07 01:02:58 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    },
+    {
+      "timestamp": "2025-09-07T06:33:03.822472",
+      "log": "quizmaster-backend   | 2025-09-07 01:03:03 [\u001b[34MDEBUG\u001b[39M]: State snapshot created | {\"gameId\":\"game_1757202459953_vr1dbatu1\",\"version\":32,\"snapshotCount\":10}"
+    }
+  ],
+  "session_analysis": "Enhanced token and session debugging enabled",
+  "summary": {
+    "critical_issues": 1,
+    "high_issues": 27,
+    "medium_issues": 0,
+    "success_rate": 28.205128205128204,
+    "auth_issues": 26
+  },
+  "recommendations": [
+    "Fix authentication/session management system",
+    "Implement proper quiz question/answer rendering",
+    "Add clear user feedback and error messaging",
+    "Test cross-origin authentication between services"
+  ]
+}

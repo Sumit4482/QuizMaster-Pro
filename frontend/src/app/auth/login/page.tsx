@@ -14,7 +14,7 @@ import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, error } = useAuth();
   
   // Redirect if already authenticated
   useRedirectIfAuthenticated('/dashboard');
@@ -34,7 +34,7 @@ export default function LoginPage() {
       Object.entries(validation.errors).forEach(([field, fieldErrors]) => {
         setError(field as keyof LoginFormData, {
           type: 'manual',
-          message: fieldErrors[0],
+          message: fieldErrors[0] || 'Invalid value',
         });
       });
       return;
@@ -42,11 +42,35 @@ export default function LoginPage() {
 
     try {
       await login(data);
-      // Redirect will happen automatically after successful login
+      // Show success message and redirect
+      console.log('Login successful! Redirecting to dashboard...');
       router.push('/dashboard');
-    } catch (error) {
-      // Error handling is done in the auth store
+    } catch (error: any) {
+      // Enhanced error handling with specific field errors
       console.error('Login failed:', error);
+      
+      // Handle specific login errors
+      if (error.code === 'INVALID_CREDENTIALS' || error.code === 'USER_NOT_FOUND') {
+        setError('email', {
+          type: 'manual',
+          message: 'Invalid email or password. Please check your credentials.',
+        });
+        setError('password', {
+          type: 'manual', 
+          message: 'Invalid email or password. Please check your credentials.',
+        });
+      } else if (error.code === 'ACCOUNT_LOCKED') {
+        setError('email', {
+          type: 'manual',
+          message: 'Account is temporarily locked. Please try again later.',
+        });
+      } else if (error.code === 'EMAIL_NOT_VERIFIED') {
+        setError('email', {
+          type: 'manual',
+          message: 'Please verify your email address before logging in.',
+        });
+      }
+      // The auth store will handle showing the toast error message
     }
   };
 
@@ -93,6 +117,18 @@ export default function LoginPage() {
             </CardHeader>
 
             <CardContent className="space-y-4">
+              {/* Display authentication error */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+                  <div className="flex items-center">
+                    <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-sm font-medium">{error}</span>
+                  </div>
+                </div>
+              )}
+
               <Input
                 label="Email address"
                 inputType="email"

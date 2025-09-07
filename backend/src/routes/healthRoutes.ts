@@ -4,6 +4,7 @@ import { checkDatabaseConnection } from '@/config/database';
 import { checkRedisConnection } from '@/config/redis';
 import { config } from '@/config/environment';
 import { RequestWithCorrelation } from '@/types/common';
+import { roomManager } from '../sockets/managers/roomManager';
 
 const router = Router();
 
@@ -19,6 +20,18 @@ router.get('/', (req: RequestWithCorrelation, res: Response) => {
       environment: config.NODE_ENV,
     },
     correlationId: req.correlationId,
+  });
+});
+
+// Test logging endpoint
+router.get('/test-log', (req: RequestWithCorrelation, res: Response) => {
+  console.log('🧪 TEST LOG ENDPOINT CALLED!');
+  console.log('🌟 This should appear in console!');
+  console.log('📍 Current time:', new Date().toISOString());
+  res.json({ 
+    message: 'Test log endpoint called', 
+    timestamp: new Date().toISOString(),
+    note: 'Check server console for log messages'
   });
 });
 
@@ -135,6 +148,41 @@ router.get('/live', (req: RequestWithCorrelation, res: Response) => {
     },
     correlationId: req.correlationId,
   });
+});
+
+// Debug endpoint to check room state
+router.get('/room/:code', (req: RequestWithCorrelation, res: Response) => {
+  try {
+    const { code } = req.params;
+    const room = roomManager.getRoomByCode(code.toUpperCase());
+    
+    if (!room) {
+      return res.status(404).json({
+        success: false,
+        error: 'Room not found',
+        correlationId: req.correlationId,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        id: room.id,
+        code: room.code,
+        name: room.name,
+        currentPlayers: room.currentPlayers,
+        participants: Array.from(room.participants.entries()),
+        serialized: roomManager.serializeRoom(room)
+      },
+      correlationId: req.correlationId,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      correlationId: req.correlationId,
+    });
+  }
 });
 
 export default router;

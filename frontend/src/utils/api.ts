@@ -102,7 +102,8 @@ apiClient.interceptors.response.use(
           // Refresh failed, redirect to login
           clearTokens();
           if (typeof window !== 'undefined') {
-            window.location.href = '/auth/login';
+            // Use window.location.replace to avoid page refresh history
+            window.location.replace('/auth/login');
           }
           return Promise.reject(refreshError);
         }
@@ -110,7 +111,8 @@ apiClient.interceptors.response.use(
         // No refresh token, redirect to login
         clearTokens();
         if (typeof window !== 'undefined') {
-          window.location.href = '/auth/login';
+          // Use window.location.replace to avoid page refresh history
+          window.location.replace('/auth/login');
         }
       }
     }
