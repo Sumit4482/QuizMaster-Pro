@@ -122,7 +122,7 @@ export function createApp(): Application {
   // app.use('/api/ai', aiRoutes);
   
   // Simple AI endpoint for question generation (temporary solution)
-  app.post('/api/ai/generate/questions', authenticate, (req, res) => {
+  app.post('/api/ai/generate/questions', authenticate, async (req, res) => {
     try {
       const { topic, difficulty, count = 5, questionType = 'MULTIPLE_CHOICE' } = req.body;
       
@@ -162,20 +162,30 @@ Format each question as JSON with this exact structure:
   "difficulty": ${difficulty}
 }
 
-Requirements:
+CRITICAL REQUIREMENTS:
 - Return only valid JSON array
-- Make sure correctAnswer exactly matches one of the options
+- The correctAnswer MUST be EXACTLY one of the options from the options array
+- Do NOT use explanations or descriptions as correctAnswer
+- If the question asks about a concept, the options should be the actual answers (like "const", "auto") and correctAnswer should be one of those exact options
 - Create engaging, educational questions about ${topic}
-- Vary the position of correct answers
+- Vary the position of correct answers (don't always put correct answer first)
 - Make questions appropriate for difficulty level ${difficulty}
 - Questions should test real knowledge about ${topic}
+
+Example:
+{
+  "questionText": "Which C++ keyword prevents modification of a variable after initialization?",
+  "options": ["const", "auto", "static", "volatile"],
+  "correctAnswer": "const",
+  "explanation": "The const keyword prevents modification of a variable after its initialization."
+}
 
 Return ONLY the JSON array, nothing else.`;
 
       console.log('📝 Sending request to Google AI...');
-      const result =  model.generateContent(prompt);
-      const response = result.response;
-      let text = response.text();
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      let text = await response.text();
       
       console.log('📋 Raw AI Response received, length:', text.length);
       

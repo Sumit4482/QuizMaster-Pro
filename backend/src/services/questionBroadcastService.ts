@@ -606,18 +606,42 @@ export class QuestionBroadcastService extends EventEmitter {
    * Validate player answer - comprehensive validation matching quizSessionService
    */
   private validateAnswer(correctAnswer: any, userAnswer: any): boolean {
+    // Enhanced debugging for AI questions
+    logger.info('🔍 Answer validation debug', {
+      component: 'QuestionBroadcastService',
+      correctAnswer,
+      correctAnswerType: typeof correctAnswer,
+      correctAnswerStringified: JSON.stringify(correctAnswer),
+      userAnswer,
+      userAnswerType: typeof userAnswer,
+      userAnswerStringified: JSON.stringify(userAnswer)
+    });
+
     // Handle different question types
     if (Array.isArray(correctAnswer)) {
-      if (!Array.isArray(userAnswer)) return false;
-      return JSON.stringify(userAnswer.sort()) === JSON.stringify(correctAnswer.sort());
+      if (!Array.isArray(userAnswer)) {
+        logger.info('❌ Array type mismatch', { correctAnswer, userAnswer });
+        return false;
+      }
+      const result = JSON.stringify(userAnswer.sort()) === JSON.stringify(correctAnswer.sort());
+      logger.info('🔢 Array comparison result', { result, correctAnswer, userAnswer });
+      return result;
     }
 
     if (typeof correctAnswer === 'boolean') {
-      return Boolean(userAnswer) === correctAnswer;
+      const result = Boolean(userAnswer) === correctAnswer;
+      logger.info('✅ Boolean comparison result', { result, correctAnswer, userAnswer });
+      return result;
     }
 
     if (typeof correctAnswer === 'string') {
-      return String(userAnswer).trim().toLowerCase() === String(correctAnswer).trim().toLowerCase();
+      const result = String(userAnswer).trim().toLowerCase() === String(correctAnswer).trim().toLowerCase();
+      logger.info('📝 String comparison result', { 
+        result, 
+        correctAnswer: String(correctAnswer).trim().toLowerCase(), 
+        userAnswer: String(userAnswer).trim().toLowerCase() 
+      });
+      return result;
     }
 
     // Handle case where correctAnswer might be a JSON string (from database)
@@ -626,27 +650,47 @@ export class QuestionBroadcastService extends EventEmitter {
     if (typeof correctAnswer === 'string' && correctAnswer.startsWith('"') && correctAnswer.endsWith('"')) {
       try {
         actualCorrectAnswer = JSON.parse(correctAnswer);
+        logger.info('🔧 Parsed JSON string correctAnswer', { 
+          original: correctAnswer, 
+          parsed: actualCorrectAnswer 
+        });
       } catch (e) {
         // If parsing fails, use the original value
         actualCorrectAnswer = correctAnswer;
+        logger.info('⚠️ JSON parsing failed, using original', { correctAnswer });
       }
     }
 
     // Re-run comparison with parsed value
     if (typeof actualCorrectAnswer === 'string') {
-      return String(userAnswer).trim().toLowerCase() === String(actualCorrectAnswer).trim().toLowerCase();
+      const result = String(userAnswer).trim().toLowerCase() === String(actualCorrectAnswer).trim().toLowerCase();
+      logger.info('📝 Parsed string comparison result', { 
+        result, 
+        actualCorrectAnswer: String(actualCorrectAnswer).trim().toLowerCase(), 
+        userAnswer: String(userAnswer).trim().toLowerCase() 
+      });
+      return result;
     }
 
     if (typeof actualCorrectAnswer === 'boolean') {
-      return Boolean(userAnswer) === actualCorrectAnswer;
+      const result = Boolean(userAnswer) === actualCorrectAnswer;
+      logger.info('✅ Parsed boolean comparison result', { result, actualCorrectAnswer, userAnswer });
+      return result;
     }
 
     if (Array.isArray(actualCorrectAnswer)) {
-      if (!Array.isArray(userAnswer)) return false;
-      return JSON.stringify(userAnswer.sort()) === JSON.stringify(actualCorrectAnswer.sort());
+      if (!Array.isArray(userAnswer)) {
+        logger.info('❌ Parsed array type mismatch', { actualCorrectAnswer, userAnswer });
+        return false;
+      }
+      const result = JSON.stringify(userAnswer.sort()) === JSON.stringify(actualCorrectAnswer.sort());
+      logger.info('🔢 Parsed array comparison result', { result, actualCorrectAnswer, userAnswer });
+      return result;
     }
 
-    return JSON.stringify(userAnswer) === JSON.stringify(actualCorrectAnswer);
+    const result = JSON.stringify(userAnswer) === JSON.stringify(actualCorrectAnswer);
+    logger.info('🔄 Final JSON comparison result', { result, actualCorrectAnswer, userAnswer });
+    return result;
   }
 
   /**

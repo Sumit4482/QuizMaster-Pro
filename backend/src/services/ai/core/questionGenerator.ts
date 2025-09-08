@@ -711,7 +711,7 @@ Always return valid JSON as specified in the template. Ensure questions are uniq
     const mockQuestion = {
       questionText: `What is the main concept related to ${request.topic}?`,
       questionType: request.questionType,
-      correctAnswer: request.questionType === 'TRUE_FALSE' ? true : 'A',
+      correctAnswer: request.questionType === 'TRUE_FALSE' ? true : 'A) First option',
       options: request.questionType === 'MULTIPLE_CHOICE' ? [
         'A) First option',
         'B) Second option', 

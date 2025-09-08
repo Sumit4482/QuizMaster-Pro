@@ -814,6 +814,12 @@ export class GameManager extends EventEmitter {
    * Generate questions for the game (AI or database with enhanced fallback)
    */
   private async generateGameQuestions(config: GameQuizConfig, rawConfig?: any): Promise<GameQuestion[]> {
+    console.log('🎯 generateGameQuestions called with:', {
+      useAI: rawConfig?.useAI,
+      aiQuestionsProvided: !!rawConfig?.aiQuestions,
+      aiQuestionsCount: rawConfig?.aiQuestions?.length || 0,
+      aiTopic: rawConfig?.aiTopic
+    });
     // Check if AI questions were provided
     if (rawConfig?.useAI && rawConfig?.aiQuestions && Array.isArray(rawConfig.aiQuestions)) {
       logger.info(`Using ${rawConfig.aiQuestions.length} AI-generated questions`, {
@@ -844,30 +850,101 @@ export class GameManager extends EventEmitter {
         });
       } else {
         // Convert AI questions to GameQuestion format
-        return validAiQuestions.slice(0, config.totalQuestions).map((aiQ: any, index: number): GameQuestion => ({
-          id: `ai_${Date.now()}_${index}`,
-          questionText: aiQ.questionText || aiQ.question,
-          questionType: aiQ.questionType || 'MULTIPLE_CHOICE',
-          options: { 
-            options: aiQ.options || []
-          },
-          correctAnswer: aiQ.correctAnswer || aiQ.correct_answer,
-          explanation: aiQ.explanation || 'AI-generated question',
-          hints: aiQ.hints || {},
-          difficultyLevel: aiQ.difficulty || 2,
-          estimatedTime: config.timePerQuestion,
-          points: config.pointsPerQuestion,
-          categories: rawConfig.aiTopic ? [{ id: 0, name: rawConfig.aiTopic, slug: rawConfig.aiTopic.toLowerCase().replace(/\s+/g, '-') }] : [],
-          // Game-specific fields
-          questionIndex: index,
-          timeLimit: config.timePerQuestion,
-          startedAt: undefined,
-          endsAt: undefined,
+        return validAiQuestions.slice(0, config.totalQuestions).map((aiQ: any, index: number): GameQuestion => {
+          // Convert AI correctAnswer format to database format
+          let correctAnswer = aiQ.correctAnswer || aiQ.correct_answer;
+          
+          // Handle different AI response formats - make robust for all cases
+          const options = aiQ.options || [];
+          
+          if (typeof correctAnswer === 'number') {
+            // AI returns index (0, 1, 2, 3) - convert to option text
+            if (correctAnswer >= 0 && correctAnswer < options.length) {
+              const originalIndex = correctAnswer;
+              correctAnswer = options[correctAnswer];
+              logger.info(`✅ Converted AI index ${originalIndex} to option text: "${correctAnswer}"`);
+            } else {
+              logger.warn(`⚠️ Invalid AI index: ${correctAnswer}, keeping as is`);
+            }
+          } else if (typeof correctAnswer === 'string') {
+            // Check if correctAnswer is already one of the options
+            if (options.includes(correctAnswer)) {
+              logger.info(`✅ AI correctAnswer already matches option: "${correctAnswer}"`);
+            } else {
+              // Try to find a matching option (case-insensitive)
+              const matchingOption = options.find(option => 
+                option.toLowerCase().trim() === correctAnswer.toLowerCase().trim()
+              );
+              if (matchingOption) {
+                const original = correctAnswer;
+                correctAnswer = matchingOption;
+                logger.info(`✅ Found matching option for AI answer: "${original}" → "${matchingOption}"`);
+              } else {
+                // Check if AI answer is a letter like "A", "B", etc. and try to match with options starting with that letter
+                const letterMatch = correctAnswer.match(/^([A-Z])\)?/i);
+                if (letterMatch) {
+                  const letter = letterMatch[1].toUpperCase();
+                  const matchingLetterOption = options.find(option => 
+                    option.match(new RegExp(`^${letter}[)\\.]`, 'i'))
+                  );
+                  if (matchingLetterOption) {
+                    const original = correctAnswer;
+                    correctAnswer = matchingLetterOption;
+                    logger.info(`✅ Found option matching letter "${letter}": "${original}" → "${matchingLetterOption}"`);
+                  } else {
+                    logger.warn(`⚠️ AI correctAnswer "${correctAnswer}" doesn't match any option. Options: ${JSON.stringify(options)}`);
+                  }
+                } else {
+                  logger.warn(`⚠️ AI correctAnswer "${correctAnswer}" doesn't match any option. Options: ${JSON.stringify(options)}`);
+                }
+              }
+            }
+          }
+          
+          const gameQuestion = {
+            id: `ai_${Date.now()}_${index}`,
+            questionText: aiQ.questionText || aiQ.question,
+            questionType: aiQ.questionType || 'MULTIPLE_CHOICE',
+            options: { 
+              options: aiQ.options || []
+            },
+            correctAnswer: correctAnswer,
+            explanation: aiQ.explanation || 'AI-generated question',
+            hints: aiQ.hints || {},
+            difficultyLevel: aiQ.difficulty || 2,
+            estimatedTime: config.timePerQuestion,
+            points: config.pointsPerQuestion,
+            categories: rawConfig.aiTopic ? [{ id: 0, name: rawConfig.aiTopic, slug: rawConfig.aiTopic.toLowerCase().replace(/\s+/g, '-') }] : [],
+            // Game-specific fields
+            questionIndex: index,
+            timeLimit: config.timePerQuestion,
+            startedAt: undefined,
+            endsAt: undefined,
           // Answer tracking
           playerAnswers: new Map(),
           answeredCount: 0,
           correctCount: 0
-        }));
+        };
+        
+        // Debug logging for AI question conversion
+        logger.info('🎯 AI Question converted to GameQuestion', {
+          component: 'GameManager',
+          originalAIQuestion: {
+            questionText: aiQ.questionText || aiQ.question,
+            options: aiQ.options,
+            correctAnswer: aiQ.correctAnswer || aiQ.correct_answer,
+            originalCorrectAnswerType: typeof (aiQ.correctAnswer || aiQ.correct_answer)
+          },
+          convertedGameQuestion: {
+            questionText: gameQuestion.questionText,
+            options: gameQuestion.options,
+            correctAnswer: gameQuestion.correctAnswer,
+            convertedCorrectAnswerType: typeof gameQuestion.correctAnswer
+          }
+        });
+        
+        return gameQuestion;
+      });
       }
     }
 
@@ -1082,18 +1159,42 @@ export class GameManager extends EventEmitter {
    * Validate player answer - comprehensive validation matching quizSessionService
    */
   private validateAnswer(correctAnswer: any, userAnswer: any): boolean {
+    // Enhanced debugging for AI questions
+    logger.info('🔍 GameManager Answer validation debug', {
+      component: 'GameManager',
+      correctAnswer,
+      correctAnswerType: typeof correctAnswer,
+      correctAnswerStringified: JSON.stringify(correctAnswer),
+      userAnswer,
+      userAnswerType: typeof userAnswer,
+      userAnswerStringified: JSON.stringify(userAnswer)
+    });
+
     // Handle different question types
     if (Array.isArray(correctAnswer)) {
-      if (!Array.isArray(userAnswer)) return false;
-      return JSON.stringify(userAnswer.sort()) === JSON.stringify(correctAnswer.sort());
+      if (!Array.isArray(userAnswer)) {
+        logger.info('❌ GM Array type mismatch', { correctAnswer, userAnswer });
+        return false;
+      }
+      const result = JSON.stringify(userAnswer.sort()) === JSON.stringify(correctAnswer.sort());
+      logger.info('🔢 GM Array comparison result', { result, correctAnswer, userAnswer });
+      return result;
     }
 
     if (typeof correctAnswer === 'boolean') {
-      return Boolean(userAnswer) === correctAnswer;
+      const result = Boolean(userAnswer) === correctAnswer;
+      logger.info('✅ GM Boolean comparison result', { result, correctAnswer, userAnswer });
+      return result;
     }
 
     if (typeof correctAnswer === 'string') {
-      return String(userAnswer).trim().toLowerCase() === String(correctAnswer).trim().toLowerCase();
+      const result = String(userAnswer).trim().toLowerCase() === String(correctAnswer).trim().toLowerCase();
+      logger.info('📝 GM String comparison result', { 
+        result, 
+        correctAnswer: String(correctAnswer).trim().toLowerCase(), 
+        userAnswer: String(userAnswer).trim().toLowerCase() 
+      });
+      return result;
     }
 
     // Handle case where correctAnswer might be a JSON string (from database)
@@ -1102,27 +1203,47 @@ export class GameManager extends EventEmitter {
     if (typeof correctAnswer === 'string' && correctAnswer.startsWith('"') && correctAnswer.endsWith('"')) {
       try {
         actualCorrectAnswer = JSON.parse(correctAnswer);
+        logger.info('🔧 GM Parsed JSON string correctAnswer', { 
+          original: correctAnswer, 
+          parsed: actualCorrectAnswer 
+        });
       } catch (e) {
         // If parsing fails, use the original value
         actualCorrectAnswer = correctAnswer;
+        logger.info('⚠️ GM JSON parsing failed, using original', { correctAnswer });
       }
     }
 
     // Re-run comparison with parsed value
     if (typeof actualCorrectAnswer === 'string') {
-      return String(userAnswer).trim().toLowerCase() === String(actualCorrectAnswer).trim().toLowerCase();
+      const result = String(userAnswer).trim().toLowerCase() === String(actualCorrectAnswer).trim().toLowerCase();
+      logger.info('📝 GM Parsed string comparison result', { 
+        result, 
+        actualCorrectAnswer: String(actualCorrectAnswer).trim().toLowerCase(), 
+        userAnswer: String(userAnswer).trim().toLowerCase() 
+      });
+      return result;
     }
 
     if (typeof actualCorrectAnswer === 'boolean') {
-      return Boolean(userAnswer) === actualCorrectAnswer;
+      const result = Boolean(userAnswer) === actualCorrectAnswer;
+      logger.info('✅ GM Parsed boolean comparison result', { result, actualCorrectAnswer, userAnswer });
+      return result;
     }
 
     if (Array.isArray(actualCorrectAnswer)) {
-      if (!Array.isArray(userAnswer)) return false;
-      return JSON.stringify(userAnswer.sort()) === JSON.stringify(actualCorrectAnswer.sort());
+      if (!Array.isArray(userAnswer)) {
+        logger.info('❌ GM Parsed array type mismatch', { actualCorrectAnswer, userAnswer });
+        return false;
+      }
+      const result = JSON.stringify(userAnswer.sort()) === JSON.stringify(actualCorrectAnswer.sort());
+      logger.info('🔢 GM Parsed array comparison result', { result, actualCorrectAnswer, userAnswer });
+      return result;
     }
 
-    return JSON.stringify(userAnswer) === JSON.stringify(actualCorrectAnswer);
+    const result = JSON.stringify(userAnswer) === JSON.stringify(actualCorrectAnswer);
+    logger.info('🔄 GM Final JSON comparison result', { result, actualCorrectAnswer, userAnswer });
+    return result;
   }
 
   /**
