@@ -15,7 +15,15 @@ import {
 const router = Router();
 const categoryController = new CategoryController();
 
-// Apply authentication to all category routes
+// Public endpoint for categories (no auth required for basic category list)
+/**
+ * @route GET /categories/public
+ * @description Get all active categories (public access)
+ * @access Public
+ */
+router.get('/public', categoryController.getAllCategories.bind(categoryController));
+
+// Apply authentication to all other category routes
 router.use(authenticate);
 
 // Public routes (accessible by all authenticated users)

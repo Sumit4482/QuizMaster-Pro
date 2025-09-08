@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { WaitingRoom } from './WaitingRoom';
 import { LiveGame } from './LiveGame';
 import { GameResults } from './GameResults';
+import { GameStartingScreen } from './GameStartingScreen';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { GameStatus, GamePlayer, PlayerStatus } from '@/types/game';
@@ -277,21 +278,9 @@ export function Game({ room }: GameProps) {
       return <LiveGame roomId={room.id} />;
     }
 
-    // Game starting
+    // Game starting - show countdown and preparation screen
     if (gameStatus === 'STARTING') {
-      return (
-        <div className="max-w-4xl mx-auto p-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              Game Starting...
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Get ready! The quiz will begin in a moment.
-            </p>
-          </div>
-        </div>
-      );
+      return <GameStartingScreen roomId={room.id} />;
     }
 
     // Default to waiting room

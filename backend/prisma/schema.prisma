@@ -42,6 +42,11 @@ model User {
   achievements     UserAchievement[]     @relation("UserAchievements")
   profile          UserProfile?          @relation("UserProfile")
 
+  // Phase 3.1: AI Relations
+  aiBudget         UserAiBudget?
+  aiUsage          AiUsage[]
+  aiGenerations    AiGeneration[]
+
   @@index([email])
   @@index([username])
   @@index([role])
@@ -117,6 +122,9 @@ model Question {
   lastModifiedBy   User?              @relation("QuestionModifier", fields: [lastModifiedById], references: [id])
   originalQuestion Question?          @relation("QuestionVersions", fields: [originalId], references: [id])
   versions         Question[]         @relation("QuestionVersions")
+
+  // Phase 3.1: AI Relations
+  aiGeneratedQuestions AiGeneratedQuestion[]
 
   @@index([questionType])
   @@index([difficultyLevel])
@@ -590,6 +598,284 @@ model UserProfile {
   @@index([lastSeenAt])
   @@map("user_profiles")
 }
+
+// ======================================
+// PHASE 3.1: AI SERVICE MODELS
+// ======================================
+
+// AI Provider Configuration
+model AiProvider {
+  id            String        @id @default(uuid()) @db.Uuid
+  name          String        @unique @db.VarChar(100) // e.g., "openai", "anthropic", "google", "huggingface", "local"
+  displayName   String        @map("display_name") @db.VarChar(100) // e.g., "OpenAI GPT", "Anthropic Claude"
+  type          AiProviderType
+  endpoint      String?       @db.VarChar(255) // API endpoint URL
+  apiKeyName    String?       @map("api_key_name") @db.VarChar(100) // Environment variable name for API key
+  models        Json          // Array of available models with their configurations
+  isActive      Boolean       @default(true) @map("is_active")
+  isFree        Boolean       @default(false) @map("is_free") // True for free/local models
+  priority      Int           @default(0) // Higher number = higher priority for model selection
+  rateLimit     Json?         @map("rate_limit") // Rate limiting configuration
+  costConfig    Json?         @map("cost_config") // Cost calculation configuration
+  metadata      Json?         // Additional provider-specific configuration
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  models_rel    AiModel[]     @relation("ProviderModels")
+  usage         AiUsage[]
+  analytics     AiAnalytics[]
+  
+  @@index([name])
+  @@index([type])
+  @@index([isActive])
+  @@index([isFree])
+  @@index([priority])
+  @@map("ai_providers")
+}
+
+// AI Model Configuration
+model AiModel {
+  id                String          @id @default(uuid()) @db.Uuid
+  providerId        String          @map("provider_id") @db.Uuid
+  name              String          @db.VarChar(100) // e.g., "gpt-4", "claude-3-opus", "llama2-7b"
+  displayName       String          @map("display_name") @db.VarChar(100)
+  modelType         AiModelType     @map("model_type")
+  capabilities      AiCapability[]  // What this model can do
+  maxTokens         Int?            @map("max_tokens") // Maximum context length
+  costPerToken      Float?          @map("cost_per_token") // Cost per token (null for free models)
+  qualityScore      Float           @default(0.8) @map("quality_score") // 0-1 quality rating
+  speedScore        Float           @default(0.8) @map("speed_score") // 0-1 speed rating
+  reliabilityScore  Float           @default(0.9) @map("reliability_score") // 0-1 reliability rating
+  isActive          Boolean         @default(true) @map("is_active")
+  isDefault         Boolean         @default(false) @map("is_default") // Default model for this provider
+  configuration     Json            // Model-specific configuration
+  createdAt         DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  provider          AiProvider      @relation("ProviderModels", fields: [providerId], references: [id], onDelete: Cascade)
+  usage             AiUsage[]
+  generations       AiGeneration[]
+  analytics         AiAnalytics[]
+  
+  @@unique([providerId, name])
+  @@index([name])
+  @@index([providerId])
+  @@index([modelType])
+  @@index([isActive])
+  @@index([isDefault])
+  @@index([qualityScore])
+  @@index([costPerToken])
+  @@map("ai_models")
+}
+
+// AI Usage Tracking
+model AiUsage {
+  id              String         @id @default(uuid()) @db.Uuid
+  userId          String         @map("user_id") @db.Uuid
+  providerId      String         @map("provider_id") @db.Uuid
+  modelId         String         @map("model_id") @db.Uuid
+  requestType     AiRequestType  @map("request_type")
+  tokensUsed      Int            @default(0) @map("tokens_used")
+  cost            Float          @default(0.0) // Actual cost incurred
+  estimatedCost   Float          @default(0.0) @map("estimated_cost") // Estimated cost before request
+  duration        Int            @map("duration") // Request duration in milliseconds
+  success         Boolean        @default(true)
+  errorCode       String?        @map("error_code") @db.VarChar(100)
+  errorMessage    String?        @map("error_message")
+  requestData     Json?          @map("request_data") // Sanitized request data for analytics
+  responseData    Json?          @map("response_data") // Sanitized response data
+  metadata        Json?          // Additional tracking data
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  
+  // Relations
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider        AiProvider     @relation(fields: [providerId], references: [id])
+  model           AiModel        @relation(fields: [modelId], references: [id])
+  generation      AiGeneration?
+  
+  @@index([userId])
+  @@index([providerId])
+  @@index([modelId])
+  @@index([requestType])
+  @@index([success])
+  @@index([createdAt])
+  @@index([cost])
+  @@map("ai_usage")
+}
+
+// AI Question Generation
+model AiGeneration {
+  id                String            @id @default(uuid()) @db.Uuid
+  usageId           String            @unique @map("usage_id") @db.Uuid
+  userId            String            @map("user_id") @db.Uuid
+  modelId           String            @map("model_id") @db.Uuid
+  requestType       AiRequestType     @map("request_type")
+  prompt            String            // The prompt used for generation
+  generatedContent  Json              @map("generated_content") // Raw AI response
+  processedContent  Json?             @map("processed_content") // Processed/formatted content
+  questionsGenerated Int              @default(0) @map("questions_generated")
+  qualityScore      Float?            @map("quality_score") // 0-1 quality assessment
+  validationStatus  ValidationStatus  @default(PENDING) @map("validation_status")
+  validationErrors  Json?             @map("validation_errors") // Array of validation issues
+  humanReview       Boolean           @default(false) @map("human_review") // Flagged for human review
+  approved          Boolean           @default(false) // Approved for use
+  rejectedReason    String?           @map("rejected_reason")
+  metadata          Json?             // Generation metadata
+  createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  usage             AiUsage           @relation(fields: [usageId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  model             AiModel           @relation(fields: [modelId], references: [id])
+  questions         AiGeneratedQuestion[]
+  
+  @@index([userId])
+  @@index([modelId])
+  @@index([requestType])
+  @@index([validationStatus])
+  @@index([qualityScore])
+  @@index([createdAt])
+  @@index([approved])
+  @@map("ai_generations")
+}
+
+// AI Generated Questions
+model AiGeneratedQuestion {
+  id               String         @id @default(uuid()) @db.Uuid
+  generationId     String         @map("generation_id") @db.Uuid
+  questionId       String?        @map("question_id") @db.Uuid // Link to actual Question if approved
+  questionData     Json           @map("question_data") // Generated question data
+  qualityScore     Float?         @map("quality_score") // Individual question quality score
+  validationErrors Json?          @map("validation_errors") // Question-specific validation errors
+  status           ValidationStatus @default(PENDING)
+  userRating       Float?         @map("user_rating") // User feedback rating (1-5)
+  userFeedback     String?        @map("user_feedback") // User feedback text
+  timesUsed        Int            @default(0) @map("times_used")
+  averageScore     Float?         @map("average_score") // Average user performance on this question
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  generation       AiGeneration   @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  question         Question?      @relation(fields: [questionId], references: [id])
+  
+  @@index([generationId])
+  @@index([questionId])
+  @@index([status])
+  @@index([qualityScore])
+  @@index([userRating])
+  @@index([timesUsed])
+  @@map("ai_generated_questions")
+}
+
+// User AI Budget & Preferences
+model UserAiBudget {
+  id                    String    @id @default(uuid()) @db.Uuid
+  userId                String    @unique @map("user_id") @db.Uuid
+  monthlyBudget         Float     @default(0.0) @map("monthly_budget") // Monthly spending limit
+  currentSpend          Float     @default(0.0) @map("current_spend") // Current month spending
+  dailyUsageLimit       Int       @default(100) @map("daily_usage_limit") // Daily request limit
+  currentDailyUsage     Int       @default(0) @map("current_daily_usage")
+  preferredModel        String?   @map("preferred_model") @db.VarChar(100)
+  allowPaidModels       Boolean   @default(false) @map("allow_paid_models")
+  autoOptimizeCost      Boolean   @default(true) @map("auto_optimize_cost")
+  qualityPreference     Float     @default(0.7) @map("quality_preference") // 0-1 quality vs cost preference
+  lastResetDate         DateTime  @default(now()) @map("last_reset_date") @db.Timestamptz(6)
+  alertThresholds       Json      @default("{}") @map("alert_thresholds") // Budget alert configurations
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([currentSpend])
+  @@index([lastResetDate])
+  @@map("user_ai_budgets")
+}
+
+// AI System Analytics
+model AiAnalytics {
+  id                  String    @id @default(uuid()) @db.Uuid
+  date                DateTime  @db.Date
+  providerId          String    @map("provider_id") @db.Uuid
+  modelId             String    @map("model_id") @db.Uuid
+  totalRequests       Int       @default(0) @map("total_requests")
+  successfulRequests  Int       @default(0) @map("successful_requests")
+  failedRequests      Int       @default(0) @map("failed_requests")
+  totalCost           Float     @default(0.0) @map("total_cost")
+  totalTokens         Int       @default(0) @map("total_tokens")
+  averageResponseTime Int       @default(0) @map("average_response_time") // in milliseconds
+  averageQualityScore Float?    @map("average_quality_score")
+  questionsGenerated  Int       @default(0) @map("questions_generated")
+  questionsApproved   Int       @default(0) @map("questions_approved")
+  uniqueUsers         Int       @default(0) @map("unique_users")
+  metadata            Json?     // Additional analytics data
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  
+  // Relations
+  provider            AiProvider @relation(fields: [providerId], references: [id])
+  model               AiModel    @relation(fields: [modelId], references: [id])
+  
+  @@unique([date, providerId, modelId])
+  @@index([date])
+  @@index([providerId])
+  @@index([modelId])
+  @@index([totalCost])
+  @@index([totalRequests])
+  @@map("ai_analytics")
+}
+
+
+// Enums for Phase 3.1 AI Service
+enum AiProviderType {
+  OPENAI
+  ANTHROPIC
+  GOOGLE
+  HUGGINGFACE
+  LOCAL
+  CUSTOM
+}
+
+enum AiModelType {
+  CHAT_COMPLETION
+  TEXT_GENERATION
+  EMBEDDING
+  FINE_TUNED
+  CUSTOM
+}
+
+enum AiCapability {
+  QUESTION_GENERATION
+  CONTENT_VALIDATION
+  FACT_CHECKING
+  LANGUAGE_TRANSLATION
+  SUMMARIZATION
+  CLASSIFICATION
+}
+
+enum AiRequestType {
+  QUESTION_GENERATION
+  BATCH_GENERATION
+  CONTENT_VALIDATION
+  QUALITY_ASSESSMENT
+  FACT_CHECK
+  OPTIMIZATION
+  ANALYSIS
+}
+
+enum ValidationStatus {
+  PENDING
+  VALID
+  INVALID
+  NEEDS_REVIEW
+  APPROVED
+  REJECTED
+}
+
 
 
 // Enums for Phase 2.3

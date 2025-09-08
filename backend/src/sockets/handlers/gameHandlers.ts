@@ -129,12 +129,12 @@ export class GameEventHandlers {
           timestamp: new Date().toISOString()
         });
 
-        // Start first question after a delay
+        // Start first question after a brief delay (reduced for better user experience)
         setTimeout(() => {
           this.gameManager.startNextQuestion(gameState.id).catch(error => {
             logger.error('Failed to start first question', { gameId: gameState.id, error });
           });
-        }, 3000); // 3 second countdown
+        }, 1500); // 1.5 second countdown for smoother experience
 
       } catch (error) {
         logger.error('Failed to start game', { 
@@ -663,8 +663,17 @@ export class GameEventHandlers {
       return { isValid: false, error: 'Time per question must be between 5 and 300 seconds' };
     }
 
-    if (config.categories && (!Array.isArray(config.categories) || config.categories.length === 0)) {
-      return { isValid: false, error: 'At least one category must be selected' };
+    // For non-AI games, categories are required. For AI games, categories can be empty
+    if (!config.useAI) {
+      // Library questions require categories
+      if (!config.categories || !Array.isArray(config.categories) || config.categories.length === 0) {
+        return { isValid: false, error: 'At least one category must be selected for library questions' };
+      }
+    } else {
+      // AI games can have empty categories, but if provided, should be valid array
+      if (config.categories && !Array.isArray(config.categories)) {
+        return { isValid: false, error: 'Categories must be an array' };
+      }
     }
 
     return { isValid: true };

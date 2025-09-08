@@ -76,6 +76,10 @@ export interface GameQuizConfig {
   pointsPerQuestion: number;
   timeBonusEnabled: boolean;
   streakBonusEnabled: boolean;
+  // AI-specific properties
+  useAI?: boolean;
+  aiTopic?: string;
+  aiQuestions?: any[];
 }
 
 // Enhanced question structure for multiplayer

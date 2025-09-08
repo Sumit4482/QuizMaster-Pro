@@ -137,6 +137,7 @@ export function WaitingRoom({
   const [showStartModal, setShowStartModal] = useState(false);
   const [isSettingReady, setIsSettingReady] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
 
   const onlinePlayers = players.filter(p => p.isOnline);
   const readyPlayers = players.filter(p => p.status === 'READY');
@@ -208,17 +209,45 @@ export function WaitingRoom({
     }
   };
 
-  if (gameStatus === 'STARTING') {
+  if (gameStatus === 'STARTING' || isGeneratingAI) {
     return (
       <div className="max-w-4xl mx-auto p-6">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            Game Starting...
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            Get ready! The quiz will begin in a moment.
-          </p>
+          {isGeneratingAI ? (
+            <>
+              <div className="relative mb-6">
+                <div className="text-6xl animate-pulse mb-4">🤖</div>
+                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto"></div>
+                <div className="absolute -top-2 -right-2">
+                  <div className="animate-ping text-2xl">✨</div>
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                🤖 AI Generating Questions...
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                Please wait while AI creates custom questions for your quiz.
+              </p>
+              <div className="max-w-xs mx-auto mb-4">
+                <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="bg-blue-500 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+                </div>
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                This may take a moment...
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Game Starting...
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Get ready! The quiz will begin in a moment.
+              </p>
+            </>
+          )}
         </div>
       </div>
     );

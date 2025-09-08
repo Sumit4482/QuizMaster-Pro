@@ -132,8 +132,8 @@ export class GameManager extends EventEmitter {
         streakBonusEnabled: config.streakBonusEnabled ?? true
       };
 
-      // Fetch questions for the game
-      const questions = await this.generateGameQuestions(gameConfig);
+      // Fetch questions for the game (AI or database)
+      const questions = await this.generateGameQuestions(gameConfig, config);
 
       // Create game state
       const gameState: GameState = {
@@ -811,9 +811,67 @@ export class GameManager extends EventEmitter {
   // ====================
 
   /**
-   * Generate questions for the game
+   * Generate questions for the game (AI or database with enhanced fallback)
    */
-  private async generateGameQuestions(config: GameQuizConfig): Promise<GameQuestion[]> {
+  private async generateGameQuestions(config: GameQuizConfig, rawConfig?: any): Promise<GameQuestion[]> {
+    // Check if AI questions were provided
+    if (rawConfig?.useAI && rawConfig?.aiQuestions && Array.isArray(rawConfig.aiQuestions)) {
+      logger.info(`Using ${rawConfig.aiQuestions.length} AI-generated questions`, {
+        component: 'GameManager',
+        aiTopic: rawConfig.aiTopic,
+        totalQuestions: config.totalQuestions,
+        questionCount: rawConfig.aiQuestions.length
+      });
+
+      // Validate AI questions before using them
+      const validAiQuestions = rawConfig.aiQuestions.filter((aiQ: any) => {
+        return aiQ && (aiQ.questionText || aiQ.question) && 
+               (aiQ.correctAnswer !== undefined || aiQ.correct_answer !== undefined);
+      });
+
+      if (validAiQuestions.length === 0) {
+        logger.warn('No valid AI questions found, falling back to database questions', {
+          component: 'GameManager',
+          originalCount: rawConfig.aiQuestions.length,
+          validCount: validAiQuestions.length
+        });
+        // Fall through to database questions
+      } else if (validAiQuestions.length < config.totalQuestions) {
+        logger.warn(`Only ${validAiQuestions.length} valid AI questions found, needed ${config.totalQuestions}. Using what we have.`, {
+          component: 'GameManager',
+          validCount: validAiQuestions.length,
+          requestedCount: config.totalQuestions
+        });
+      } else {
+        // Convert AI questions to GameQuestion format
+        return validAiQuestions.slice(0, config.totalQuestions).map((aiQ: any, index: number): GameQuestion => ({
+          id: `ai_${Date.now()}_${index}`,
+          questionText: aiQ.questionText || aiQ.question,
+          questionType: aiQ.questionType || 'MULTIPLE_CHOICE',
+          options: { 
+            options: aiQ.options || []
+          },
+          correctAnswer: aiQ.correctAnswer || aiQ.correct_answer,
+          explanation: aiQ.explanation || 'AI-generated question',
+          hints: aiQ.hints || {},
+          difficultyLevel: aiQ.difficulty || 2,
+          estimatedTime: config.timePerQuestion,
+          points: config.pointsPerQuestion,
+          categories: rawConfig.aiTopic ? [{ id: 0, name: rawConfig.aiTopic, slug: rawConfig.aiTopic.toLowerCase().replace(/\s+/g, '-') }] : [],
+          // Game-specific fields
+          questionIndex: index,
+          timeLimit: config.timePerQuestion,
+          startedAt: undefined,
+          endsAt: undefined,
+          // Answer tracking
+          playerAnswers: new Map(),
+          answeredCount: 0,
+          correctCount: 0
+        }));
+      }
+    }
+
+    // Use database questions (original logic)
     try {
       const whereClause: any = {
         isActive: true,
@@ -842,7 +900,7 @@ export class GameManager extends EventEmitter {
         };
       }
 
-      const questions = await prisma.question.findMany({
+      let questions = await prisma.question.findMany({
         where: whereClause,
         include: {
           categories: {
@@ -857,8 +915,64 @@ export class GameManager extends EventEmitter {
         take: Math.min(config.totalQuestions * 2, 100) // Get extra questions for better shuffling
       });
 
+      // If not enough questions found with specific criteria, try with fallback
       if (questions.length < config.totalQuestions) {
-        throw new Error(`Not enough questions found. Required: ${config.totalQuestions}, Found: ${questions.length}`);
+        logger.warn(`Not enough questions with specific criteria. Required: ${config.totalQuestions}, Found: ${questions.length}. Trying fallback...`, {
+          component: 'GameManager',
+          originalCriteria: { categories: config.categories, difficultyLevels: config.difficultyLevels, questionTypes: config.questionTypes }
+        });
+
+        // Fallback 1: Remove category restriction
+        const fallbackQuestions = await prisma.question.findMany({
+          where: {
+            isActive: true,
+            isPublished: true,
+            difficultyLevel: config.difficultyLevels.length > 0 ? { in: config.difficultyLevels } : undefined,
+            questionType: config.questionTypes.length > 0 ? { in: config.questionTypes } : undefined
+          },
+          include: {
+            categories: {
+              include: {
+                category: true
+              }
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          },
+          take: Math.min(config.totalQuestions * 2, 100)
+        });
+
+        if (fallbackQuestions.length >= config.totalQuestions) {
+          logger.info(`Fallback successful: Found ${fallbackQuestions.length} questions without category restriction`);
+          questions = fallbackQuestions;
+        } else {
+          // Fallback 2: Remove all restrictions except active/published
+          const finalFallback = await prisma.question.findMany({
+            where: {
+              isActive: true,
+              isPublished: true
+            },
+            include: {
+              categories: {
+                include: {
+                  category: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: 'desc'
+            },
+            take: Math.min(config.totalQuestions * 2, 100)
+          });
+
+          if (finalFallback.length >= config.totalQuestions) {
+            logger.info(`Final fallback successful: Found ${finalFallback.length} questions with no restrictions`);
+            questions = finalFallback;
+          } else {
+            throw new Error(`Insufficient questions in database. Required: ${config.totalQuestions}, Available: ${finalFallback.length}. Please add more questions or reduce game size.`);
+          }
+        }
       }
 
       // Shuffle and select questions
@@ -890,8 +1004,35 @@ export class GameManager extends EventEmitter {
       }));
 
     } catch (error) {
-      logger.error('Failed to generate game questions', { config, error });
-      throw new GameError('QUESTION_GENERATION_FAILED', 'Failed to generate questions for game');
+      logger.error('Failed to generate game questions from database', { config, error });
+      
+      // Final fallback - create minimal questions if everything fails
+      logger.warn('Creating minimal fallback questions as last resort', {
+        component: 'GameManager',
+        totalQuestions: config.totalQuestions
+      });
+      
+      return Array.from({ length: Math.min(config.totalQuestions, 5) }, (_, index): GameQuestion => ({
+        id: `fallback_${Date.now()}_${index}`,
+        questionText: `Sample Question ${index + 1}: What is 2 + 2?`,
+        questionType: 'MULTIPLE_CHOICE' as any,
+        options: {
+          options: ['3', '4', '5', '6'],
+          type: 'single'
+        },
+        correctAnswer: '4',
+        explanation: 'This is a fallback question used when the system cannot load regular questions.',
+        hints: {},
+        difficultyLevel: 1,
+        estimatedTime: config.timePerQuestion,
+        points: config.pointsPerQuestion,
+        categories: [{ id: 999, name: 'System Fallback', slug: 'system-fallback' }],
+        questionIndex: index,
+        timeLimit: config.timePerQuestion * 1000,
+        playerAnswers: new Map(),
+        answeredCount: 0,
+        correctCount: 0
+      }));
     }
   }
 

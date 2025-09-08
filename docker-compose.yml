@@ -51,6 +51,14 @@ services:
       JWT_REFRESH_SECRET: development_refresh_secret_change_in_production_256_bit_minimum
       PORT: 3001
       CORS_ORIGIN: http://localhost:3000
+      # AI SERVICE CONFIGURATION
+      GOOGLE_API_KEY: AIzaSyB7O_pCoXdzsMAytdUssXNuK0ApF-3PIXg
+      AI_DEFAULT_MODEL: gemini-1.5-flash
+      AI_FALLBACK_MODEL: gemini-1.5-flash
+      AI_DAILY_USAGE_LIMIT: 100
+      AI_MAX_QUESTIONS_PER_BATCH: 3
+      AI_MIN_QUALITY_SCORE: 0.6
+      AI_RATE_LIMIT_RPM: 50
     depends_on:
       postgres:
         condition: service_healthy

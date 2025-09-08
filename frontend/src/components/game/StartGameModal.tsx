@@ -55,18 +55,29 @@ export function StartGameModal({ isOpen, onClose, roomId, playerCount }: StartGa
   
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const [useAI, setUseAI] = useState(false); // Toggle for AI vs Library questions
+  const [aiGenerating, setAiGenerating] = useState(false); // Loading state for AI generation
+  const [aiTopic, setAiTopic] = useState(''); // Custom topic for AI questions
   
   const [formData, setFormData] = useState<StartGameForm>({
-    totalQuestions: 10,
+    totalQuestions: 5, // Reduced from 10 to 5 for better success rate
     categories: [],
-    difficultyLevels: [1, 2],
-    questionTypes: ['MULTIPLE_CHOICE'],
+    difficultyLevels: [1, 2, 3], // Include all difficulty levels
+    questionTypes: ['MULTIPLE_CHOICE', 'TRUE_FALSE'], // Include more question types
     timePerQuestion: 30,
     allowHints: false,
     showExplanations: true,
     timeBonusEnabled: true,
     streakBonusEnabled: true
   });
+
+  // Debug useAI state changes (placed after formData declaration)
+  useEffect(() => {
+    console.log('🔄 useAI state changed:', useAI);
+    console.log('🔄 Current form categories:', formData.categories.length);
+    console.log('🔄 Available categories:', categories.length);
+    console.log('🔄 Loading categories:', loadingCategories);
+  }, [useAI, formData.categories, categories.length, loadingCategories]);
 
   // Load categories
   useEffect(() => {
@@ -75,24 +86,53 @@ export function StartGameModal({ isOpen, onClose, roomId, playerCount }: StartGa
       try {
         const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         const { accessToken } = getTokens();
-        const response = await fetch(`${API_BASE}/api/categories`, {
+        // Try public endpoint first (no auth required)
+        let response = await fetch(`${API_BASE}/api/categories/public`, {
           headers: {
-            'Authorization': `Bearer ${accessToken || ''}`,
             'Content-Type': 'application/json',
           }
         });
         
+        // Fallback to authenticated endpoint if public fails
+        if (!response.ok) {
+          console.log('📂 Public categories failed, trying authenticated endpoint...');
+          response = await fetch(`${API_BASE}/api/categories`, {
+            headers: {
+              'Authorization': `Bearer ${accessToken || ''}`,
+              'Content-Type': 'application/json',
+            }
+          });
+        }
+        
         if (response.ok) {
           const apiResponse = await response.json();
+          console.log('📂 Categories API Response:', apiResponse);
+          
           const data = apiResponse.success ? apiResponse.data : apiResponse;
+          console.log('📂 Categories Data:', data);
           setCategories(data || []);
           
-          // Auto-select first few categories if none selected (only on initial load)
-          if (data.length > 0) {
-            setFormData(prev => prev.categories.length === 0 ? ({
-              ...prev,
-              categories: data.slice(0, 3).map((cat: CategoryOption) => cat.id)
-            }) : prev);
+          // Auto-select ALL categories if none selected (ensures enough questions)
+          if (data && data.length > 0) {
+            const categoryIds = data.map((cat: CategoryOption) => cat.id);
+            console.log('📂 Available category IDs:', categoryIds);
+            
+            setFormData(prev => {
+              const shouldAutoSelect = prev.categories.length === 0;
+              console.log('📂 Should auto-select categories?', shouldAutoSelect);
+              console.log('📂 Current categories:', prev.categories);
+              
+              if (shouldAutoSelect) {
+                console.log('📂 Auto-selecting ALL categories:', categoryIds);
+                return {
+                  ...prev,
+                  categories: categoryIds
+                };
+              }
+              return prev;
+            });
+          } else {
+            console.warn('📂 No categories received from API');
           }
         } else {
           console.error('Categories API response not OK:', response.status, response.statusText);
@@ -110,27 +150,49 @@ export function StartGameModal({ isOpen, onClose, roomId, playerCount }: StartGa
     }
   }, [isOpen]); // Removed formData.categories.length dependency to prevent loops
 
+  // AI Question Generation Function
+  const generateAIQuestions = async (topic: string, difficulty: number, count: number) => {
+    try {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const { accessToken } = getTokens();
+      const response = await fetch(`${API_BASE}/api/ai/generate/questions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          topic: topic || 'General Knowledge',
+          difficulty: difficulty,
+          count: count,
+          questionType: 'MULTIPLE_CHOICE'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`AI service error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to generate questions');
+      }
+
+      // AI API returns questions in data.data.questions
+      const questions = data.data?.questions || data.questions || [];
+      return questions;
+    } catch (error) {
+      console.error('AI generation error:', error);
+      throw new Error('Failed to generate AI questions. Please try library questions instead.');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
-    if (formData.categories.length === 0) {
-      toast.error('Please select at least one category');
-      return;
-    }
-    
-    if (formData.difficultyLevels.length === 0) {
-      toast.error('Please select at least one difficulty level');
-      return;
-    }
-    
-    if (formData.questionTypes.length === 0) {
-      toast.error('Please select at least one question type');
-      return;
-    }
-    
-    if (formData.totalQuestions < 1 || formData.totalQuestions > 50) {
-      toast.error('Number of questions must be between 1 and 50');
+    // Basic validation
+    if (formData.totalQuestions < 1 || formData.totalQuestions > 20) {
+      toast.error('Number of questions must be between 1 and 20');
       return;
     }
     
@@ -139,28 +201,212 @@ export function StartGameModal({ isOpen, onClose, roomId, playerCount }: StartGa
       return;
     }
 
+    console.log('🎯 VALIDATION CHECK:');
+    console.log('🎯 useAI:', useAI);
+    console.log('🎯 formData.categories.length:', formData.categories.length);
+    console.log('🎯 formData.categories:', formData.categories);
+    console.log('🎯 aiTopic:', aiTopic);
+    console.log('🎯 Available categories count:', categories.length);
+    
+    // Library questions validation (only when NOT using AI)
+    if (!useAI) {
+      console.log('📚 Running Library Questions Validation...');
+      console.log('📚 Categories available:', categories.map(c => `${c.id}: ${c.name}`));
+      
+      if (formData.categories.length === 0) {
+        console.log('❌ Category validation failed - No categories selected');
+        console.log('❌ Available categories:', categories.length);
+        
+        // EMERGENCY FIX: Auto-select all categories if none are selected
+        if (categories.length > 0) {
+          console.log('🚑 EMERGENCY: Auto-selecting all categories before game start');
+          const allCategoryIds = categories.map(cat => cat.id);
+          
+          setFormData(prev => ({
+            ...prev,
+            categories: allCategoryIds
+          }));
+          
+          toast.success(`Auto-selected all ${categories.length} categories`);
+          
+          // Retry game start after a brief delay to let state update
+          setTimeout(() => {
+            console.log('🚑 Retrying game start with categories:', allCategoryIds);
+            handleSubmit(e);
+          }, 500);
+          return;
+        } else {
+          toast.error('No categories available. Please check your connection.');
+          return;
+        }
+      }
+      
+      if (formData.difficultyLevels.length === 0) {
+        console.log('❌ Difficulty validation failed');
+        toast.error('Please select at least one difficulty level');
+        return;
+      }
+      
+      if (formData.questionTypes.length === 0) {
+        console.log('❌ Question type validation failed');
+        toast.error('Please select at least one question type');
+        return;
+      }
+    } else {
+      console.log('🤖 SKIPPING Library Validation - AI Mode Active');
+      
+      // AI-specific validation
+      if (!aiTopic || aiTopic.trim().length === 0) {
+        console.log('❌ AI Topic validation failed');
+        toast.error('Please enter a topic for AI questions');
+        return;
+      }
+    }
+
     try {
-      const gameConfig: Partial<GameConfig> = {
-        totalQuestions: formData.totalQuestions,
-        categories: formData.categories,
-        difficultyLevels: formData.difficultyLevels,
-        questionTypes: formData.questionTypes,
-        timePerQuestion: formData.timePerQuestion,
-        shuffleQuestions: true,
-        shuffleAnswers: true,
-        showExplanations: formData.showExplanations,
-        allowHints: formData.allowHints,
-        pointsPerQuestion: 100,
-        timeBonusEnabled: formData.timeBonusEnabled,
-        streakBonusEnabled: formData.streakBonusEnabled
-      };
+      let gameConfig: Partial<GameConfig>;
+
+      if (useAI) {
+        console.log('🤖 Starting AI Question Generation Flow');
+        console.log('AI Topic:', aiTopic);
+        console.log('Difficulty Levels:', formData.difficultyLevels);
+        console.log('Question Count:', formData.totalQuestions);
+        
+        // AI Question Generation Flow - Enhanced loading states
+        setAiGenerating(true);
+        toast.loading('🤖 Generating AI questions... This may take a moment.', { 
+          id: 'ai-generation',
+          duration: 0 // Don't auto-dismiss
+        });
+        
+        try {
+          // Generate questions with AI
+          const averageDifficulty = Math.round(
+            formData.difficultyLevels.reduce((sum, level) => sum + level, 0) / formData.difficultyLevels.length
+          );
+          
+          console.log('Calculated Average Difficulty:', averageDifficulty);
+          
+          const aiQuestions = await generateAIQuestions(
+            aiTopic, 
+            averageDifficulty, 
+            formData.totalQuestions
+          );
+          
+          if (!aiQuestions || aiQuestions.length === 0) {
+            throw new Error('No AI questions were generated. Please try again or use library questions.');
+          }
+          
+          toast.success(`✅ Generated ${aiQuestions.length} AI questions successfully!`, { 
+            id: 'ai-generation',
+            duration: 3000
+          });
+          
+          console.log('📝 AI questions generated successfully:', aiQuestions.length);
+
+          gameConfig = {
+            totalQuestions: formData.totalQuestions,
+            categories: [], // Empty for AI questions
+            difficultyLevels: formData.difficultyLevels,
+            questionTypes: formData.questionTypes,
+            timePerQuestion: formData.timePerQuestion,
+            shuffleQuestions: true,
+            shuffleAnswers: true,
+            showExplanations: formData.showExplanations,
+            allowHints: formData.allowHints,
+            pointsPerQuestion: 100,
+            timeBonusEnabled: formData.timeBonusEnabled,
+            streakBonusEnabled: formData.streakBonusEnabled,
+            useAI: true,
+            aiTopic: aiTopic,
+            aiQuestions: aiQuestions // Pass generated questions
+          };
+          
+        } catch (aiError) {
+          console.error('AI generation failed, attempting fallback to library questions:', aiError);
+          toast.dismiss('ai-generation');
+          
+          // Show fallback notification
+          toast.loading('🤖➡️📚 AI generation failed. Switching to library questions...', { 
+            id: 'ai-fallback',
+            duration: 3000 
+          });
+          
+          // Auto-fallback to library questions if AI fails
+          if (categories.length > 0) {
+            const allCategoryIds = categories.map(cat => cat.id);
+            gameConfig = {
+              totalQuestions: formData.totalQuestions,
+              categories: allCategoryIds,
+              difficultyLevels: formData.difficultyLevels,
+              questionTypes: formData.questionTypes,
+              timePerQuestion: formData.timePerQuestion,
+              shuffleQuestions: true,
+              shuffleAnswers: true,
+              showExplanations: formData.showExplanations,
+              allowHints: formData.allowHints,
+              pointsPerQuestion: 100,
+              timeBonusEnabled: formData.timeBonusEnabled,
+              streakBonusEnabled: formData.streakBonusEnabled,
+              useAI: false
+            };
+            
+            toast.success('📚 Switched to library questions automatically!', { 
+              id: 'ai-fallback' 
+            });
+          } else {
+            throw new Error('AI generation failed and no library questions are available. Please try again later.');
+          }
+        }
+      } else {
+        console.log('📚 Starting Library Question Flow');
+        console.log('Selected Categories:', formData.categories);
+        console.log('Difficulty Levels:', formData.difficultyLevels);
+        console.log('Question Types:', formData.questionTypes);
+        
+        // Library Questions Flow
+        gameConfig = {
+          totalQuestions: formData.totalQuestions,
+          categories: formData.categories,
+          difficultyLevels: formData.difficultyLevels,
+          questionTypes: formData.questionTypes,
+          timePerQuestion: formData.timePerQuestion,
+          shuffleQuestions: true,
+          shuffleAnswers: true,
+          showExplanations: formData.showExplanations,
+          allowHints: formData.allowHints,
+          pointsPerQuestion: 100,
+          timeBonusEnabled: formData.timeBonusEnabled,
+          streakBonusEnabled: formData.streakBonusEnabled,
+          useAI: false
+        };
+      }
+
+      console.log('🎮 Final Game Config:', gameConfig);
+      console.log('🎮 Use AI:', gameConfig.useAI);
+      console.log('🎮 Room ID:', roomId);
+
+      // Show game starting notification
+      toast.loading('🚀 Starting multiplayer quiz...', { 
+        id: 'game-starting',
+        duration: 0
+      });
 
       await startGame(gameConfig, roomId);
       
-      toast.success('Game starting!');
+      toast.success(gameConfig.useAI ? '🤖 AI Quiz Game Started!' : '📚 Library Quiz Game Started!', {
+        id: 'game-starting'
+      });
       onClose();
+      
     } catch (error) {
       console.error('Failed to start game:', error);
+      toast.dismiss('game-starting');
+      toast.error(error instanceof Error ? error.message : 'Failed to start game');
+    } finally {
+      setAiGenerating(false);
+      toast.dismiss('ai-generation');
+      toast.dismiss('ai-fallback');
     }
   };
 
@@ -233,6 +479,86 @@ export function StartGameModal({ isOpen, onClose, roomId, playerCount }: StartGa
 
         <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-8">
+            {/* Question Source */}
+            <section>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Question Source
+              </h3>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex flex-col">
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {useAI ? '🤖 AI Generated Questions' : '📚 Library Questions'}
+                      </span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {useAI 
+                          ? 'Generate fresh questions on any topic using AI'
+                          : 'Use existing questions from our curated library'
+                        }
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newUseAI = !useAI;
+                      console.log('🔄 AI Toggle clicked - Current:', useAI, '-> New:', newUseAI);
+                      setUseAI(newUseAI);
+                      toast.success(
+                        newUseAI ? '🤖 Switched to AI Questions!' : '📚 Switched to Library Questions!',
+                        { duration: 2000 }
+                      );
+                      console.log('🔄 Toggle state after click should be:', newUseAI);
+                      
+                      if (!newUseAI && categories.length > 0 && formData.categories.length === 0) {
+                        console.log('🔄 Switching to Library mode - Auto-selecting categories');
+                        const allCategoryIds = categories.map(cat => cat.id);
+                        setFormData(prev => ({
+                          ...prev,
+                          categories: allCategoryIds
+                        }));
+                        console.log('🔄 Auto-selected categories for Library mode:', allCategoryIds);
+                      }
+                    }}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                      useAI 
+                        ? 'bg-indigo-600' 
+                        : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        useAI ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+                
+                {/* AI Topic Input */}
+                {useAI && (
+                  <div className="animate-in slide-in-from-top duration-200">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      AI Topic (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={aiTopic}
+                      onChange={(e) => setAiTopic(e.target.value)}
+                      placeholder="e.g., Python Programming, World History, Science..."
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+                      disabled={isLoading || aiGenerating}
+                    />
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      Leave empty for mixed topics. Specific topics generate more focused questions.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </section>
+
             {/* Basic Settings */}
             <section>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -282,12 +608,13 @@ export function StartGameModal({ isOpen, onClose, roomId, playerCount }: StartGa
               </div>
             </section>
 
-            {/* Categories */}
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Categories
-                </h3>
+            {/* Categories - Only show for Library questions */}
+            {!useAI && (
+              <section>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Categories
+                  </h3>
                 {!loadingCategories && categories.length > 0 && (
                   <div className="flex space-x-2">
                     <Button
@@ -359,7 +686,8 @@ export function StartGameModal({ isOpen, onClose, roomId, playerCount }: StartGa
                   Please select at least one category
                 </p>
               )}
-            </section>
+              </section>
+            )}
 
             {/* Difficulty Levels */}
             <section>
@@ -520,19 +848,39 @@ export function StartGameModal({ isOpen, onClose, roomId, playerCount }: StartGa
               type="button"
               variant="outline"
               onClick={onClose}
-              disabled={isLoading}
+              disabled={isLoading || aiGenerating}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || formData.categories.length === 0}
-              className="min-w-[120px]"
+              disabled={
+                isLoading || 
+                aiGenerating || 
+                (useAI ? (
+                  !aiTopic || aiTopic.trim().length === 0
+                ) : (
+                  formData.categories.length === 0 ||
+                  formData.difficultyLevels.length === 0 ||
+                  formData.questionTypes.length === 0
+                ))
+              }
+              className="min-w-[160px] relative"
             >
-              {isLoading ? (
-                <LoadingSpinner size="sm" />
+              {aiGenerating ? (
+                <div className="flex items-center">
+                  <LoadingSpinner size="sm" />
+                  <span className="ml-2">Generating...</span>
+                </div>
+              ) : isLoading ? (
+                <div className="flex items-center">
+                  <LoadingSpinner size="sm" />
+                  <span className="ml-2">Starting...</span>
+                </div>
               ) : (
-                'Start Game'
+                <div className="flex items-center">
+                  {useAI ? '🤖 Generate & Start AI Game' : '📚 Start Library Game'}
+                </div>
               )}
             </Button>
           </div>

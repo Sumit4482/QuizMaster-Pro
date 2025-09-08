@@ -32,6 +32,10 @@ export interface GameConfig {
   pointsPerQuestion: number;
   timeBonusEnabled: boolean;
   streakBonusEnabled: boolean;
+  // AI-related properties
+  useAI?: boolean;
+  aiTopic?: string;
+  aiQuestions?: any[]; // Generated AI questions
 }
 
 // Game state interface

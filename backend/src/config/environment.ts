@@ -45,10 +45,43 @@ export const config = {
     SMTP_PASS: process.env.SMTP_PASS,
   },
   
-  // AI Configuration (Phase 3)
+  // AI Configuration (Phase 3.1)
   AI: {
+    // API Keys
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+    GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
+    HUGGINGFACE_API_KEY: process.env.HUGGINGFACE_API_KEY,
+    
+    // Model Configuration
+    DEFAULT_MODEL: process.env.AI_DEFAULT_MODEL || 'gpt-3.5-turbo',
+    FALLBACK_MODEL: process.env.AI_FALLBACK_MODEL || 'llama2',
+    
+    // Usage Limits & Cost Management
+    DAILY_USAGE_LIMIT: parseInt(process.env.AI_DAILY_USAGE_LIMIT || '1000', 10),
+    MONTHLY_BUDGET_LIMIT: parseFloat(process.env.AI_MONTHLY_BUDGET_LIMIT || '100.0'),
+    COST_PER_REQUEST_LIMIT: parseFloat(process.env.AI_COST_PER_REQUEST_LIMIT || '1.0'),
+    
+    // Request Configuration
+    REQUEST_TIMEOUT: parseInt(process.env.AI_REQUEST_TIMEOUT || '30000', 10), // 30 seconds
+    MAX_RETRIES: parseInt(process.env.AI_MAX_RETRIES || '3', 10),
+    RETRY_DELAY: parseInt(process.env.AI_RETRY_DELAY || '1000', 10), // 1 second
+    
+    // Quality & Content Settings
+    MIN_QUALITY_SCORE: parseFloat(process.env.AI_MIN_QUALITY_SCORE || '0.7'),
+    MAX_QUESTIONS_PER_BATCH: parseInt(process.env.AI_MAX_QUESTIONS_PER_BATCH || '10', 10),
+    
+    // Caching Configuration
+    CACHE_TTL: parseInt(process.env.AI_CACHE_TTL || '3600', 10), // 1 hour
+    CACHE_MAX_SIZE: parseInt(process.env.AI_CACHE_MAX_SIZE || '10000', 10),
+    
+    // Rate Limiting
+    RATE_LIMIT_REQUESTS_PER_MINUTE: parseInt(process.env.AI_RATE_LIMIT_RPM || '60', 10),
+    RATE_LIMIT_REQUESTS_PER_HOUR: parseInt(process.env.AI_RATE_LIMIT_RPH || '1000', 10),
+    
+    // Local Model Configuration
+    LOCAL_MODEL_ENDPOINT: process.env.AI_LOCAL_MODEL_ENDPOINT,
+    LOCAL_MODEL_ENABLED: process.env.AI_LOCAL_MODEL_ENABLED === 'true',
   },
 } as const;
 
