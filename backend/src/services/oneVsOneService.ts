@@ -493,17 +493,43 @@ export class OneVsOneService extends EventEmitter {
     const player1Correct = question.player1Answer === question.correctAnswer;
     const player2Correct = question.player2Answer === question.correctAnswer;
 
-    // Award points
+    // Award points with improved scoring
     if (player1Correct) {
       const timeBonus = Math.max(0, 30 - Math.floor((game.player1.timeToAnswer || 30000) / 1000));
-      game.player1.score += 100 + timeBonus * 2;
+      const basePoints = 100;
+      const bonusPoints = Math.floor(timeBonus * 2);
+      const totalPoints = basePoints + bonusPoints;
+      
+      game.player1.score += totalPoints;
       game.player1.correctAnswers++;
+      
+      logger.info('Player 1 scored points', {
+        gameId,
+        basePoints,
+        timeBonus,
+        bonusPoints,
+        totalPoints,
+        newScore: game.player1.score
+      });
     }
 
     if (player2Correct) {
       const timeBonus = Math.max(0, 30 - Math.floor((game.player2.timeToAnswer || 30000) / 1000));
-      game.player2.score += 100 + timeBonus * 2;
+      const basePoints = 100;
+      const bonusPoints = Math.floor(timeBonus * 2);
+      const totalPoints = basePoints + bonusPoints;
+      
+      game.player2.score += totalPoints;
       game.player2.correctAnswers++;
+      
+      logger.info('Player 2 scored points', {
+        gameId,
+        basePoints,
+        timeBonus,
+        bonusPoints,
+        totalPoints,
+        newScore: game.player2.score
+      });
     }
 
     // Send results to both players

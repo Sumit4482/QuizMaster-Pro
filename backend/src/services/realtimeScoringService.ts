@@ -233,7 +233,8 @@ export class RealtimeScoringService extends EventEmitter {
     const previousScore = player.score;
 
     // Update player score
-    player.score += scoreCalculation.totalPoints;
+    const scoreChange = scoreCalculation.totalPoints;
+    player.score += scoreChange;
     player.timeBonuses += scoreCalculation.timeBonus;
     player.streakBonuses += scoreCalculation.streakBonus;
     player.questionsAnswered++;
@@ -245,6 +246,19 @@ export class RealtimeScoringService extends EventEmitter {
     } else {
       player.currentStreak = 0;
     }
+    
+    // Update last activity
+    player.lastActivity = new Date();
+    
+    logger.info('Player score updated in memory', {
+      gameId,
+      playerId,
+      previousScore,
+      scoreChange,
+      newScore: player.score,
+      totalCorrect: player.correctAnswers,
+      currentStreak: player.currentStreak
+    });
 
     // Update performance metrics
     this.updatePlayerMetrics(gameId, playerId, answer, scoreCalculation);
@@ -268,6 +282,23 @@ export class RealtimeScoringService extends EventEmitter {
       newTotalScore: player.score,
       rank: player.rank,
       calculation: scoreCalculation
+    });
+    
+    // Also emit to GameManager for database persistence
+    this.emit('score:database_update', {
+      gameId,
+      playerId,
+      scoreData: {
+        score: player.score,
+        correctAnswers: player.correctAnswers,
+        questionsAnswered: player.questionsAnswered,
+        currentStreak: player.currentStreak,
+        bestStreak: player.bestStreak,
+        timeBonuses: player.timeBonuses,
+        streakBonuses: player.streakBonuses
+      },
+      answer,
+      scoreCalculation
     });
 
     // Schedule leaderboard animation

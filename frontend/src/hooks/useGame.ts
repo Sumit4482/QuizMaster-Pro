@@ -392,6 +392,34 @@ export function useGame(): UseGameResult {
   const handleScoreUpdate = useCallback((data: any) => {
     console.log('🔢 Score update received:', data);
     
+    // Handle direct score update from RealtimeScoringService
+    if (data.playerId && data.newTotalScore !== undefined) {
+      console.log('📈 Direct score update:', {
+        playerId: data.playerId,
+        scoreChange: data.scoreChange,
+        newScore: data.newTotalScore,
+        rank: data.rank
+      });
+      
+      gameActions.updatePlayerScore(data.playerId, data.newTotalScore, data.rank || 0);
+      
+      // If this is the current player, update their score
+      if (data.playerId === gameStore.currentPlayer?.userId) {
+        gameActions.updatePlayerScore(data.playerId, data.newTotalScore, data.rank || 0);
+      }
+      return;
+    }
+    
+    // Handle legacy score update format
+    if (data.userId && data.newScore !== undefined) {
+      gameActions.updatePlayerScore(data.userId, data.newScore, data.newRank || 0);
+      
+      if (data.userId === gameStore.currentPlayer?.userId) {
+        gameActions.updatePlayerScore(data.userId, data.newScore, data.newRank || 0);
+      }
+      return;
+    }
+    
     // Update answered count if provided
     if (data.answeredCount !== undefined && 
         gameStore.currentQuestion &&
@@ -613,6 +641,12 @@ export function useGame(): UseGameResult {
     // Game lifecycle events
     socket.on('game_event', handleGameEvent);
     
+    // Direct score updates (personal)
+    socket.on('score_update', handleScoreUpdate);
+    
+    // Leaderboard updates (personal)
+    socket.on('leaderboard_personal', handleLeaderboardUpdated);
+    
     // Question broadcast events (requires acknowledgment)
     socket.on('question_broadcast', handleQuestionBroadcast);
     
@@ -625,6 +659,8 @@ export function useGame(): UseGameResult {
     
     return () => {
       socket.off('game_event', handleGameEvent);
+      socket.off('score_update', handleScoreUpdate);
+      socket.off('leaderboard_personal', handleLeaderboardUpdated);
       socket.off('question_broadcast', handleQuestionBroadcast);
       socket.off('answer_acknowledged', handleAnswerAcknowledged);
       socket.off('room:user_joined', handlePlayerJoined);

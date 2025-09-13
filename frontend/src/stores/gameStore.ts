@@ -85,6 +85,7 @@ interface GameStore {
     // Leaderboard
     updateLeaderboard: (leaderboard: LeaderboardEntry[]) => void;
     updatePlayerScore: (userId: string, score: number, rank: number) => void;
+    setMyScore: (score: number, rank: number) => void;
     
     // Game results
     setGameResult: (result: GameResult) => void;
@@ -395,6 +396,22 @@ export const useGameStore = create<GameStore>()(
         
         if (userId === get().currentPlayer?.userId) {
           set({ myScore: score, myRank: rank });
+        }
+      },
+      
+      setMyScore: (score: number, rank: number) => {
+        set({ myScore: score, myRank: rank });
+        
+        // Also update the current player's score
+        const currentPlayer = get().currentPlayer;
+        if (currentPlayer) {
+          set({
+            currentPlayer: {
+              ...currentPlayer,
+              score,
+              rank
+            }
+          });
         }
       },
       

@@ -79,6 +79,7 @@ export class GameManager extends EventEmitter {
   private setupServiceEventListeners(): void {
     // Question broadcast events
     this.questionBroadcast.on('answer:submitted', ({ gameId, playerId, answer }) => {
+      logger.info('Answer submitted event received', { gameId, playerId, answer });
       this.handleAnswerSubmission(gameId, playerId, answer);
     });
 
@@ -88,7 +89,13 @@ export class GameManager extends EventEmitter {
 
     // Scoring events
     this.realtimeScoring.on('score:updated', ({ gameId, playerId, scoreCalculation }) => {
+      logger.info('Score updated event received', { gameId, playerId, scoreCalculation });
       this.handleScoreUpdate(gameId, playerId, scoreCalculation);
+    });
+    
+    this.realtimeScoring.on('score:database_update', ({ gameId, playerId, scoreData, answer, scoreCalculation }) => {
+      logger.info('Database update event received', { gameId, playerId, scoreData });
+      this.handleDatabaseUpdate(gameId, playerId, scoreData, answer, scoreCalculation);
     });
 
     // Timer events
@@ -545,25 +552,50 @@ export class GameManager extends EventEmitter {
   /**
    * Handle answer submission events from question broadcast service
    */
-  private handleAnswerSubmission(gameId: string, playerId: string, answer: PlayerAnswer): void {
-    const gameState = this.gameStateSync.getGameState(gameId);
-    if (!gameState || !gameState.currentQuestion) return;
+  private async handleAnswerSubmission(gameId: string, playerId: string, answer: PlayerAnswer): Promise<void> {
+    try {
+      logger.info('Processing answer submission', { gameId, playerId, answer });
+      
+      const gameState = this.gameStateSync.getGameState(gameId);
+      if (!gameState || !gameState.currentQuestion) {
+        logger.warn('Game state or current question not found', { gameId, playerId });
+        return;
+      }
 
-    const player = gameState.players.get(playerId);
-    if (!player) return;
+      const player = gameState.players.get(playerId);
+      if (!player) {
+        logger.warn('Player not found in game state', { gameId, playerId });
+        return;
+      }
 
-    // Calculate score using enhanced scoring service
-    const scoreCalculation = this.realtimeScoring.calculateScore(
-      gameId,
-      playerId,
-      answer,
-      gameState.currentQuestion.difficultyLevel,
-      gameState.quizConfig.timePerQuestion * 1000,
-      player.currentStreak
-    );
+      logger.info('Calculating score for answer', {
+        gameId, 
+        playerId, 
+        questionDifficulty: gameState.currentQuestion.difficultyLevel,
+        timePerQuestion: gameState.quizConfig.timePerQuestion,
+        currentStreak: player.currentStreak
+      });
 
-    // Update player score through scoring service
-    this.realtimeScoring.updatePlayerScore(gameId, playerId, answer, scoreCalculation);
+      // Calculate score using enhanced scoring service
+      const scoreCalculation = this.realtimeScoring.calculateScore(
+        gameId,
+        playerId,
+        answer,
+        gameState.currentQuestion.difficultyLevel,
+        gameState.quizConfig.timePerQuestion * 1000,
+        player.currentStreak
+      );
+
+      logger.info('Score calculated, updating player score', { gameId, playerId, scoreCalculation });
+
+      // Update player score through scoring service
+      await this.realtimeScoring.updatePlayerScore(gameId, playerId, answer, scoreCalculation);
+      
+      logger.info('Player score updated successfully', { gameId, playerId });
+      
+    } catch (error) {
+      logger.error('Error handling answer submission', { gameId, playerId, error });
+    }
   }
 
   /**
@@ -585,6 +617,39 @@ export class GameManager extends EventEmitter {
           logger.error('Failed to start next question after break', { gameId, error });
         });
       }, breakDuration);
+    }
+  }
+
+  /**
+   * Handle database update events from scoring service
+   */
+  private async handleDatabaseUpdate(
+    gameId: string, 
+    playerId: string, 
+    scoreData: any, 
+    answer: PlayerAnswer, 
+    scoreCalculation: ScoreCalculation
+  ): Promise<void> {
+    try {
+      // Here you could add database persistence logic
+      // For now, just log the event for debugging
+      logger.info('Database update would be processed here', {
+        gameId,
+        playerId,
+        scoreData,
+        answer: {
+          questionId: answer.questionId,
+          isCorrect: answer.isCorrect,
+          timeTaken: answer.timeTaken
+        },
+        scoreCalculation
+      });
+      
+      // TODO: Add actual database persistence when needed
+      // This could write to a game_scores table or update player statistics
+      
+    } catch (error) {
+      logger.error('Error handling database update', { gameId, playerId, error });
     }
   }
 

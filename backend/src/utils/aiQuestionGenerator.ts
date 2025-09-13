@@ -54,7 +54,9 @@ Format each question as JSON with this exact structure:
   "options": ["option1", "option2", "option3", "option4"],
   "correctAnswer": "option1",
   "explanation": "Brief explanation why this answer is correct...",
-  "difficulty": ${difficulty}
+  "difficulty": ${difficulty},
+  "points": 10,
+  "estimatedTime": 30
 }
 
 CRITICAL REQUIREMENTS:
@@ -72,7 +74,10 @@ Example:
   "questionText": "Which C++ keyword prevents modification of a variable after initialization?",
   "options": ["const", "auto", "static", "volatile"],
   "correctAnswer": "const",
-  "explanation": "The const keyword prevents modification of a variable after its initialization."
+  "explanation": "The const keyword prevents modification of a variable after its initialization.",
+  "difficulty": ${difficulty},
+  "points": 10,
+  "estimatedTime": 30
 }
 
 Return ONLY the JSON array, nothing else.`;

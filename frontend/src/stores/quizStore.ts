@@ -299,6 +299,14 @@ export const useQuizStore = create<QuizStore>()(
             timeTaken,
           });
 
+          console.log('📊 Answer response received:', {
+            isCorrect: response.isCorrect,
+            pointsEarned: response.pointsEarned,
+            sessionProgress: response.sessionProgress,
+            oldScore: session.totalScore,
+            newScore: response.sessionProgress.totalScore
+          });
+
           // Update user answers
           const newAnswer: QuizAnswer = {
             questionId: answer.questionId,
@@ -316,7 +324,11 @@ export const useQuizStore = create<QuizStore>()(
             session: {
               ...state.session!,
               ...response.sessionProgress,
+              // Explicitly set the score to ensure it updates
+              totalScore: response.sessionProgress.totalScore,
             },
+            // Force a re-render by updating a timestamp
+            lastUpdated: Date.now(),
           }));
 
           // Check if quiz is completed

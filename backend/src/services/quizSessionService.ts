@@ -430,7 +430,9 @@ export class QuizSessionService {
           explanation: aiQuestion.explanation,
           difficultyLevel: aiQuestion.difficulty,
           questionType: aiQuestion.questionType,
-          options: aiQuestion.options
+          options: aiQuestion.options,
+          points: aiQuestion.points || 10, // Default points for AI questions
+          estimatedTime: aiQuestion.estimatedTime || 30 // Default time for bonuses
         };
       } else {
         // For database questions, fetch from database
@@ -610,11 +612,14 @@ export class QuizSessionService {
         },
       };
 
-      logger.info('Answer submitted', { 
+      logger.info('Answer submitted successfully', { 
         sessionId, 
         questionId, 
-        isCorrect, 
-        pointsEarned: scoring.totalPoints 
+        isCorrect: finalIsCorrect, 
+        pointsEarned: scoring.totalPoints,
+        oldScore: session.totalScore,
+        newScore: updatedSession.totalScore,
+        sessionProgress: response.sessionProgress
       });
 
       return response;

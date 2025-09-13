@@ -100,7 +100,15 @@ export default function OneVsOnePage() {
     // Round result
     const handleRoundResult = (data: any) => {
       console.log('1vs1 round result:', data);
-      // Handle round results (scores, correct answers, etc.)
+      
+      // Update opponent score if provided
+      if (data.currentScores && opponent) {
+        const updatedOpponent = {
+          ...opponent,
+          score: data.currentScores.player2 || opponent.score
+        };
+        setOpponent(updatedOpponent);
+      }
     };
 
     // Game finished
