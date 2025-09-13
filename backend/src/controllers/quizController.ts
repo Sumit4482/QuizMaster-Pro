@@ -57,6 +57,28 @@ export class QuizController {
         return;
       }
 
+      // Convert difficulty level strings to numbers if needed
+      const difficultyLevelMap: Record<string, number> = {
+        'EASY': 1,
+        'MEDIUM': 2,
+        'HARD': 3,
+        'EXPERT': 4
+      };
+
+      // Ensure difficultyLevels are numbers
+      if (config.difficultyLevels && config.difficultyLevels.length > 0) {
+        config.difficultyLevels = config.difficultyLevels.map((level: any) => {
+          if (typeof level === 'string') {
+            const numericLevel = difficultyLevelMap[level.toUpperCase()];
+            if (numericLevel === undefined) {
+              throw new Error(`Invalid difficulty level: ${level}`);
+            }
+            return numericLevel;
+          }
+          return Number(level);
+        });
+      }
+
       const session = await this.quizSessionService.createSession(userId, config);
 
       logger.info('Quiz session created via API', { sessionId: session.id, userId });

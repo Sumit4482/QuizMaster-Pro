@@ -19,6 +19,9 @@ export interface QuizConfiguration {
   shuffleQuestions: boolean;
   allowPause: boolean;
   showExplanations: boolean;
+  // AI Question Support
+  useAI?: boolean;
+  aiTopic?: string;
 }
 
 export interface CreateQuizSessionRequest extends QuizConfiguration {

@@ -290,10 +290,9 @@ export const useQuizStore = create<QuizStore>()(
         try {
           set({ isSubmittingAnswer: true, error: null });
           
-          // Stop timer and calculate time taken (use provided time or calculate from timer)
+          // Stop timer and calculate time taken
           get().stopTimer();
-          const calculatedTimeTaken = timer.startTime ? Math.floor((Date.now() - timer.startTime) / 1000) : 0;
-          const timeTaken = answer.timeTaken !== undefined ? answer.timeTaken : calculatedTimeTaken;
+          const timeTaken = timer.startTime ? Math.floor((Date.now() - timer.startTime) / 1000) : 0;
 
           const response = await quizApi.gameplay.submitAnswer(session.id, {
             ...answer,

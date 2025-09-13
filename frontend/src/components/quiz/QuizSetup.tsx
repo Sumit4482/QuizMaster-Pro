@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useQuizStore, useQuizActions, useQuizSetupForm, useQuizLoading, useQuizError } from '@/stores/quizStore';
 import { categoryApi } from '@/utils/questionApi';
+import { getTokens } from '@/utils/api';
 import {
   QuizSetupFormData,
   QuizCategory,
@@ -27,6 +28,11 @@ export const QuizSetup: React.FC<QuizSetupProps> = ({ onSessionCreated }) => {
   const [categories, setCategories] = useState<QuizCategory[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [categoryError, setCategoryError] = useState<string | null>(null);
+  
+  // AI-related state
+  const [useAI, setUseAI] = useState(false);
+  const [aiTopic, setAiTopic] = useState('');
+  const [aiGenerating, setAiGenerating] = useState(false);
 
   // Load categories on component mount
   useEffect(() => {
@@ -81,34 +87,99 @@ export const QuizSetup: React.FC<QuizSetupProps> = ({ onSessionCreated }) => {
     handleInputChange('selectedCategories', []);
   };
 
+  // AI Question Generation Function
+  const generateAIQuestions = async (topic: string, difficulty: number, count: number) => {
+    try {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const { accessToken } = getTokens();
+      const response = await fetch(`${API_BASE}/api/ai/generate/questions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          topic: topic || 'General Knowledge',
+          difficulty: difficulty,
+          count: count,
+          questionType: 'MULTIPLE_CHOICE'
+        })
+      });
 
+      if (!response.ok) {
+        throw new Error(`AI service error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to generate questions');
+      }
+
+      // AI API returns questions in data.data.questions
+      const questions = data.data?.questions || data.questions || [];
+      return questions;
+    } catch (error) {
+      console.error('AI generation error:', error);
+      throw new Error('Failed to generate AI questions. Please try library questions instead.');
+    }
+  };
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e?.preventDefault) {
       e.preventDefault();
     }
 
-    // Simple validation - just need categories
-    if (setupForm.selectedCategories.length === 0) {
-      alert('Please select at least one category');
-      return;
+    // Validation based on mode (AI vs Library)
+    if (useAI) {
+      // AI validation
+      if (!aiTopic || aiTopic.trim().length === 0) {
+        alert('Please enter a topic for AI questions');
+        return;
+      }
+    } else {
+      // Library validation
+      if (setupForm.selectedCategories.length === 0) {
+        alert('Please select at least one category');
+        return;
+      }
     }
 
     try {
-      // Create quiz with sensible defaults
-      await createSession({
-        totalQuestions: 10, // Fixed at 10 questions for simplicity
-        categoryIds: setupForm.selectedCategories,
-        difficultyLevels: [1, 2, 3], // Mixed difficulty (Easy, Medium, Hard)
-        questionTypes: ['MULTIPLE_CHOICE', 'TRUE_FALSE'], // Popular question types
-        shuffleQuestions: true, // Always shuffle for variety
-        allowPause: true, // Always allow pause
-        showExplanations: true, // Always show explanations for learning
-        timePerQuestion: 30, // 30 seconds per question
-        title: setupForm.selectedCategories.length === categories.length 
-          ? 'Random Mix Quiz' 
-          : `${categories.filter(c => setupForm.selectedCategories.includes(c.id)).map(c => c.name).join(' & ')} Quiz`
-      });
+      if (useAI) {
+        // AI Quiz Creation
+        setAiGenerating(true);
+        
+        const quizTitle = `${aiTopic} Quiz (AI Generated)`;
+        
+        await createSession({
+          totalQuestions: 10,
+          categoryIds: [], // Not needed for AI quizzes
+          difficultyLevels: [1, 2, 3],
+          questionTypes: ['MULTIPLE_CHOICE'],
+          shuffleQuestions: true,
+          allowPause: true,
+          showExplanations: true,
+          timePerQuestion: 30,
+          title: quizTitle,
+          useAI: true,
+          aiTopic: aiTopic.trim()
+        });
+      } else {
+        // Library Quiz Creation (original logic)
+        await createSession({
+          totalQuestions: 10, // Fixed at 10 questions for simplicity
+          categoryIds: setupForm.selectedCategories,
+          difficultyLevels: [1, 2, 3], // Mixed difficulty (Easy, Medium, Hard)
+          questionTypes: ['MULTIPLE_CHOICE', 'TRUE_FALSE'], // Popular question types
+          shuffleQuestions: true, // Always shuffle for variety
+          allowPause: true, // Always allow pause
+          showExplanations: true, // Always show explanations for learning
+          timePerQuestion: 30, // 30 seconds per question
+          title: setupForm.selectedCategories.length === categories.length 
+            ? 'Random Mix Quiz' 
+            : `${categories.filter(c => setupForm.selectedCategories.includes(c.id)).map(c => c.name).join(' & ')} Quiz`
+        });
+      }
 
       // Session will be available in the store after creation
       const session = useQuizStore.getState().session;
@@ -117,6 +188,9 @@ export const QuizSetup: React.FC<QuizSetupProps> = ({ onSessionCreated }) => {
       }
     } catch (err) {
       console.error('Failed to create quiz session:', err);
+      alert(`Failed to create quiz: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    } finally {
+      setAiGenerating(false);
     }
   };
 
@@ -129,8 +203,6 @@ export const QuizSetup: React.FC<QuizSetupProps> = ({ onSessionCreated }) => {
       console.error('Failed to start quiz session:', err);
     }
   };
-
-
 
   if (loadingCategories) {
     return (
@@ -244,142 +316,219 @@ export const QuizSetup: React.FC<QuizSetupProps> = ({ onSessionCreated }) => {
         </div>
       )}
 
-      {/* Random Option */}
-      <div 
-        className="cursor-pointer"
-        onClick={() => {
-          // Set random configuration
-          const allCategoryIds = categories.map(cat => cat.id);
-          handleInputChange('selectedCategories', allCategoryIds);
-          handleSubmit({ preventDefault: () => {} } as any);
-        }}
-      >
-        <Card className="p-8 transform hover:scale-105 transition-all duration-200 border-2 hover:border-purple-500 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
-        <div className="text-center">
-          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-4xl mb-4">
-            🎲
-          </div>
-          <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
-            🎲 Surprise Me!
-          </h3>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-            Random mix from all categories - perfect for discovering new topics!
-          </p>
-          <div className="text-sm text-purple-600 dark:text-purple-400 font-medium">
-            ⚡ Click to start instantly
-          </div>
+      {/* AI/Library Toggle */}
+      <div className="flex justify-center mb-6">
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-1 flex">
+          <button
+            type="button"
+            onClick={() => setUseAI(false)}
+            className={`px-6 py-3 rounded-md transition-all font-medium ${
+              !useAI
+                ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-md'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+            }`}
+          >
+            📚 Library Questions
+          </button>
+          <button
+            type="button"
+            onClick={() => setUseAI(true)}
+            className={`px-6 py-3 rounded-md transition-all font-medium ${
+              useAI
+                ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-purple-400 shadow-md'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+            }`}
+          >
+            🤖 AI Questions
+          </button>
         </div>
-        </Card>
       </div>
 
-      {/* Categories Selection */}
-      <div className="space-y-6">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            Or Pick Your Favorite Topics
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            Select one or more categories that interest you
-          </p>
-        </div>
-        
-        {/* Select All/Deselect All Controls */}
-        {categories.length > 0 && (
-          <div className="flex justify-center space-x-3">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleSelectAllCategories}
-              disabled={setupForm.selectedCategories.length === categories.length}
-            >
-              Select All
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleDeselectAllCategories}
-              disabled={setupForm.selectedCategories.length === 0}
-            >
-              Deselect All
-            </Button>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {categories.map((category) => (
-            <div
-              key={category.id}
-              className="cursor-pointer"
-              onClick={() => handleCategoryToggle(category.id)}
-            >
-              <Card
-                className={`transform hover:scale-105 transition-all duration-200 border-2 ${
-                  setupForm.selectedCategories.includes(category.id)
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg'
-                    : 'border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500'
-                }`}
-              >
-              <div className="p-6 text-center">
-                <div className="text-4xl mb-3">
-                  {category.icon || '📚'}
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {category.name}
-                </h3>
-                {category.description && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                    {category.description}
-                  </p>
-                )}
-                {setupForm.selectedCategories.includes(category.id) && (
-                  <div className="mt-3">
-                    <Badge className="bg-blue-500 text-white">
-                      ✓ Selected
-                    </Badge>
-                  </div>
-                )}
+      {useAI ? (
+        /* AI Topic Input */
+        <div className="space-y-6">
+          <Card className="p-8 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+            <div className="text-center mb-6">
+              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-4xl mb-4">
+                🤖
               </div>
-              </Card>
-            </div>
-          ))}
-        </div>
-
-        {/* Start Quiz Button */}
-        {setupForm.selectedCategories.length > 0 && (
-          <div className="text-center">
-            <Button
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 text-lg rounded-lg transform hover:scale-105 transition-all duration-200"
-            >
-              {isLoading ? (
-                <>
-                  <LoadingSpinner size="sm" className="mr-2" />
-                  Setting up your quiz...
-                </>
-              ) : (
-                `🚀 Start Quiz (${setupForm.selectedCategories.length} ${setupForm.selectedCategories.length === 1 ? 'topic' : 'topics'} selected)`
-              )}
-            </Button>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-              10 questions • Mixed difficulty • 30 seconds per question
-            </p>
-          </div>
-        )}
-
-        {/* Instructions */}
-        {setupForm.selectedCategories.length === 0 && (
-          <div className="text-center">
-            <Card className="p-6 bg-gray-50 dark:bg-gray-800">
-              <p className="text-gray-600 dark:text-gray-400">
-                👆 Choose the "Surprise Me" option for instant play, or select your favorite topics below to get started!
+              <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+                🎯 AI-Generated Quiz
+              </h3>
+              <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
+                Tell the AI what you want to learn about, and it will create custom questions for you!
               </p>
+              
+              <div className="max-w-md mx-auto">
+                <Input
+                  type="text"
+                  placeholder="e.g., JavaScript programming, World History, Biology..."
+                  value={aiTopic}
+                  onChange={(e) => setAiTopic(e.target.value)}
+                  className="w-full text-lg p-4 rounded-lg border-2 border-purple-200 dark:border-purple-600 focus:border-purple-500 dark:focus:border-purple-400"
+                />
+              </div>
+              
+              <div className="mt-6">
+                <Button
+                  onClick={handleSubmit}
+                  disabled={isLoading || aiGenerating || !aiTopic.trim()}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-8 text-lg rounded-lg transform hover:scale-105 transition-all duration-200"
+                >
+                  {isLoading || aiGenerating ? (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2" />
+                      {aiGenerating ? 'Generating AI Quiz...' : 'Creating Quiz...'}
+                    </>
+                  ) : (
+                    '🚀 Create AI Quiz'
+                  )}
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      ) : (
+        /* Library Questions (Original UI) */
+        <div className="space-y-6">
+          {/* Random Option */}
+          <div 
+            className="cursor-pointer"
+            onClick={() => {
+              // Set random configuration
+              const allCategoryIds = categories.map(cat => cat.id);
+              handleInputChange('selectedCategories', allCategoryIds);
+              handleSubmit({ preventDefault: () => {} } as any);
+            }}
+          >
+            <Card className="p-8 transform hover:scale-105 transition-all duration-200 border-2 hover:border-purple-500 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-4xl mb-4">
+                  🎲
+                </div>
+                <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+                  🎲 Surprise Me!
+                </h3>
+                <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
+                  Random mix from all categories - perfect for discovering new topics!
+                </p>
+                <div className="text-sm text-purple-600 dark:text-purple-400 font-medium">
+                  ⚡ Click to start instantly
+                </div>
+              </div>
             </Card>
           </div>
-        )}
-      </div>
+
+          {/* Categories Selection */}
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Or Pick Your Favorite Topics
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Select one or more categories that interest you
+              </p>
+            </div>
+            
+            {/* Select All/Deselect All Controls */}
+            {categories.length > 0 && (
+              <div className="flex justify-center space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSelectAllCategories}
+                  disabled={setupForm.selectedCategories.length === categories.length}
+                >
+                  Select All
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDeselectAllCategories}
+                  disabled={setupForm.selectedCategories.length === 0}
+                >
+                  Deselect All
+                </Button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {categories.map((category) => (
+                <div
+                  key={category.id}
+                  className="cursor-pointer"
+                  onClick={() => handleCategoryToggle(category.id)}
+                >
+                  <Card
+                    className={`transform hover:scale-105 transition-all duration-200 border-2 ${
+                      setupForm.selectedCategories.includes(category.id)
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500'
+                    }`}
+                  >
+                    <div className="p-6 text-center">
+                      <div className="text-4xl mb-3">
+                        {category.icon || '📚'}
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                        {category.name}
+                      </h3>
+                      {category.description && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                          {category.description}
+                        </p>
+                      )}
+                      {setupForm.selectedCategories.includes(category.id) && (
+                        <div className="mt-3">
+                          <Badge className="bg-blue-500 text-white">
+                            ✓ Selected
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                </div>
+              ))}
+            </div>
+
+            {/* Start Quiz Button */}
+            {setupForm.selectedCategories.length > 0 && (
+              <div className="text-center">
+                <Button
+                  onClick={handleSubmit}
+                  disabled={isLoading}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 text-lg rounded-lg transform hover:scale-105 transition-all duration-200"
+                >
+                  {isLoading ? (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2" />
+                      Setting up your quiz...
+                    </>
+                  ) : (
+                    `🚀 Start Quiz (${setupForm.selectedCategories.length} ${setupForm.selectedCategories.length === 1 ? 'topic' : 'topics'} selected)`
+                  )}
+                </Button>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                  10 questions • Mixed difficulty • 30 seconds per question
+                </p>
+              </div>
+            )}
+
+            {/* Instructions */}
+            {setupForm.selectedCategories.length === 0 && (
+              <div className="text-center">
+                <Card className="p-6 bg-gray-50 dark:bg-gray-800">
+                  <p className="text-gray-600 dark:text-gray-400">
+                    👆 Choose the "Surprise Me" option for instant play, or select your favorite topics below to get started!
+                  </p>
+                </Card>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

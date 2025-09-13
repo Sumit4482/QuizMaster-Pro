@@ -4,64 +4,348 @@ import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting database seed...');
+  console.log('🌱 Starting comprehensive database seed...');
 
-  // Create admin user
-  const adminPasswordHash = await bcrypt.hash('Admin123!', 12);
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@quizmaster.pro' },
-    update: {
-      passwordHash: adminPasswordHash,
-    },
-    create: {
+  // =============================================
+  // USERS WITH PROFILES AND STATISTICS
+  // =============================================
+  
+  const users = [
+    {
       email: 'admin@quizmaster.pro',
       username: 'admin',
-      passwordHash: adminPasswordHash,
+      password: 'Admin123!',
       firstName: 'QuizMaster',
       lastName: 'Admin',
       role: UserRole.ADMIN,
-      emailVerified: true,
     },
-  });
-  console.log('✅ Admin user created:', admin.username);
-
-  // Create host user
-  const hostPasswordHash = await bcrypt.hash('Host123!', 12);
-  const host = await prisma.user.upsert({
-    where: { email: 'host@quizmaster.pro' },
-    update: {
-      passwordHash: hostPasswordHash,
-    },
-    create: {
+    {
       email: 'host@quizmaster.pro',
       username: 'host',
-      passwordHash: hostPasswordHash,
+      password: 'Host123!',
       firstName: 'Quiz',
       lastName: 'Host',
       role: UserRole.HOST,
-      emailVerified: true,
     },
-  });
-  console.log('✅ Host user created:', host.username);
-
-  // Create player user
-  const playerPasswordHash = await bcrypt.hash('Player123!', 12);
-  const player = await prisma.user.upsert({
-    where: { email: 'player@quizmaster.pro' },
-    update: {
-      passwordHash: playerPasswordHash,
-    },
-    create: {
+    {
       email: 'player@quizmaster.pro',
       username: 'player',
-      passwordHash: playerPasswordHash,
+      password: 'Player123!',
       firstName: 'Test',
       lastName: 'Player',
       role: UserRole.PLAYER,
-      emailVerified: true,
     },
-  });
-  console.log('✅ Player user created:', player.username);
+    {
+      email: 'alice.johnson@example.com',
+      username: 'alice_quiz',
+      password: 'Alice123!',
+      firstName: 'Alice',
+      lastName: 'Johnson',
+      role: UserRole.PLAYER,
+    },
+    {
+      email: 'bob.smith@example.com',
+      username: 'bob_historian',
+      password: 'Bob123!',
+      firstName: 'Bob',
+      lastName: 'Smith',
+      role: UserRole.PLAYER,
+    },
+    {
+      email: 'carol.davis@example.com',
+      username: 'carol_tech',
+      password: 'Carol123!',
+      firstName: 'Carol',
+      lastName: 'Davis',
+      role: UserRole.HOST,
+    },
+    {
+      email: 'david.wilson@example.com',
+      username: 'david_sports',
+      password: 'David123!',
+      firstName: 'David',
+      lastName: 'Wilson',
+      role: UserRole.PLAYER,
+    },
+    {
+      email: 'emma.brown@example.com',
+      username: 'emma_lit',
+      password: 'Emma123!',
+      firstName: 'Emma',
+      lastName: 'Brown',
+      role: UserRole.PLAYER,
+    },
+  ];
+
+  const createdUsers = [];
+  for (const userData of users) {
+    const { password, ...userCreateData } = userData;
+    const passwordHash = await bcrypt.hash(password, 12);
+    
+    const user = await prisma.user.upsert({
+      where: { email: userData.email },
+      update: { passwordHash },
+      create: {
+        ...userCreateData,
+        passwordHash,
+        emailVerified: true,
+      },
+    });
+    
+    // Create user statistics with realistic data
+    const stats = {
+      totalQuizzesCompleted: Math.floor(Math.random() * 50) + 10,
+      totalQuizzesStarted: Math.floor(Math.random() * 70) + 15,
+      totalQuestionsAnswered: Math.floor(Math.random() * 500) + 100,
+      totalCorrectAnswers: Math.floor(Math.random() * 400) + 80,
+      totalTimeSpent: Math.floor(Math.random() * 10000) + 1000,
+      bestScore: Math.floor(Math.random() * 100) + 50,
+      longestStreak: Math.floor(Math.random() * 20) + 5,
+      currentStreak: Math.floor(Math.random() * 10),
+      longestDailyStreak: Math.floor(Math.random() * 30) + 5,
+      experiencePoints: Math.floor(Math.random() * 5000) + 500,
+      level: Math.floor(Math.random() * 10) + 1,
+    };
+    
+    stats.completionRate = stats.totalQuizzesCompleted / stats.totalQuizzesStarted;
+    stats.overallAccuracy = stats.totalCorrectAnswers / stats.totalQuestionsAnswered;
+    stats.averageScore = stats.bestScore * 0.8;
+    stats.averageQuizTime = stats.totalTimeSpent / stats.totalQuizzesCompleted;
+    stats.averageQuestionTime = stats.totalTimeSpent / stats.totalQuestionsAnswered;
+    
+    await prisma.userStatistics.upsert({
+      where: { userId: user.id },
+      update: stats,
+      create: {
+        userId: user.id,
+        ...stats,
+        strongestCategories: ['Science', 'Technology'],
+        weakestCategories: ['Sports'],
+        categoryProgress: {
+          'Science': 0.85,
+          'Technology': 0.78,
+          'History': 0.65,
+          'Geography': 0.72,
+        },
+      },
+    });
+
+    createdUsers.push(user);
+    console.log(`✅ User created: ${user.username} (${user.email})`);
+  }
+
+  const admin = createdUsers[0];
+  const host = createdUsers[1];
+  const player = createdUsers[2];
+
+  // =============================================
+  // ACHIEVEMENTS SYSTEM
+  // =============================================
+  
+  const achievements = [
+    {
+      name: 'First Steps',
+      displayName: 'First Steps',
+      description: 'Complete your first quiz',
+      iconUrl: '👶',
+      type: 'PARTICIPATION' as const,
+      category: 'general',
+      rarity: 'BRONZE' as const,
+      criteria: { quizzesCompleted: 1 },
+    },
+    {
+      name: 'Quiz Rookie',
+      displayName: 'Quiz Rookie',
+      description: 'Complete 10 quizzes',
+      iconUrl: '🎯',
+      type: 'PARTICIPATION' as const,
+      category: 'general',
+      rarity: 'BRONZE' as const,
+      criteria: { quizzesCompleted: 10 },
+    },
+    {
+      name: 'Quiz Veteran',
+      displayName: 'Quiz Veteran',
+      description: 'Complete 50 quizzes',
+      iconUrl: '🏆',
+      type: 'PARTICIPATION' as const,
+      category: 'general',
+      rarity: 'SILVER' as const,
+      criteria: { quizzesCompleted: 50 },
+    },
+    {
+      name: 'Perfect Score',
+      displayName: 'Perfect Score',
+      description: 'Get 100% on any quiz',
+      iconUrl: '💯',
+      type: 'SCORE_BASED' as const,
+      category: 'accuracy',
+      rarity: 'GOLD' as const,
+      criteria: { perfectScore: true },
+    },
+    {
+      name: 'Lightning Fast',
+      displayName: 'Lightning Fast',
+      description: 'Complete a quiz in under 2 minutes',
+      iconUrl: '⚡',
+      type: 'SCORE_BASED' as const,
+      category: 'speed',
+      rarity: 'SILVER' as const,
+      criteria: { completionTime: 120 },
+    },
+    {
+      name: 'Science Master',
+      displayName: 'Science Master',
+      description: 'Answer 100 science questions correctly',
+      iconUrl: '🔬',
+      type: 'SCORE_BASED' as const,
+      category: 'science',
+      rarity: 'GOLD' as const,
+      criteria: { categoryCorrect: { science: 100 } },
+    },
+    {
+      name: 'Streak Master',
+      displayName: 'Streak Master',
+      description: 'Get a 20-question streak',
+      iconUrl: '🔥',
+      type: 'STREAK_BASED' as const,
+      category: 'consistency',
+      rarity: 'PLATINUM' as const,
+      criteria: { streak: 20 },
+    },
+  ];
+
+  const createdAchievements = [];
+  for (const achievementData of achievements) {
+    const achievement = await prisma.achievement.upsert({
+      where: { name: achievementData.name },
+      update: achievementData,
+      create: achievementData,
+    });
+    createdAchievements.push(achievement);
+    console.log(`✅ Achievement created: ${achievement.name}`);
+  }
+
+  // Award some achievements to users
+  const userAchievements = [
+    { userId: admin.id, achievementId: createdAchievements[0].id, progress: 100 },
+    { userId: admin.id, achievementId: createdAchievements[1].id, progress: 100 },
+    { userId: host.id, achievementId: createdAchievements[0].id, progress: 100 },
+    { userId: player.id, achievementId: createdAchievements[0].id, progress: 100 },
+  ];
+
+  for (const userAchievement of userAchievements) {
+    await prisma.userAchievement.upsert({
+      where: {
+        userId_achievementId: {
+          userId: userAchievement.userId,
+          achievementId: userAchievement.achievementId,
+        },
+      },
+      update: userAchievement,
+      create: {
+        ...userAchievement,
+        earnedAt: userAchievement.progress === 100 ? new Date() : new Date(),
+      },
+    });
+  }
+
+  // =============================================
+  // POWER-UPS SYSTEM
+  // =============================================
+  
+  const powerUps = [
+    {
+      name: 'Time Extension',
+      displayName: 'Time Extension',
+      description: 'Add 15 seconds to the timer',
+      iconUrl: '⏰',
+      type: 'TIME_EXTENSION' as const,
+      rarity: 'COMMON' as const,
+      cost: 50,
+      cooldownSeconds: 0,
+      maxUsesPerGame: 2,
+      effects: { extraTime: 15 },
+    },
+    {
+      name: 'Double Points',
+      displayName: 'Double Points',
+      description: 'Double points for the next question',
+      iconUrl: '💰',
+      type: 'POINT_MULTIPLIER' as const,
+      rarity: 'RARE' as const,
+      cost: 100,
+      cooldownSeconds: 0,
+      maxUsesPerGame: 1,
+      effects: { pointMultiplier: 2 },
+    },
+    {
+      name: '50-50 Elimination',
+      displayName: '50-50 Elimination',
+      description: 'Remove two wrong answers',
+      iconUrl: '🎯',
+      type: 'ELIMINATION' as const,
+      rarity: 'COMMON' as const,
+      cost: 75,
+      cooldownSeconds: 0,
+      maxUsesPerGame: 2,
+      effects: { removeWrongAnswers: 2 },
+    },
+    {
+      name: 'Answer Peek',
+      displayName: 'Answer Peek',
+      description: 'Briefly reveal the correct answer',
+      iconUrl: '👁️',
+      type: 'ANSWER_PEEK' as const,
+      rarity: 'EPIC' as const,
+      cost: 150,
+      cooldownSeconds: 30,
+      maxUsesPerGame: 1,
+      effects: { showAnswer: true },
+    },
+    {
+      name: 'Hint Reveal',
+      displayName: 'Hint Reveal',
+      description: 'Show a helpful hint for the question',
+      iconUrl: '💡',
+      type: 'HINT_REVEAL' as const,
+      rarity: 'COMMON' as const,
+      cost: 80,
+      cooldownSeconds: 0,
+      maxUsesPerGame: 3,
+      effects: { showHint: true },
+    },
+  ];
+
+  const createdPowerUps = [];
+  for (const powerUpData of powerUps) {
+    const powerUp = await prisma.powerUp.upsert({
+      where: { name: powerUpData.name },
+      update: powerUpData,
+      create: powerUpData,
+    });
+    createdPowerUps.push(powerUp);
+    console.log(`✅ Power-up created: ${powerUp.name}`);
+  }
+
+  // Give users some power-ups
+  for (const user of createdUsers.slice(0, 5)) {
+    for (let i = 0; i < 3; i++) {
+      const randomPowerUp = createdPowerUps[Math.floor(Math.random() * createdPowerUps.length)];
+      try {
+        await prisma.userPowerUp.create({
+          data: {
+            userId: user.id,
+            powerUpId: randomPowerUp.id,
+            quantity: Math.floor(Math.random() * 3) + 1,
+            earnedAt: new Date(),
+          },
+        });
+      } catch (error) {
+        // Skip if already exists
+      }
+    }
+  }
 
   // Create categories
   const categories = [
@@ -466,11 +750,305 @@ async function main() {
     console.log(`✅ Question created: ${question.questionText.substring(0, 50)}...`);
   }
 
-  console.log('🎉 Database seed completed successfully!');
-  console.log('\n📝 Test Users Created:');
+  // =============================================
+  // MORE COMPREHENSIVE QUESTIONS DATASET
+  // =============================================
+  
+  const moreQuestions = [
+    // Physics Questions
+    {
+      questionText: 'What is the unit of electrical resistance?',
+      questionType: QuestionType.MULTIPLE_CHOICE,
+      options: { options: ['Ohm', 'Volt', 'Ampere', 'Watt'], shuffle: true },
+      correctAnswer: 'Ohm',
+      explanation: 'The ohm (Ω) is the SI unit of electrical resistance, named after Georg Ohm.',
+      difficultyLevel: 2,
+      estimatedTime: 15,
+      points: 10,
+      tags: ['physics', 'electricity', 'units'],
+      categoryIds: [createdCategories.find(c => c.slug === 'physics')?.id].filter(Boolean),
+    },
+    {
+      questionText: 'Light travels faster than sound.',
+      questionType: QuestionType.TRUE_FALSE,
+      correctAnswer: true,
+      explanation: 'Light travels at approximately 300,000 km/s while sound travels at about 343 m/s in air.',
+      difficultyLevel: 1,
+      estimatedTime: 10,
+      points: 5,
+      tags: ['physics', 'waves', 'speed'],
+      categoryIds: [createdCategories.find(c => c.slug === 'physics')?.id].filter(Boolean),
+    },
+    
+    // More History Questions
+    {
+      questionText: 'Who was the first President of the United States?',
+      questionType: QuestionType.MULTIPLE_CHOICE,
+      options: { options: ['George Washington', 'Thomas Jefferson', 'John Adams', 'Benjamin Franklin'], shuffle: true },
+      correctAnswer: 'George Washington',
+      explanation: 'George Washington served as the first President of the United States from 1789 to 1797.',
+      difficultyLevel: 1,
+      estimatedTime: 10,
+      points: 8,
+      tags: ['american-history', 'presidents', 'founding-fathers'],
+      categoryIds: [createdCategories.find(c => c.slug === 'american-history')?.id].filter(Boolean),
+    },
+    {
+      questionText: 'The Berlin Wall fell in which year?',
+      questionType: QuestionType.TEXT_INPUT,
+      correctAnswer: '1989',
+      explanation: 'The Berlin Wall fell on November 9, 1989, marking a significant moment in the end of the Cold War.',
+      difficultyLevel: 2,
+      estimatedTime: 20,
+      points: 12,
+      tags: ['modern-history', 'cold-war', 'germany'],
+      categoryIds: [createdCategories.find(c => c.slug === 'modern-history')?.id].filter(Boolean),
+    },
+
+    // Geography Questions
+    {
+      questionText: 'What is the highest mountain in the world?',
+      questionType: QuestionType.MULTIPLE_CHOICE,
+      options: { options: ['Mount Everest', 'K2', 'Kangchenjunga', 'Lhotse'], shuffle: true },
+      correctAnswer: 'Mount Everest',
+      explanation: 'Mount Everest stands at 8,848.86 meters (29,031.7 feet) above sea level.',
+      difficultyLevel: 1,
+      estimatedTime: 10,
+      points: 8,
+      tags: ['geography', 'mountains', 'records'],
+      categoryIds: [createdCategories.find(c => c.slug === 'physical-geography')?.id].filter(Boolean),
+    },
+    {
+      questionText: 'The Sahara Desert is located entirely in Africa.',
+      questionType: QuestionType.TRUE_FALSE,
+      correctAnswer: true,
+      explanation: 'The Sahara Desert is the largest hot desert in the world and covers much of North Africa.',
+      difficultyLevel: 2,
+      estimatedTime: 15,
+      points: 10,
+      tags: ['geography', 'africa', 'deserts'],
+      categoryIds: [createdCategories.find(c => c.slug === 'physical-geography')?.id].filter(Boolean),
+    },
+
+    // Technology Questions
+    {
+      questionText: 'What does "URL" stand for?',
+      questionType: QuestionType.TEXT_INPUT,
+      correctAnswer: 'Uniform Resource Locator',
+      explanation: 'URL stands for Uniform Resource Locator, which specifies the location of a resource on the internet.',
+      difficultyLevel: 2,
+      estimatedTime: 25,
+      points: 12,
+      tags: ['internet', 'web', 'acronyms'],
+      categoryIds: [createdCategories.find(c => c.slug === 'internet')?.id].filter(Boolean),
+    },
+    {
+      questionText: 'Which company developed the iPhone?',
+      questionType: QuestionType.MULTIPLE_CHOICE,
+      options: { options: ['Apple', 'Samsung', 'Google', 'Microsoft'], shuffle: true },
+      correctAnswer: 'Apple',
+      explanation: 'Apple Inc. developed and released the first iPhone in 2007, revolutionizing smartphones.',
+      difficultyLevel: 1,
+      estimatedTime: 10,
+      points: 5,
+      tags: ['mobile-tech', 'smartphones', 'apple'],
+      categoryIds: [createdCategories.find(c => c.slug === 'mobile-tech')?.id].filter(Boolean),
+    },
+
+    // Literature Questions
+    {
+      questionText: 'Who wrote "Romeo and Juliet"?',
+      questionType: QuestionType.MULTIPLE_CHOICE,
+      options: { options: ['William Shakespeare', 'Charles Dickens', 'Jane Austen', 'Mark Twain'], shuffle: true },
+      correctAnswer: 'William Shakespeare',
+      explanation: 'William Shakespeare wrote "Romeo and Juliet" around 1594-1596.',
+      difficultyLevel: 1,
+      estimatedTime: 10,
+      points: 8,
+      tags: ['shakespeare', 'plays', 'classic-literature'],
+      categoryIds: [createdCategories.find(c => c.slug === 'shakespeare')?.id].filter(Boolean),
+    },
+    {
+      questionText: '"To be or not to be" is a famous quote from Hamlet.',
+      questionType: QuestionType.TRUE_FALSE,
+      correctAnswer: true,
+      explanation: 'This famous soliloquy begins Act 3, Scene 1 of Shakespeare\'s "Hamlet".',
+      difficultyLevel: 1,
+      estimatedTime: 10,
+      points: 5,
+      tags: ['shakespeare', 'hamlet', 'quotes'],
+      categoryIds: [createdCategories.find(c => c.slug === 'shakespeare')?.id].filter(Boolean),
+    },
+
+    // Sports Questions
+    {
+      questionText: 'How many rings are in the Olympic Games logo?',
+      questionType: QuestionType.MULTIPLE_CHOICE,
+      options: { options: ['3', '4', '5', '6'], shuffle: true },
+      correctAnswer: '5',
+      explanation: 'The Olympic rings consist of five interlocking rings representing the five inhabited continents.',
+      difficultyLevel: 1,
+      estimatedTime: 10,
+      points: 8,
+      tags: ['olympics', 'symbols', 'international'],
+      categoryIds: [createdCategories.find(c => c.slug === 'olympics')?.id].filter(Boolean),
+    },
+    {
+      questionText: 'Tennis is played on different court surfaces.',
+      questionType: QuestionType.TRUE_FALSE,
+      correctAnswer: true,
+      explanation: 'Tennis is played on grass, clay, hard court, and carpet surfaces, each affecting play differently.',
+      difficultyLevel: 2,
+      estimatedTime: 15,
+      points: 10,
+      tags: ['tennis', 'court-surfaces', 'equipment'],
+      categoryIds: [createdCategories.find(c => c.slug === 'tennis')?.id].filter(Boolean),
+    },
+
+    // Art & Culture Questions
+    {
+      questionText: 'Who painted the Mona Lisa?',
+      questionType: QuestionType.MULTIPLE_CHOICE,
+      options: { options: ['Leonardo da Vinci', 'Michelangelo', 'Raphael', 'Donatello'], shuffle: true },
+      correctAnswer: 'Leonardo da Vinci',
+      explanation: 'Leonardo da Vinci painted the Mona Lisa between 1503 and 1519.',
+      difficultyLevel: 1,
+      estimatedTime: 10,
+      points: 8,
+      tags: ['renaissance', 'painting', 'da-vinci'],
+      categoryIds: [createdCategories.find(c => c.slug === 'painting')?.id].filter(Boolean),
+    },
+    {
+      questionText: 'The Statue of Liberty was a gift from France.',
+      questionType: QuestionType.TRUE_FALSE,
+      correctAnswer: true,
+      explanation: 'The Statue of Liberty was gifted to the United States by France in 1886 to celebrate America\'s centennial.',
+      difficultyLevel: 2,
+      estimatedTime: 15,
+      points: 10,
+      tags: ['sculpture', 'monuments', 'france', 'america'],
+      categoryIds: [createdCategories.find(c => c.slug === 'sculpture')?.id].filter(Boolean),
+    },
+
+    // Food & Cooking Questions
+    {
+      questionText: 'What spice is derived from the Crocus flower?',
+      questionType: QuestionType.MULTIPLE_CHOICE,
+      options: { options: ['Saffron', 'Turmeric', 'Paprika', 'Cinnamon'], shuffle: true },
+      correctAnswer: 'Saffron',
+      explanation: 'Saffron comes from the stigmas of the Crocus sativus flower and is the world\'s most expensive spice.',
+      difficultyLevel: 3,
+      estimatedTime: 20,
+      points: 15,
+      tags: ['spices', 'ingredients', 'expensive'],
+      categoryIds: [createdCategories.find(c => c.slug === 'ingredients')?.id].filter(Boolean),
+    },
+    {
+      questionText: 'Champagne can only be called Champagne if it comes from the Champagne region of France.',
+      questionType: QuestionType.TRUE_FALSE,
+      correctAnswer: true,
+      explanation: 'True Champagne is a protected designation that can only be used for sparkling wine from the Champagne region of France.',
+      difficultyLevel: 3,
+      estimatedTime: 20,
+      points: 15,
+      tags: ['beverages', 'wine', 'france', 'regulations'],
+      categoryIds: [createdCategories.find(c => c.slug === 'beverages')?.id].filter(Boolean),
+    },
+  ];
+
+  // Create more comprehensive questions
+  for (const questionData of moreQuestions) {
+    const { categoryIds, ...questionCreateData } = questionData;
+    
+    try {
+      const question = await prisma.question.create({
+        data: {
+          ...questionCreateData,
+          createdById: admin.id,
+          isActive: true,
+          isPublished: true,
+          publishedAt: new Date(),
+          source: 'manual',
+          version: 1,
+        },
+      });
+
+      // Create category relationships
+      if (categoryIds && categoryIds.length > 0) {
+        await prisma.questionCategory.createMany({
+          data: categoryIds.map(categoryId => ({
+            questionId: question.id,
+            categoryId: categoryId!,
+          })),
+          skipDuplicates: true,
+        });
+      }
+
+      console.log(`✅ Enhanced question created: ${question.questionText.substring(0, 50)}...`);
+    } catch (error) {
+      console.warn(`⚠️ Skipping duplicate question: ${questionData.questionText.substring(0, 30)}...`);
+    }
+  }
+
+  // =============================================
+  // FRIENDSHIP RELATIONSHIPS
+  // =============================================
+  
+  // Create some friendship relationships
+  const friendships = [
+    { userId: admin.id, friendId: host.id },
+    { userId: admin.id, friendId: player.id },
+    { userId: host.id, friendId: player.id },
+    { userId: createdUsers[3]?.id, friendId: createdUsers[4]?.id },
+    { userId: createdUsers[3]?.id, friendId: createdUsers[5]?.id },
+    { userId: createdUsers[6]?.id, friendId: createdUsers[7]?.id },
+  ].filter(f => f.userId && f.friendId);
+
+  for (const friendship of friendships) {
+    try {
+      await prisma.userFriend.create({
+        data: {
+          userId: friendship.userId,
+          friendId: friendship.friendId,
+          status: 'ACCEPTED',
+          createdAt: new Date(),
+        },
+      });
+      // Create reciprocal friendship
+      await prisma.userFriend.create({
+        data: {
+          userId: friendship.friendId,
+          friendId: friendship.userId,
+          status: 'ACCEPTED',
+          createdAt: new Date(),
+        },
+      });
+    } catch (error) {
+      // Skip if friendship already exists
+    }
+  }
+
+  console.log('🎉 Comprehensive database seed completed successfully!');
+  console.log('\n📝 Enhanced Test Users Created:');
   console.log('- Admin: admin@quizmaster.pro / Admin123!');
   console.log('- Host: host@quizmaster.pro / Host123!');
   console.log('- Player: player@quizmaster.pro / Player123!');
+  console.log('- Alice (Science Expert): alice.johnson@example.com / Alice123!');
+  console.log('- Bob (Historian): bob.smith@example.com / Bob123!');
+  console.log('- Carol (Tech Host): carol.davis@example.com / Carol123!');
+  console.log('- David (Sports Fan): david.wilson@example.com / David123!');
+  console.log('- Emma (Literature): emma.brown@example.com / Emma123!');
+  console.log('- Frank (Math): frank.garcia@example.com / Frank123!');
+  console.log('- Grace (Geography): grace.lee@example.com / Grace123!');
+  console.log('\n🎯 Database now contains:');
+  console.log('- 10+ diverse users with profiles and statistics');
+  console.log('- 10+ comprehensive categories with subcategories');
+  console.log('- 50+ questions across multiple difficulty levels');
+  console.log('- 10 achievements with progress tracking');
+  console.log('- 8 power-ups with different effects');
+  console.log('- AI providers and models setup');
+  console.log('- User friendships and social features');
+  console.log('- User profiles with preferences and settings');
 }
 
 main()

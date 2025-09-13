@@ -123,6 +123,27 @@ export function authorize(...allowedRoles: UserRole[]) {
 // Admin only middleware
 export const requireAdmin = authorize(UserRole.ADMIN);
 
+// Role requirement middleware (accepts string array for flexibility)
+export function requireRole(allowedRoles: string[]) {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+    if (!req.user) {
+      unauthorizedResponse(res, 'Authentication required', req.correlationId);
+      return;
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      forbiddenResponse(
+        res,
+        `Access denied. Required roles: ${allowedRoles.join(', ')}`,
+        req.correlationId
+      );
+      return;
+    }
+
+    next();
+  };
+}
+
 // Host or Admin middleware
 export const requireHostOrAdmin = authorize(UserRole.HOST, UserRole.ADMIN);
 

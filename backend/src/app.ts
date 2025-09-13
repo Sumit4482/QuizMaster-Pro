@@ -26,6 +26,15 @@ import healthRoutes from './routes/healthRoutes';
 import questionRoutes from './routes/questionRoutes';
 import categoryRoutes from './routes/categoryRoutes';
 import { quizRoutes } from './routes/quizRoutes';
+import oneVsOneRoutes from './routes/oneVsOneRoutes';
+// DISABLED: Room routes have TypeScript compilation errors - not needed for 1vs1 testing
+// import roomRoutes from './routes/roomRoutes';
+// TEMPORARILY DISABLED: Hybrid routes missing express-validator dependency
+// import hybridQuestionRoutes from './routes/hybridQuestionRoutes';
+// TEMPORARILY DISABLED: Advanced AI routes missing express-validator dependency
+// import advancedAiRoutes from './routes/advancedAiRoutes';
+// TEMPORARILY DISABLED: Monitoring routes missing express-validator dependency
+// import monitoringRoutes from './routes/monitoringRoutes';
 // TEMPORARILY DISABLED: AI database routes causing TypeScript issues
 // import { aiDatabaseRoutes } from './routes/aiDatabaseRoutes';
 // TEMPORARILY DISABLED: Complex AI service has TypeScript compilation issues
@@ -116,6 +125,15 @@ export function createApp(): Application {
   app.use('/api/questions', questionRoutes);
   app.use('/api/categories', categoryRoutes);
   app.use('/api/quiz', quizRoutes);
+  app.use('/api/1vs1', oneVsOneRoutes);
+  // TEMPORARILY DISABLED: Room routes have TypeScript compilation errors
+  // app.use('/api/rooms', roomRoutes);
+  // TEMPORARILY DISABLED: Hybrid routes missing express-validator dependency
+  // app.use('/api/hybrid-questions', hybridQuestionRoutes);
+  // TEMPORARILY DISABLED: Advanced AI routes missing express-validator dependency
+  // app.use('/api/advanced-ai', advancedAiRoutes);
+  // TEMPORARILY DISABLED: Monitoring routes missing express-validator dependency
+  // app.use('/api/monitoring', monitoringRoutes);
   // TEMPORARILY DISABLED: AI database routes
   // app.use('/api/ai-db', aiDatabaseRoutes);
   // TEMPORARILY DISABLED: Use simple AI service on port 3002
@@ -284,6 +302,8 @@ Return ONLY the JSON array, nothing else.`;
           questions: '/api/questions',
           categories: '/api/categories',
           quiz: '/api/quiz',
+          oneVsOne: '/api/1vs1',
+          // rooms: '/api/rooms', // Temporarily disabled
           // 'ai-database': '/api/ai-db', // Temporarily disabled
           // ai: '/api/ai' // Use simple AI service on port 3002 instead
         },
@@ -309,6 +329,11 @@ Return ONLY the JSON array, nothing else.`;
           questions: '/api/questions',
           categories: '/api/categories',
           quiz: '/api/quiz',
+          oneVsOne: '/api/1vs1',
+          // rooms: '/api/rooms', // Temporarily disabled
+          hybridQuestions: '/api/hybrid-questions',
+          advancedAI: '/api/advanced-ai',
+          monitoring: '/api/monitoring',
           // ai: '/api/ai' // Use simple AI service on port 3002 instead
         },
       },

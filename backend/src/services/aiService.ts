@@ -396,6 +396,32 @@ export class AiService extends EventEmitter {
   }
 
   /**
+   * Health check for AI service
+   */
+  public async healthCheck(): Promise<boolean> {
+    try {
+      if (!this.isInitialized) {
+        return false;
+      }
+
+      // Check if providers are available
+      const providers = Object.keys(this.providers);
+      if (providers.length === 0) {
+        return false;
+      }
+
+      // Simple health check - service is initialized and has providers
+      return true;
+    } catch (error) {
+      logger.error('AI service health check failed', {
+        component: 'AiService',
+        error: error instanceof Error ? error.message : String(error)
+      });
+      return false;
+    }
+  }
+
+  /**
    * Process a generic AI request
    */
   public async processRequest(request: AiRequest): Promise<AiResponse> {

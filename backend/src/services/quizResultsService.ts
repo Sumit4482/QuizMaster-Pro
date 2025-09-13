@@ -41,10 +41,11 @@ export class QuizResultsService {
         throw new Error('Quiz session not found');
       }
 
-      // Get all questions used in the quiz
-      const questions = await prisma.question.findMany({
+      // Get all questions used in the quiz (filter out AI questions)
+      const databaseQuestionIds = session.questionIds.filter(id => !id.startsWith('ai_'));
+      const questions = databaseQuestionIds.length > 0 ? await prisma.question.findMany({
         where: {
-          id: { in: session.questionIds },
+          id: { in: databaseQuestionIds },
         },
         include: {
           categories: {
@@ -53,7 +54,7 @@ export class QuizResultsService {
             },
           },
         },
-      });
+      }) : [];
 
       // Calculate basic stats from actual answer records
       const totalQuestions = session.totalQuestions;
@@ -225,14 +226,16 @@ export class QuizResultsService {
         },
       });
 
-      const questions = await prisma.question.findMany({
-        where: { id: { in: session?.questionIds || [] } },
+      // Filter out AI questions before querying database
+      const databaseQuestionIds = (session?.questionIds || []).filter(id => !id.startsWith('ai_'));
+      const questions = databaseQuestionIds.length > 0 ? await prisma.question.findMany({
+        where: { id: { in: databaseQuestionIds } },
         include: {
           categories: {
             include: { category: true },
           },
         },
-      });
+      }) : [];
 
       const questionResults = session ? await this.generateQuestionResults(session.answers, questions) : [];
 
@@ -348,10 +351,14 @@ export class QuizResultsService {
       const strongestCategories: CategoryStrength[] = [];
       const weakestCategories: CategoryStrength[] = [];
 
-      // Get category names
-      const categories = await prisma.category.findMany({
-        where: { id: { in: Object.keys(categoryProgress).map(Number) } },
-      });
+      // Get category names - filter out invalid IDs
+      const categoryIds = Object.keys(categoryProgress)
+        .map(Number)
+        .filter(id => !isNaN(id) && id > 0);
+      
+      const categories = categoryIds.length > 0 ? await prisma.category.findMany({
+        where: { id: { in: categoryIds } },
+      }) : [];
 
       for (const [categoryIdStr, progress] of Object.entries(categoryProgress)) {
         const categoryId = parseInt(categoryIdStr);

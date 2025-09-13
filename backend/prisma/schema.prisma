@@ -9,43 +9,37 @@ datasource db {
 }
 
 model User {
-  id                String          @id @default(uuid()) @db.Uuid
-  email             String          @unique @db.VarChar(255)
-  username          String          @unique @db.VarChar(50)
-  passwordHash      String          @map("password_hash") @db.VarChar(255)
-  firstName         String?         @map("first_name") @db.VarChar(100)
-  lastName          String?         @map("last_name") @db.VarChar(100)
-  avatarUrl         String?         @map("avatar_url")
-  emailVerified     Boolean         @default(false) @map("email_verified")
-  role              UserRole        @default(PLAYER)
-  lastLoginAt       DateTime?       @map("last_login_at") @db.Timestamptz(6)
-  createdAt         DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
-  // Existing relations
-  questionAudits    QuestionAudit[] @relation("QuestionAuditor")
-  createdQuestions  Question[]      @relation("QuestionCreator")
-  modifiedQuestions Question[]      @relation("QuestionModifier")
+  id                String                @id @default(uuid()) @db.Uuid
+  email             String                @unique @db.VarChar(255)
+  username          String                @unique @db.VarChar(50)
+  passwordHash      String                @map("password_hash") @db.VarChar(255)
+  firstName         String?               @map("first_name") @db.VarChar(100)
+  lastName          String?               @map("last_name") @db.VarChar(100)
+  avatarUrl         String?               @map("avatar_url")
+  emailVerified     Boolean               @default(false) @map("email_verified")
+  role              UserRole              @default(PLAYER)
+  lastLoginAt       DateTime?             @map("last_login_at") @db.Timestamptz(6)
+  createdAt         DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  aiGenerations     AiGeneration[]
+  aiUsage           AiUsage[]
+  chatMessages      ChatMessage[]         @relation("ChatMessages")
+  chatReactions     ChatReaction[]        @relation("ChatReactions")
+  participations    GameRoomParticipant[] @relation("GameParticipant")
+  hostedRooms       GameRoom[]            @relation("RoomHost")
+  questionAudits    QuestionAudit[]       @relation("QuestionAuditor")
+  createdQuestions  Question[]            @relation("QuestionCreator")
+  modifiedQuestions Question[]            @relation("QuestionModifier")
   quizResults       QuizResult[]
   quizSessions      QuizSession[]
+  achievements      UserAchievement[]     @relation("UserAchievements")
+  aiBudget          UserAiBudget?
+  friendRelations   UserFriend[]          @relation("FriendRelations")
+  friends           UserFriend[]          @relation("UserFriends")
+  powerUps          UserPowerUp[]         @relation("UserPowerUps")
+  profile           UserProfile?          @relation("UserProfile")
   sessions          UserSession[]
   statistics        UserStatistics?
-
-  // Phase 2.3 relations
-  powerUps         UserPowerUp[]         @relation("UserPowerUps")
-  friends          UserFriend[]          @relation("UserFriends")
-  friendRelations  UserFriend[]          @relation("FriendRelations")
-  hostedRooms      GameRoom[]            @relation("RoomHost")
-  participations   GameRoomParticipant[] @relation("GameParticipant")
-  chatMessages     ChatMessage[]         @relation("ChatMessages")
-  chatReactions    ChatReaction[]        @relation("ChatReactions")
-  achievements     UserAchievement[]     @relation("UserAchievements")
-  profile          UserProfile?          @relation("UserProfile")
-
-  // Phase 3.1: AI Relations
-  aiBudget         UserAiBudget?
-  aiUsage          AiUsage[]
-  aiGenerations    AiGeneration[]
 
   @@index([email])
   @@index([username])
@@ -94,37 +88,35 @@ model Category {
 }
 
 model Question {
-  id               String             @id @default(uuid()) @db.Uuid
-  questionText     String             @map("question_text")
-  questionType     QuestionType       @map("question_type")
-  options          Json?
-  correctAnswer    Json               @map("correct_answer")
-  explanation      String?
-  hints            Json?
-  difficultyLevel  Int                @default(1) @map("difficulty_level") @db.SmallInt
-  estimatedTime    Int?               @default(30) @map("estimated_time") @db.SmallInt
-  points           Int                @default(10) @db.SmallInt
-  source           String             @default("manual") @db.VarChar(50)
-  tags             String[]
-  metadata         Json?
-  version          Int                @default(1) @db.SmallInt
-  originalId       String?            @map("original_id") @db.Uuid
-  createdById      String             @map("created_by") @db.Uuid
-  lastModifiedById String?            @map("last_modified_by") @db.Uuid
-  isActive         Boolean            @default(true) @map("is_active")
-  isPublished      Boolean            @default(false) @map("is_published")
-  publishedAt      DateTime?          @map("published_at") @db.Timestamptz(6)
-  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
-  categories       QuestionCategory[]
-  usage            QuestionUsage[]
-  createdBy        User               @relation("QuestionCreator", fields: [createdById], references: [id])
-  lastModifiedBy   User?              @relation("QuestionModifier", fields: [lastModifiedById], references: [id])
-  originalQuestion Question?          @relation("QuestionVersions", fields: [originalId], references: [id])
-  versions         Question[]         @relation("QuestionVersions")
-
-  // Phase 3.1: AI Relations
+  id                   String                @id @default(uuid()) @db.Uuid
+  questionText         String                @map("question_text")
+  questionType         QuestionType          @map("question_type")
+  options              Json?
+  correctAnswer        Json                  @map("correct_answer")
+  explanation          String?
+  hints                Json?
+  difficultyLevel      Int                   @default(1) @map("difficulty_level") @db.SmallInt
+  estimatedTime        Int?                  @default(30) @map("estimated_time") @db.SmallInt
+  points               Int                   @default(10) @db.SmallInt
+  source               String                @default("manual") @db.VarChar(50)
+  tags                 String[]
+  metadata             Json?
+  version              Int                   @default(1) @db.SmallInt
+  originalId           String?               @map("original_id") @db.Uuid
+  createdById          String                @map("created_by") @db.Uuid
+  lastModifiedById     String?               @map("last_modified_by") @db.Uuid
+  isActive             Boolean               @default(true) @map("is_active")
+  isPublished          Boolean               @default(false) @map("is_published")
+  publishedAt          DateTime?             @map("published_at") @db.Timestamptz(6)
+  createdAt            DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
   aiGeneratedQuestions AiGeneratedQuestion[]
+  categories           QuestionCategory[]
+  usage                QuestionUsage[]
+  createdBy            User                  @relation("QuestionCreator", fields: [createdById], references: [id])
+  lastModifiedBy       User?                 @relation("QuestionModifier", fields: [lastModifiedById], references: [id])
+  originalQuestion     Question?             @relation("QuestionVersions", fields: [originalId], references: [id])
+  versions             Question[]            @relation("QuestionVersions")
 
   @@index([questionType])
   @@index([difficultyLevel])
@@ -324,28 +316,23 @@ model UserStatistics {
   @@map("user_statistics")
 }
 
-// ======================================
-// PHASE 2.3: ENHANCED MULTIPLAYER MODELS
-// ======================================
-
-// Power-ups System
 model PowerUp {
-  id              String           @id @default(uuid()) @db.Uuid
-  name            String           @unique @db.VarChar(100)
-  displayName     String           @map("display_name") @db.VarChar(100)
+  id              String         @id @default(uuid()) @db.Uuid
+  name            String         @unique @db.VarChar(100)
+  displayName     String         @map("display_name") @db.VarChar(100)
   description     String
-  type            PowerUpType      @map("power_up_type")
+  type            PowerUpType    @map("power_up_type")
   rarity          PowerUpRarity
-  effects         Json             // PowerUpEffect[]
-  cooldownSeconds Int              @default(0) @map("cooldown_seconds")
-  maxUsesPerGame  Int?             @map("max_uses_per_game")
-  cost            Int              @default(0) // Cost in coins or points
-  iconUrl         String?          @map("icon_url")
-  animationData   Json?            @map("animation_data")
-  isActive        Boolean          @default(true) @map("is_active")
-  sortOrder       Int              @default(0) @map("sort_order")
-  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  effects         Json
+  cooldownSeconds Int            @default(0) @map("cooldown_seconds")
+  maxUsesPerGame  Int?           @map("max_uses_per_game")
+  cost            Int            @default(0)
+  iconUrl         String?        @map("icon_url")
+  animationData   Json?          @map("animation_data")
+  isActive        Boolean        @default(true) @map("is_active")
+  sortOrder       Int            @default(0) @map("sort_order")
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
   usages          PowerUpUsage[]
   userInventory   UserPowerUp[]
 
@@ -357,14 +344,14 @@ model PowerUp {
 }
 
 model UserPowerUp {
-  id         String     @id @default(uuid()) @db.Uuid
-  userId     String     @map("user_id") @db.Uuid
-  powerUpId  String     @map("power_up_id") @db.Uuid
-  quantity   Int        @default(1)
-  earnedAt   DateTime   @default(now()) @map("earned_at") @db.Timestamptz(6)
-  lastUsedAt DateTime?  @map("last_used_at") @db.Timestamptz(6)
-  user       User       @relation("UserPowerUps", fields: [userId], references: [id], onDelete: Cascade)
-  powerUp    PowerUp    @relation(fields: [powerUpId], references: [id], onDelete: Cascade)
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  powerUpId  String    @map("power_up_id") @db.Uuid
+  quantity   Int       @default(1)
+  earnedAt   DateTime  @default(now()) @map("earned_at") @db.Timestamptz(6)
+  lastUsedAt DateTime? @map("last_used_at") @db.Timestamptz(6)
+  powerUp    PowerUp   @relation(fields: [powerUpId], references: [id], onDelete: Cascade)
+  user       User      @relation("UserPowerUps", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, powerUpId])
   @@index([userId])
@@ -373,16 +360,16 @@ model UserPowerUp {
 }
 
 model PowerUpUsage {
-  id               String    @id @default(uuid()) @db.Uuid
-  userId           String    @map("user_id") @db.Uuid
-  powerUpId        String    @map("power_up_id") @db.Uuid
-  gameId           String    @map("game_id") @db.VarChar(255)
-  roomId           String    @map("room_id") @db.VarChar(255)
-  questionIndex    Int?      @map("question_index")
-  effectData       Json?     @map("effect_data") // Store effect results
-  usedAt           DateTime  @default(now()) @map("used_at") @db.Timestamptz(6)
-  effectiveness    Float?    // How effective the power-up was (0.0-1.0)
-  powerUp          PowerUp   @relation(fields: [powerUpId], references: [id], onDelete: Cascade)
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  powerUpId     String   @map("power_up_id") @db.Uuid
+  gameId        String   @map("game_id") @db.VarChar(255)
+  roomId        String   @map("room_id") @db.VarChar(255)
+  questionIndex Int?     @map("question_index")
+  effectData    Json?    @map("effect_data")
+  usedAt        DateTime @default(now()) @map("used_at") @db.Timestamptz(6)
+  effectiveness Float?
+  powerUp       PowerUp  @relation(fields: [powerUpId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([powerUpId])
@@ -391,18 +378,17 @@ model PowerUpUsage {
   @@map("power_up_usage")
 }
 
-// Social Features
 model UserFriend {
-  id          String             @id @default(uuid()) @db.Uuid
-  userId      String             @map("user_id") @db.Uuid
-  friendId    String             @map("friend_id") @db.Uuid
-  status      FriendshipStatus   @default(PENDING)
-  requestedBy String             @map("requested_by") @db.Uuid // Who sent the friend request
-  requestedAt DateTime           @default(now()) @map("requested_at") @db.Timestamptz(6)
-  acceptedAt  DateTime?          @map("accepted_at") @db.Timestamptz(6)
-  blockedAt   DateTime?          @map("blocked_at") @db.Timestamptz(6)
-  user        User               @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
-  friend      User               @relation("FriendRelations", fields: [friendId], references: [id], onDelete: Cascade)
+  id          String           @id @default(uuid()) @db.Uuid
+  userId      String           @map("user_id") @db.Uuid
+  friendId    String           @map("friend_id") @db.Uuid
+  status      FriendshipStatus @default(PENDING)
+  requestedBy String           @map("requested_by") @db.Uuid
+  requestedAt DateTime         @default(now()) @map("requested_at") @db.Timestamptz(6)
+  acceptedAt  DateTime?        @map("accepted_at") @db.Timestamptz(6)
+  blockedAt   DateTime?        @map("blocked_at") @db.Timestamptz(6)
+  friend      User             @relation("FriendRelations", fields: [friendId], references: [id], onDelete: Cascade)
+  user        User             @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, friendId])
   @@index([userId])
@@ -413,31 +399,31 @@ model UserFriend {
 }
 
 model GameRoom {
-  id               String              @id @default(uuid()) @db.Uuid
-  code             String              @unique @db.VarChar(10)
-  name             String              @db.VarChar(255)
-  description      String?
-  category         String?             @db.VarChar(100)
-  tags             String[]
-  hostId           String              @map("host_id") @db.Uuid
-  maxPlayers       Int                 @default(10) @map("max_players")
-  currentPlayers   Int                 @default(0) @map("current_players")
-  isPrivate        Boolean             @default(false) @map("is_private")
-  password         String?             @db.VarChar(255)
-  status           GameRoomStatus      @default(WAITING)
-  gameMode         GameMode            @default(CLASSIC) @map("game_mode")
-  settings         Json                // Room settings object
-  quizConfig       Json?               @map("quiz_config") // Quiz configuration
-  spectatorCount   Int                 @default(0) @map("spectator_count")
-  createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
-  lastActivity     DateTime            @default(now()) @map("last_activity") @db.Timestamptz(6)
-  startedAt        DateTime?           @map("started_at") @db.Timestamptz(6)
-  endedAt          DateTime?           @map("ended_at") @db.Timestamptz(6)
-  host             User                @relation("RoomHost", fields: [hostId], references: [id], onDelete: Cascade)
-  participants     GameRoomParticipant[]
-  chatMessages     ChatMessage[]
-  analytics        GameRoomAnalytics[]
+  id             String                @id @default(uuid()) @db.Uuid
+  code           String                @unique @db.VarChar(10)
+  name           String                @db.VarChar(255)
+  description    String?
+  category       String?               @db.VarChar(100)
+  tags           String[]
+  hostId         String                @map("host_id") @db.Uuid
+  maxPlayers     Int                   @default(10) @map("max_players")
+  currentPlayers Int                   @default(0) @map("current_players")
+  isPrivate      Boolean               @default(false) @map("is_private")
+  password       String?               @db.VarChar(255)
+  status         GameRoomStatus        @default(WAITING)
+  gameMode       GameMode              @default(CLASSIC) @map("game_mode")
+  settings       Json
+  quizConfig     Json?                 @map("quiz_config")
+  spectatorCount Int                   @default(0) @map("spectator_count")
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  lastActivity   DateTime              @default(now()) @map("last_activity") @db.Timestamptz(6)
+  startedAt      DateTime?             @map("started_at") @db.Timestamptz(6)
+  endedAt        DateTime?             @map("ended_at") @db.Timestamptz(6)
+  chatMessages   ChatMessage[]
+  analytics      GameRoomAnalytics[]
+  participants   GameRoomParticipant[]
+  host           User                  @relation("RoomHost", fields: [hostId], references: [id], onDelete: Cascade)
 
   @@index([code])
   @@index([hostId])
@@ -451,19 +437,19 @@ model GameRoom {
 }
 
 model GameRoomParticipant {
-  id            String             @id @default(uuid()) @db.Uuid
-  roomId        String             @map("room_id") @db.Uuid
-  userId        String             @map("user_id") @db.Uuid
-  role          ParticipantRole    @default(PLAYER)
-  status        ParticipantStatus  @default(WAITING)
-  joinedAt      DateTime           @default(now()) @map("joined_at") @db.Timestamptz(6)
-  leftAt        DateTime?          @map("left_at") @db.Timestamptz(6)
-  isReady       Boolean            @default(false) @map("is_ready")
-  score         Int                @default(0)
-  rank          Int?
-  powerUpsUsed  Int                @default(0) @map("power_ups_used")
-  room          GameRoom           @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  user          User               @relation("GameParticipant", fields: [userId], references: [id], onDelete: Cascade)
+  id           String            @id @default(uuid()) @db.Uuid
+  roomId       String            @map("room_id") @db.Uuid
+  userId       String            @map("user_id") @db.Uuid
+  role         ParticipantRole   @default(PLAYER)
+  status       ParticipantStatus @default(WAITING)
+  joinedAt     DateTime          @default(now()) @map("joined_at") @db.Timestamptz(6)
+  leftAt       DateTime?         @map("left_at") @db.Timestamptz(6)
+  isReady      Boolean           @default(false) @map("is_ready")
+  score        Int               @default(0)
+  rank         Int?
+  powerUpsUsed Int               @default(0) @map("power_ups_used")
+  room         GameRoom          @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user         User              @relation("GameParticipant", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([roomId, userId])
   @@index([roomId])
@@ -475,17 +461,17 @@ model GameRoomParticipant {
 }
 
 model ChatMessage {
-  id        String      @id @default(uuid()) @db.Uuid
-  roomId    String      @map("room_id") @db.Uuid
-  userId    String      @map("user_id") @db.Uuid
+  id        String         @id @default(uuid()) @db.Uuid
+  roomId    String         @map("room_id") @db.Uuid
+  userId    String         @map("user_id") @db.Uuid
   content   String
-  type      MessageType @default(TEXT)
-  metadata  Json?       // For reactions, mentions, etc.
-  isDeleted Boolean     @default(false) @map("is_deleted")
-  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  editedAt  DateTime?   @map("edited_at") @db.Timestamptz(6)
-  room      GameRoom    @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  user      User        @relation("ChatMessages", fields: [userId], references: [id], onDelete: Cascade)
+  type      MessageType    @default(TEXT)
+  metadata  Json?
+  isDeleted Boolean        @default(false) @map("is_deleted")
+  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  editedAt  DateTime?      @map("edited_at") @db.Timestamptz(6)
+  room      GameRoom       @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user      User           @relation("ChatMessages", fields: [userId], references: [id], onDelete: Cascade)
   reactions ChatReaction[]
 
   @@index([roomId])
@@ -510,22 +496,21 @@ model ChatReaction {
   @@map("chat_reactions")
 }
 
-// Achievements System
 model Achievement {
-  id            String           @id @default(uuid()) @db.Uuid
-  name          String           @unique @db.VarChar(100)
-  displayName   String           @map("display_name") @db.VarChar(100)
-  description   String
-  category      String           @db.VarChar(50)
-  type          AchievementType
-  criteria      Json             // Achievement criteria object
-  rewards       Json?            // Rewards for earning (XP, power-ups, etc.)
-  iconUrl       String?          @map("icon_url")
-  rarity        AchievementRarity
-  isActive      Boolean          @default(true) @map("is_active")
-  sortOrder     Int              @default(0) @map("sort_order")
-  createdAt     DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id               String            @id @default(uuid()) @db.Uuid
+  name             String            @unique @db.VarChar(100)
+  displayName      String            @map("display_name") @db.VarChar(100)
+  description      String
+  category         String            @db.VarChar(50)
+  type             AchievementType
+  criteria         Json
+  rewards          Json?
+  iconUrl          String?           @map("icon_url")
+  rarity           AchievementRarity
+  isActive         Boolean           @default(true) @map("is_active")
+  sortOrder        Int               @default(0) @map("sort_order")
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
   userAchievements UserAchievement[]
 
   @@index([category])
@@ -540,10 +525,10 @@ model UserAchievement {
   userId        String      @map("user_id") @db.Uuid
   achievementId String      @map("achievement_id") @db.Uuid
   earnedAt      DateTime    @default(now()) @map("earned_at") @db.Timestamptz(6)
-  progress      Json?       // Progress data for partial achievements
-  gameId        String?     @map("game_id") @db.VarChar(255) // Game where achievement was earned
-  user          User        @relation("UserAchievements", fields: [userId], references: [id], onDelete: Cascade)
+  progress      Json?
+  gameId        String?     @map("game_id") @db.VarChar(255)
   achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  user          User        @relation("UserAchievements", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, achievementId])
   @@index([userId])
@@ -552,22 +537,21 @@ model UserAchievement {
   @@map("user_achievements")
 }
 
-// Game Analytics
 model GameRoomAnalytics {
-  id              String    @id @default(uuid()) @db.Uuid
-  roomId          String    @map("room_id") @db.Uuid
-  date            DateTime  @db.Date
-  playersJoined   Int       @default(0) @map("players_joined")
-  playersLeft     Int       @default(0) @map("players_left")
-  gamesCompleted  Int       @default(0) @map("games_completed")
-  averageScore    Float?    @map("average_score")
-  popularityScore Float     @default(0) @map("popularity_score")
-  retentionRate   Float?    @map("retention_rate")
-  chatMessages    Int       @default(0) @map("chat_messages")
-  powerUpsUsed    Int       @default(0) @map("power_ups_used")
+  id               String   @id @default(uuid()) @db.Uuid
+  roomId           String   @map("room_id") @db.Uuid
+  date             DateTime @db.Date
+  playersJoined    Int      @default(0) @map("players_joined")
+  playersLeft      Int      @default(0) @map("players_left")
+  gamesCompleted   Int      @default(0) @map("games_completed")
+  averageScore     Float?   @map("average_score")
+  popularityScore  Float    @default(0) @map("popularity_score")
+  retentionRate    Float?   @map("retention_rate")
+  chatMessages     Int      @default(0) @map("chat_messages")
+  powerUpsUsed     Int      @default(0) @map("power_ups_used")
   spectatorMinutes Int      @default(0) @map("spectator_minutes")
-  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  room            GameRoom  @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  room             GameRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@unique([roomId, date])
   @@index([roomId])
@@ -576,22 +560,21 @@ model GameRoomAnalytics {
   @@map("game_room_analytics")
 }
 
-// User Social Profile Extensions
 model UserProfile {
-  id               String    @id @default(uuid()) @db.Uuid
-  userId           String    @unique @map("user_id") @db.Uuid
-  displayName      String?   @map("display_name") @db.VarChar(100)
-  bio              String?   @db.VarChar(500)
-  location         String?   @db.VarChar(100)
-  website          String?   @db.VarChar(255)
-  socialLinks      Json?     @map("social_links")
-  preferences      Json      @default("{}") // User preferences
-  privacySettings  Json      @default("{}") @map("privacy_settings")
-  isOnline         Boolean   @default(false) @map("is_online")
-  lastSeenAt       DateTime? @map("last_seen_at") @db.Timestamptz(6)
-  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  user             User      @relation("UserProfile", fields: [userId], references: [id], onDelete: Cascade)
+  id              String    @id @default(uuid()) @db.Uuid
+  userId          String    @unique @map("user_id") @db.Uuid
+  displayName     String?   @map("display_name") @db.VarChar(100)
+  bio             String?   @db.VarChar(500)
+  location        String?   @db.VarChar(100)
+  website         String?   @db.VarChar(255)
+  socialLinks     Json?     @map("social_links")
+  preferences     Json      @default("{}")
+  privacySettings Json      @default("{}") @map("privacy_settings")
+  isOnline        Boolean   @default(false) @map("is_online")
+  lastSeenAt      DateTime? @map("last_seen_at") @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user            User      @relation("UserProfile", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([isOnline])
@@ -599,33 +582,26 @@ model UserProfile {
   @@map("user_profiles")
 }
 
-// ======================================
-// PHASE 3.1: AI SERVICE MODELS
-// ======================================
-
-// AI Provider Configuration
 model AiProvider {
-  id            String        @id @default(uuid()) @db.Uuid
-  name          String        @unique @db.VarChar(100) // e.g., "openai", "anthropic", "google", "huggingface", "local"
-  displayName   String        @map("display_name") @db.VarChar(100) // e.g., "OpenAI GPT", "Anthropic Claude"
-  type          AiProviderType
-  endpoint      String?       @db.VarChar(255) // API endpoint URL
-  apiKeyName    String?       @map("api_key_name") @db.VarChar(100) // Environment variable name for API key
-  models        Json          // Array of available models with their configurations
-  isActive      Boolean       @default(true) @map("is_active")
-  isFree        Boolean       @default(false) @map("is_free") // True for free/local models
-  priority      Int           @default(0) // Higher number = higher priority for model selection
-  rateLimit     Json?         @map("rate_limit") // Rate limiting configuration
-  costConfig    Json?         @map("cost_config") // Cost calculation configuration
-  metadata      Json?         // Additional provider-specific configuration
-  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
-  // Relations
-  models_rel    AiModel[]     @relation("ProviderModels")
-  usage         AiUsage[]
-  analytics     AiAnalytics[]
-  
+  id          String         @id @default(uuid()) @db.Uuid
+  name        String         @unique @db.VarChar(100)
+  displayName String         @map("display_name") @db.VarChar(100)
+  type        AiProviderType
+  endpoint    String?        @db.VarChar(255)
+  apiKeyName  String?        @map("api_key_name") @db.VarChar(100)
+  models      Json
+  isActive    Boolean        @default(true) @map("is_active")
+  isFree      Boolean        @default(false) @map("is_free")
+  priority    Int            @default(0)
+  rateLimit   Json?          @map("rate_limit")
+  costConfig  Json?          @map("cost_config")
+  metadata    Json?
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  analytics   AiAnalytics[]
+  models_rel  AiModel[]      @relation("ProviderModels")
+  usage       AiUsage[]
+
   @@index([name])
   @@index([type])
   @@index([isActive])
@@ -634,31 +610,28 @@ model AiProvider {
   @@map("ai_providers")
 }
 
-// AI Model Configuration
 model AiModel {
-  id                String          @id @default(uuid()) @db.Uuid
-  providerId        String          @map("provider_id") @db.Uuid
-  name              String          @db.VarChar(100) // e.g., "gpt-4", "claude-3-opus", "llama2-7b"
-  displayName       String          @map("display_name") @db.VarChar(100)
-  modelType         AiModelType     @map("model_type")
-  capabilities      AiCapability[]  // What this model can do
-  maxTokens         Int?            @map("max_tokens") // Maximum context length
-  costPerToken      Float?          @map("cost_per_token") // Cost per token (null for free models)
-  qualityScore      Float           @default(0.8) @map("quality_score") // 0-1 quality rating
-  speedScore        Float           @default(0.8) @map("speed_score") // 0-1 speed rating
-  reliabilityScore  Float           @default(0.9) @map("reliability_score") // 0-1 reliability rating
-  isActive          Boolean         @default(true) @map("is_active")
-  isDefault         Boolean         @default(false) @map("is_default") // Default model for this provider
-  configuration     Json            // Model-specific configuration
-  createdAt         DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
-  // Relations
-  provider          AiProvider      @relation("ProviderModels", fields: [providerId], references: [id], onDelete: Cascade)
-  usage             AiUsage[]
-  generations       AiGeneration[]
-  analytics         AiAnalytics[]
-  
+  id               String         @id @default(uuid()) @db.Uuid
+  providerId       String         @map("provider_id") @db.Uuid
+  name             String         @db.VarChar(100)
+  displayName      String         @map("display_name") @db.VarChar(100)
+  modelType        AiModelType    @map("model_type")
+  capabilities     AiCapability[]
+  maxTokens        Int?           @map("max_tokens")
+  costPerToken     Float?         @map("cost_per_token")
+  qualityScore     Float          @default(0.8) @map("quality_score")
+  speedScore       Float          @default(0.8) @map("speed_score")
+  reliabilityScore Float          @default(0.9) @map("reliability_score")
+  isActive         Boolean        @default(true) @map("is_active")
+  isDefault        Boolean        @default(false) @map("is_default")
+  configuration    Json
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  analytics        AiAnalytics[]
+  generations      AiGeneration[]
+  provider         AiProvider     @relation("ProviderModels", fields: [providerId], references: [id], onDelete: Cascade)
+  usage            AiUsage[]
+
   @@unique([providerId, name])
   @@index([name])
   @@index([providerId])
@@ -670,31 +643,28 @@ model AiModel {
   @@map("ai_models")
 }
 
-// AI Usage Tracking
 model AiUsage {
-  id              String         @id @default(uuid()) @db.Uuid
-  userId          String         @map("user_id") @db.Uuid
-  providerId      String         @map("provider_id") @db.Uuid
-  modelId         String         @map("model_id") @db.Uuid
-  requestType     AiRequestType  @map("request_type")
-  tokensUsed      Int            @default(0) @map("tokens_used")
-  cost            Float          @default(0.0) // Actual cost incurred
-  estimatedCost   Float          @default(0.0) @map("estimated_cost") // Estimated cost before request
-  duration        Int            @map("duration") // Request duration in milliseconds
-  success         Boolean        @default(true)
-  errorCode       String?        @map("error_code") @db.VarChar(100)
-  errorMessage    String?        @map("error_message")
-  requestData     Json?          @map("request_data") // Sanitized request data for analytics
-  responseData    Json?          @map("response_data") // Sanitized response data
-  metadata        Json?          // Additional tracking data
-  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  
-  // Relations
-  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  provider        AiProvider     @relation(fields: [providerId], references: [id])
-  model           AiModel        @relation(fields: [modelId], references: [id])
-  generation      AiGeneration?
-  
+  id            String        @id @default(uuid()) @db.Uuid
+  userId        String        @map("user_id") @db.Uuid
+  providerId    String        @map("provider_id") @db.Uuid
+  modelId       String        @map("model_id") @db.Uuid
+  requestType   AiRequestType @map("request_type")
+  tokensUsed    Int           @default(0) @map("tokens_used")
+  cost          Float         @default(0.0)
+  estimatedCost Float         @default(0.0) @map("estimated_cost")
+  duration      Int           @map("duration")
+  success       Boolean       @default(true)
+  errorCode     String?       @map("error_code") @db.VarChar(100)
+  errorMessage  String?       @map("error_message")
+  requestData   Json?         @map("request_data")
+  responseData  Json?         @map("response_data")
+  metadata      Json?
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  generation    AiGeneration?
+  model         AiModel       @relation(fields: [modelId], references: [id])
+  provider      AiProvider    @relation(fields: [providerId], references: [id])
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([providerId])
   @@index([modelId])
@@ -705,33 +675,30 @@ model AiUsage {
   @@map("ai_usage")
 }
 
-// AI Question Generation
 model AiGeneration {
-  id                String            @id @default(uuid()) @db.Uuid
-  usageId           String            @unique @map("usage_id") @db.Uuid
-  userId            String            @map("user_id") @db.Uuid
-  modelId           String            @map("model_id") @db.Uuid
-  requestType       AiRequestType     @map("request_type")
-  prompt            String            // The prompt used for generation
-  generatedContent  Json              @map("generated_content") // Raw AI response
-  processedContent  Json?             @map("processed_content") // Processed/formatted content
-  questionsGenerated Int              @default(0) @map("questions_generated")
-  qualityScore      Float?            @map("quality_score") // 0-1 quality assessment
-  validationStatus  ValidationStatus  @default(PENDING) @map("validation_status")
-  validationErrors  Json?             @map("validation_errors") // Array of validation issues
-  humanReview       Boolean           @default(false) @map("human_review") // Flagged for human review
-  approved          Boolean           @default(false) // Approved for use
-  rejectedReason    String?           @map("rejected_reason")
-  metadata          Json?             // Generation metadata
-  createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
-  // Relations
-  usage             AiUsage           @relation(fields: [usageId], references: [id], onDelete: Cascade)
-  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  model             AiModel           @relation(fields: [modelId], references: [id])
-  questions         AiGeneratedQuestion[]
-  
+  id                 String                @id @default(uuid()) @db.Uuid
+  usageId            String                @unique @map("usage_id") @db.Uuid
+  userId             String                @map("user_id") @db.Uuid
+  modelId            String                @map("model_id") @db.Uuid
+  requestType        AiRequestType         @map("request_type")
+  prompt             String
+  generatedContent   Json                  @map("generated_content")
+  processedContent   Json?                 @map("processed_content")
+  questionsGenerated Int                   @default(0) @map("questions_generated")
+  qualityScore       Float?                @map("quality_score")
+  validationStatus   ValidationStatus      @default(PENDING) @map("validation_status")
+  validationErrors   Json?                 @map("validation_errors")
+  humanReview        Boolean               @default(false) @map("human_review")
+  approved           Boolean               @default(false)
+  rejectedReason     String?               @map("rejected_reason")
+  metadata           Json?
+  createdAt          DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  questions          AiGeneratedQuestion[]
+  model              AiModel               @relation(fields: [modelId], references: [id])
+  usage              AiUsage               @relation(fields: [usageId], references: [id], onDelete: Cascade)
+  user               User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([modelId])
   @@index([requestType])
@@ -742,26 +709,23 @@ model AiGeneration {
   @@map("ai_generations")
 }
 
-// AI Generated Questions
 model AiGeneratedQuestion {
-  id               String         @id @default(uuid()) @db.Uuid
-  generationId     String         @map("generation_id") @db.Uuid
-  questionId       String?        @map("question_id") @db.Uuid // Link to actual Question if approved
-  questionData     Json           @map("question_data") // Generated question data
-  qualityScore     Float?         @map("quality_score") // Individual question quality score
-  validationErrors Json?          @map("validation_errors") // Question-specific validation errors
+  id               String           @id @default(uuid()) @db.Uuid
+  generationId     String           @map("generation_id") @db.Uuid
+  questionId       String?          @map("question_id") @db.Uuid
+  questionData     Json             @map("question_data")
+  qualityScore     Float?           @map("quality_score")
+  validationErrors Json?            @map("validation_errors")
   status           ValidationStatus @default(PENDING)
-  userRating       Float?         @map("user_rating") // User feedback rating (1-5)
-  userFeedback     String?        @map("user_feedback") // User feedback text
-  timesUsed        Int            @default(0) @map("times_used")
-  averageScore     Float?         @map("average_score") // Average user performance on this question
-  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
-  // Relations
-  generation       AiGeneration   @relation(fields: [generationId], references: [id], onDelete: Cascade)
-  question         Question?      @relation(fields: [questionId], references: [id])
-  
+  userRating       Float?           @map("user_rating")
+  userFeedback     String?          @map("user_feedback")
+  timesUsed        Int              @default(0) @map("times_used")
+  averageScore     Float?           @map("average_score")
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  generation       AiGeneration     @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  question         Question?        @relation(fields: [questionId], references: [id])
+
   @@index([generationId])
   @@index([questionId])
   @@index([status])
@@ -771,55 +735,49 @@ model AiGeneratedQuestion {
   @@map("ai_generated_questions")
 }
 
-// User AI Budget & Preferences
 model UserAiBudget {
-  id                    String    @id @default(uuid()) @db.Uuid
-  userId                String    @unique @map("user_id") @db.Uuid
-  monthlyBudget         Float     @default(0.0) @map("monthly_budget") // Monthly spending limit
-  currentSpend          Float     @default(0.0) @map("current_spend") // Current month spending
-  dailyUsageLimit       Int       @default(100) @map("daily_usage_limit") // Daily request limit
-  currentDailyUsage     Int       @default(0) @map("current_daily_usage")
-  preferredModel        String?   @map("preferred_model") @db.VarChar(100)
-  allowPaidModels       Boolean   @default(false) @map("allow_paid_models")
-  autoOptimizeCost      Boolean   @default(true) @map("auto_optimize_cost")
-  qualityPreference     Float     @default(0.7) @map("quality_preference") // 0-1 quality vs cost preference
-  lastResetDate         DateTime  @default(now()) @map("last_reset_date") @db.Timestamptz(6)
-  alertThresholds       Json      @default("{}") @map("alert_thresholds") // Budget alert configurations
-  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
-  // Relations
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id                String   @id @default(uuid()) @db.Uuid
+  userId            String   @unique @map("user_id") @db.Uuid
+  monthlyBudget     Float    @default(0.0) @map("monthly_budget")
+  currentSpend      Float    @default(0.0) @map("current_spend")
+  dailyUsageLimit   Int      @default(100) @map("daily_usage_limit")
+  currentDailyUsage Int      @default(0) @map("current_daily_usage")
+  preferredModel    String?  @map("preferred_model") @db.VarChar(100)
+  allowPaidModels   Boolean  @default(false) @map("allow_paid_models")
+  autoOptimizeCost  Boolean  @default(true) @map("auto_optimize_cost")
+  qualityPreference Float    @default(0.7) @map("quality_preference")
+  lastResetDate     DateTime @default(now()) @map("last_reset_date") @db.Timestamptz(6)
+  alertThresholds   Json     @default("{}") @map("alert_thresholds")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([currentSpend])
   @@index([lastResetDate])
   @@map("user_ai_budgets")
 }
 
-// AI System Analytics
 model AiAnalytics {
-  id                  String    @id @default(uuid()) @db.Uuid
-  date                DateTime  @db.Date
-  providerId          String    @map("provider_id") @db.Uuid
-  modelId             String    @map("model_id") @db.Uuid
-  totalRequests       Int       @default(0) @map("total_requests")
-  successfulRequests  Int       @default(0) @map("successful_requests")
-  failedRequests      Int       @default(0) @map("failed_requests")
-  totalCost           Float     @default(0.0) @map("total_cost")
-  totalTokens         Int       @default(0) @map("total_tokens")
-  averageResponseTime Int       @default(0) @map("average_response_time") // in milliseconds
-  averageQualityScore Float?    @map("average_quality_score")
-  questionsGenerated  Int       @default(0) @map("questions_generated")
-  questionsApproved   Int       @default(0) @map("questions_approved")
-  uniqueUsers         Int       @default(0) @map("unique_users")
-  metadata            Json?     // Additional analytics data
-  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  
-  // Relations
-  provider            AiProvider @relation(fields: [providerId], references: [id])
+  id                  String     @id @default(uuid()) @db.Uuid
+  date                DateTime   @db.Date
+  providerId          String     @map("provider_id") @db.Uuid
+  modelId             String     @map("model_id") @db.Uuid
+  totalRequests       Int        @default(0) @map("total_requests")
+  successfulRequests  Int        @default(0) @map("successful_requests")
+  failedRequests      Int        @default(0) @map("failed_requests")
+  totalCost           Float      @default(0.0) @map("total_cost")
+  totalTokens         Int        @default(0) @map("total_tokens")
+  averageResponseTime Int        @default(0) @map("average_response_time")
+  averageQualityScore Float?     @map("average_quality_score")
+  questionsGenerated  Int        @default(0) @map("questions_generated")
+  questionsApproved   Int        @default(0) @map("questions_approved")
+  uniqueUsers         Int        @default(0) @map("unique_users")
+  metadata            Json?
+  createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
   model               AiModel    @relation(fields: [modelId], references: [id])
-  
+  provider            AiProvider @relation(fields: [providerId], references: [id])
+
   @@unique([date, providerId, modelId])
   @@index([date])
   @@index([providerId])
@@ -829,8 +787,6 @@ model AiAnalytics {
   @@map("ai_analytics")
 }
 
-
-// Enums for Phase 3.1 AI Service
 enum AiProviderType {
   OPENAI
   ANTHROPIC
@@ -876,18 +832,15 @@ enum ValidationStatus {
   REJECTED
 }
 
-
-
-// Enums for Phase 2.3
 enum PowerUpType {
-  ELIMINATION     // Remove incorrect answers
-  TIME_EXTENSION  // Add extra time
-  POINT_MULTIPLIER // Double/triple points
-  FREEZE_OPPONENTS // Freeze other players
-  HINT_REVEAL     // Show hints
-  ANSWER_PEEK     // Briefly show answer
-  SCORE_SHIELD    // Protection from penalties
-  LIGHTNING_ROUND // Speed bonus
+  ELIMINATION
+  TIME_EXTENSION
+  POINT_MULTIPLIER
+  FREEZE_OPPONENTS
+  HINT_REVEAL
+  ANSWER_PEEK
+  SCORE_SHIELD
+  LIGHTNING_ROUND
 }
 
 enum PowerUpRarity {

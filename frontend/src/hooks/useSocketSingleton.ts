@@ -46,10 +46,7 @@ class SocketManager {
     isConnected: false,
     isConnecting: false,
     isReconnecting: false,
-    connectionId: undefined,
     reconnectAttempts: 0,
-    lastConnected: undefined,
-    error: undefined,
   };
   private subscribers = new Set<(status: ConnectionStatus) => void>();
   private reconnectTimeoutId: NodeJS.Timeout | null = null;
@@ -95,7 +92,7 @@ class SocketManager {
     console.log('🚀 [SocketManager] Initializing connection to:', process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
 
     this.connectionState.isConnecting = true;
-    this.connectionState.error = undefined;
+    delete this.connectionState.error;
     this.notifySubscribers();
 
     // Clean up existing socket
@@ -132,11 +129,11 @@ class SocketManager {
         isConnected: true,
         isConnecting: false,
         isReconnecting: false,
-        connectionId: this.socket?.id,
         reconnectAttempts: 0,
         lastConnected: new Date(),
-        error: undefined,
+        ...(this.socket?.id && { connectionId: this.socket.id })
       };
+      delete this.connectionState.error;
       this.notifySubscribers();
       this.startPingMonitoring();
     });
@@ -147,8 +144,11 @@ class SocketManager {
         ...this.connectionState,
         isConnected: false,
         isConnecting: false,
-        error: reason === 'io server disconnect' ? 'Server disconnected' : undefined,
+        ...(reason === 'io server disconnect' && { error: 'Server disconnected' })
       };
+      if (reason !== 'io server disconnect') {
+        delete this.connectionState.error;
+      }
       this.notifySubscribers();
       this.stopPingMonitoring();
 
@@ -257,10 +257,7 @@ class SocketManager {
       isConnected: false,
       isConnecting: false,
       isReconnecting: false,
-      connectionId: undefined,
       reconnectAttempts: 0,
-      lastConnected: undefined,
-      error: undefined,
     };
     this.notifySubscribers();
   }
@@ -303,10 +300,7 @@ export function useSocket(): SocketContextType {
     isConnected: false,
     isConnecting: false,
     isReconnecting: false,
-    connectionId: undefined,
     reconnectAttempts: 0,
-    lastConnected: undefined,
-    error: undefined,
   });
 
   const socketManager = SocketManager.getInstance();

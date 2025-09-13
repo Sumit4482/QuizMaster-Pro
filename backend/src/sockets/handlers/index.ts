@@ -4,6 +4,7 @@ import { connectionManager } from '../managers/connectionManager';
 import { roomManager } from '../managers/roomManager';
 import { GameManager } from '../managers/gameManager';
 import { GameEventHandlers } from './gameHandlers';
+import { OneVsOneHandlers } from './oneVsOneHandlers';
 import {
   ExtendedSocket,
   EventResponse,
@@ -22,6 +23,7 @@ import { rateLimitEvent } from './rateLimit';
 class EventHandlers {
   private gameManager: GameManager | null = null;
   private gameEventHandlers: GameEventHandlers | null = null;
+  private oneVsOneHandlers: OneVsOneHandlers | null = null;
 
   /**
    * Initialize game manager
@@ -32,7 +34,8 @@ class EventHandlers {
       io,
       this.gameManager
     );
-    logger.info('Game manager initialized for event handlers');
+    this.oneVsOneHandlers = new OneVsOneHandlers();
+    logger.info('Game manager and 1vs1 handlers initialized for event handlers');
   }
 
   /**
@@ -59,6 +62,11 @@ class EventHandlers {
     // Game events (Phase 2.2)
     if (this.gameEventHandlers) {
       this.gameEventHandlers.setupGameEvents(socket);
+    }
+
+    // 1vs1 events
+    if (this.oneVsOneHandlers) {
+      this.oneVsOneHandlers.setupHandlers(socket, io);
     }
 
     logger.debug('Event handlers set up for socket', {

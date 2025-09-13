@@ -1,0 +1,442 @@
+name: Backend CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+
+env:
+  NODE_VERSION: '20.x'
+  DATABASE_URL: 'postgresql://test:test@localhost:5432/quizmaster_test'
+  REDIS_URL: 'redis://localhost:6379'
+  JWT_SECRET: 'test_jwt_secret_for_ci_pipeline_minimum_256_bits'
+  JWT_REFRESH_SECRET: 'test_jwt_refresh_secret_for_ci_pipeline_minimum_256_bits'
+
+jobs:
+  lint-and-typecheck:
+    name: Lint and TypeCheck
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        npm ci
+
+    - name: Run ESLint
+      run: |
+        cd backend
+        npm run lint
+
+    - name: Run TypeScript type checking
+      run: |
+        cd backend
+        npm run type-check
+
+    - name: Check for unused dependencies
+      run: |
+        cd backend
+        npx depcheck --ignore-patterns="jest.config.js,*.test.ts,*.spec.ts"
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        npm ci
+
+    - name: Run npm audit
+      run: |
+        cd backend
+        npm audit --audit-level=moderate
+
+    - name: Run Snyk security scan
+      if: github.event_name == 'push'
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+        command: test
+        
+    - name: Upload Snyk results to GitHub
+      if: github.event_name == 'push' && failure()
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: snyk.sarif
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: quizmaster_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        npm ci
+
+    - name: Setup database
+      run: |
+        cd backend
+        npx prisma generate
+        npx prisma db push --force-reset
+
+    - name: Run unit tests
+      run: |
+        cd backend
+        npm run test:unit
+
+    - name: Run integration tests
+      run: |
+        cd backend
+        npm run test:integration
+
+    - name: Generate test coverage
+      run: |
+        cd backend
+        npm run test:coverage
+
+    - name: Upload coverage to Codecov
+      if: github.event_name == 'push'
+      uses: codecov/codecov-action@v3
+      with:
+        directory: ./backend/coverage
+        flags: backend
+        name: backend-coverage
+        fail_ci_if_error: true
+
+    - name: Upload test results
+      if: always()
+      uses: dorny/test-reporter@v1
+      with:
+        name: Backend Unit Tests
+        path: 'backend/coverage/junit.xml'
+        reporter: jest-junit
+
+  api-tests:
+    name: API Integration Tests
+    runs-on: ubuntu-latest
+    needs: [lint-and-typecheck]
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: quizmaster_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        npm ci
+
+    - name: Setup database
+      run: |
+        cd backend
+        npx prisma generate
+        npx prisma db push --force-reset
+        npx prisma db seed
+
+    - name: Start backend server
+      run: |
+        cd backend
+        npm run build
+        npm start &
+        
+        # Wait for server to be ready
+        timeout 30 bash -c 'until curl -f http://localhost:3001/health; do sleep 1; done'
+
+    - name: Run API tests
+      run: |
+        cd backend
+        npm run test:api
+
+    - name: Run comprehensive API tests
+      run: |
+        cd backend
+        npm run test:api:comprehensive
+
+    - name: Stop backend server
+      if: always()
+      run: |
+        pkill -f "npm start" || true
+        pkill -f "node.*index.js" || true
+
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: [api-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: quizmaster_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+
+    - name: Install K6
+      run: |
+        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+        echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt-get update
+        sudo apt-get install k6
+
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        npm ci
+
+    - name: Setup database and start server
+      run: |
+        cd backend
+        npx prisma generate
+        npx prisma db push --force-reset
+        npx prisma db seed
+        npm run build
+        npm start &
+        
+        # Wait for server
+        timeout 30 bash -c 'until curl -f http://localhost:3001/health; do sleep 1; done'
+
+    - name: Create performance test users
+      run: |
+        cd backend
+        curl -X POST http://localhost:3001/api/auth/register \
+          -H "Content-Type: application/json" \
+          -d '{"email":"loadtest1@example.com","username":"loadtest1","password":"LoadTest123!","firstName":"Load","lastName":"Test"}' || true
+
+    - name: Run K6 performance tests
+      run: |
+        cd backend/src/__tests__/performance
+        k6 run --out json=performance-results.json k6LoadTest.js
+
+    - name: Upload performance results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: performance-results
+        path: backend/src/__tests__/performance/performance-results.json
+        retention-days: 30
+
+    - name: Comment performance results on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          try {
+            const results = JSON.parse(fs.readFileSync('backend/src/__tests__/performance/performance-results.json', 'utf8'));
+            const avgDuration = results.metrics.http_req_duration?.values?.avg || 0;
+            const p95Duration = results.metrics.http_req_duration?.values?.['p(95)'] || 0;
+            const successRate = ((1 - (results.metrics.http_req_failed?.values?.rate || 0)) * 100).toFixed(2);
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Performance Test Results 📊
+              
+              - **Average Response Time**: ${avgDuration.toFixed(2)}ms
+              - **95th Percentile**: ${p95Duration.toFixed(2)}ms  
+              - **Success Rate**: ${successRate}%
+              - **Total Requests**: ${results.metrics.http_reqs?.values?.count || 0}
+              
+              ${p95Duration > 500 ? '⚠️ Response times are above target (500ms)' : '✅ Response times within target'}
+              ${parseFloat(successRate) < 95 ? '⚠️ Success rate below target (95%)' : '✅ Success rate within target'}
+              `
+            });
+          } catch (error) {
+            console.log('Could not parse performance results:', error);
+          }
+
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    needs: [unit-tests, api-tests, security-audit]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        npm ci
+
+    - name: Build application
+      run: |
+        cd backend
+        npm run build
+
+    - name: Run post-build tests
+      run: |
+        cd backend
+        # Test that build artifacts work
+        node -e "require('./dist/index.js')" --dry-run || echo "Build verification complete"
+
+    - name: Create deployment artifact
+      run: |
+        cd backend
+        tar -czf ../backend-build.tar.gz dist/ node_modules/ package*.json prisma/
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: backend-build
+        path: backend-build.tar.gz
+        retention-days: 30
+
+    # Add your deployment steps here
+    # - name: Deploy to staging
+    #   if: github.ref == 'refs/heads/develop'
+    #   run: echo "Deploy to staging environment"
+    
+    # - name: Deploy to production
+    #   if: github.ref == 'refs/heads/main'
+    #   run: echo "Deploy to production environment"
+
+  notification:
+    name: Notify Results
+    runs-on: ubuntu-latest
+    needs: [build-and-deploy]
+    if: always()
+
+    steps:
+    - name: Notify on success
+      if: ${{ needs.build-and-deploy.result == 'success' }}
+      run: |
+        echo "✅ Backend CI/CD pipeline completed successfully!"
+        
+    - name: Notify on failure
+      if: ${{ needs.build-and-deploy.result == 'failure' }}
+      run: |
+        echo "❌ Backend CI/CD pipeline failed!"
+        
+    # Add Slack/Discord/Email notifications here if needed

@@ -27,6 +27,7 @@ import {
   DIFFICULTY_NAMES,
 } from '@/types/quiz';
 import { QuizResultsService } from './quizResultsService';
+import { generateAIQuestions, AIQuestion } from '@/utils/aiQuestionGenerator';
 
 export class QuizSessionService {
   private readonly scoringConfig: ScoringConfiguration;
@@ -54,36 +55,77 @@ export class QuizSessionService {
       // Validate configuration
       this.validateQuizConfiguration(config);
 
-      // Select questions for the quiz
-      const questionPool = await this.selectQuestionsForQuiz({
-        categoryIds: config.categoryIds,
-        difficultyLevels: config.difficultyLevels,
-        questionTypes: config.questionTypes,
-        count: config.totalQuestions,
-        userId,
-      });
-
-      // Adjust total questions to available questions if there aren't enough
+      let questionIds: string[] = [];
       let actualTotalQuestions = config.totalQuestions;
-      if (questionPool.questions.length < config.totalQuestions) {
-        actualTotalQuestions = questionPool.questions.length;
-        logger.info('Adjusting quiz questions to available count', { 
-          requested: config.totalQuestions, 
-          available: questionPool.questions.length 
+      let aiQuestions: AIQuestion[] | null = null;
+
+      if (config.useAI && config.aiTopic) {
+        // Generate AI questions
+        logger.info('Generating AI questions for quiz session', { 
+          topic: config.aiTopic, 
+          count: config.totalQuestions 
         });
         
-        // Ensure we have at least 1 question
-        if (actualTotalQuestions < 1) {
-          throw new Error(`No questions available for the selected criteria. Please select different categories or criteria.`);
+        try {
+          const averageDifficulty = config.difficultyLevels.reduce((sum, level) => sum + level, 0) / config.difficultyLevels.length;
+          
+          aiQuestions = await generateAIQuestions({
+            topic: config.aiTopic,
+            difficulty: Math.round(averageDifficulty),
+            count: config.totalQuestions,
+            questionType: config.questionTypes[0] || 'MULTIPLE_CHOICE'
+          });
+          
+          // Generate unique IDs for AI questions and store them in the questions
+          const sessionIdPrefix = `${Date.now()}`;
+          questionIds = aiQuestions.map((_, index) => `ai_${sessionIdPrefix}_${index}`);
+          
+          // Add IDs to the AI questions themselves for consistency
+          aiQuestions.forEach((question, index) => {
+            (question as any).id = questionIds[index];
+          });
+          
+          actualTotalQuestions = aiQuestions.length;
+          
+          logger.info('AI questions generated successfully', { 
+            count: aiQuestions.length,
+            topic: config.aiTopic
+          });
+        } catch (error) {
+          logger.error('Failed to generate AI questions', { error, topic: config.aiTopic });
+          throw new Error(`Failed to generate AI questions: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
-      }
+      } else {
+        // Use database questions (original logic)
+        const questionPool = await this.selectQuestionsForQuiz({
+          categoryIds: config.categoryIds,
+          difficultyLevels: config.difficultyLevels,
+          questionTypes: config.questionTypes,
+          count: config.totalQuestions,
+          userId,
+        });
 
-      // Shuffle questions if requested, then take only what we need
-      const allQuestionIds = config.shuffleQuestions 
-        ? this.shuffleArray(questionPool.questions.map(q => q.id))
-        : questionPool.questions.map(q => q.id);
-      
-      const questionIds = allQuestionIds.slice(0, actualTotalQuestions);
+        // Adjust total questions to available questions if there aren't enough
+        if (questionPool.questions.length < config.totalQuestions) {
+          actualTotalQuestions = questionPool.questions.length;
+          logger.info('Adjusting quiz questions to available count', { 
+            requested: config.totalQuestions, 
+            available: questionPool.questions.length 
+          });
+          
+          // Ensure we have at least 1 question
+          if (actualTotalQuestions < 1) {
+            throw new Error(`No questions available for the selected criteria. Please select different categories or criteria.`);
+          }
+        }
+
+        // Shuffle questions if requested, then take only what we need
+        const allQuestionIds = config.shuffleQuestions 
+          ? this.shuffleArray(questionPool.questions.map(q => q.id))
+          : questionPool.questions.map(q => q.id);
+        
+        questionIds = allQuestionIds.slice(0, actualTotalQuestions);
+      }
 
       // Calculate expiration time
       const expiresAt = new Date();
@@ -94,7 +136,9 @@ export class QuizSessionService {
         data: {
           userId,
           title: config.title,
-          description: config.description,
+          description: aiQuestions 
+            ? JSON.stringify({ type: 'ai', topic: config.aiTopic, questions: aiQuestions })
+            : config.description,
           totalQuestions: actualTotalQuestions,
           timePerQuestion: config.timePerQuestion,
           totalTimeLimit: config.totalTimeLimit,
@@ -232,6 +276,19 @@ export class QuizSessionService {
         return null; // Quiz completed
       }
 
+      // Check if this is an AI-generated quiz
+      if (session.description && this.isAISession(session.description)) {
+        const aiData = JSON.parse(session.description);
+        const aiQuestion = aiData.questions[session.currentQuestionIndex];
+        
+        if (!aiQuestion) {
+          throw new Error(`AI question not found at index: ${session.currentQuestionIndex}`);
+        }
+        
+        return this.mapAIQuestionToQuizQuestion(aiQuestion, session.currentQuestionIndex, sessionId);
+      }
+
+      // Original database question logic
       const questionId = session.questionIds[session.currentQuestionIndex];
       const question = await prisma.question.findUnique({
         where: { id: questionId },
@@ -325,56 +382,102 @@ export class QuizSessionService {
         throw new Error('Unable to retrieve current question. Please restart the quiz.');
       }
 
-      if (currentQuestionId !== questionId) {
+      // For AI sessions, validate using the consistent ID from the session
+      let isValidQuestion = false;
+      if (session.description && this.isAISession(session.description)) {
+        // For AI questions, check both the stored ID and regenerated ID for backward compatibility
+        const aiData = JSON.parse(session.description);
+        const aiQuestion = aiData.questions[session.currentQuestionIndex];
+        if (aiQuestion && ((aiQuestion as any).id === questionId || currentQuestionId === questionId)) {
+          isValidQuestion = true;
+        }
+      } else {
+        // For database questions, use exact match
+        isValidQuestion = currentQuestionId === questionId;
+      }
+
+      if (!isValidQuestion) {
         logger.error('Question mismatch', { 
           sessionId, 
           requestedQuestionId: questionId,
           currentQuestionId,
-          currentQuestionIndex: session.currentQuestionIndex
+          currentQuestionIndex: session.currentQuestionIndex,
+          isAI: session.description && this.isAISession(session.description)
         });
         throw new Error('Question is not the current question for this session');
       }
 
-      // Get question details
-      const question = await prisma.question.findUnique({
-        where: { id: questionId },
-        include: {
-          categories: {
-            include: {
-              category: true,
+      // Get question details - handle AI vs database questions
+      let questionDetails;
+      let isCorrect = false;
+      
+      if (session.description && this.isAISession(session.description)) {
+        // For AI questions, get from stored session data
+        const aiData = JSON.parse(session.description);
+        const aiQuestion = aiData.questions[session.currentQuestionIndex];
+        
+        if (!aiQuestion) {
+          throw new Error(`AI question not found: ${questionId}`);
+        }
+        
+        // Check if answer is correct for AI question
+        isCorrect = userAnswer === aiQuestion.correctAnswer;
+        
+        questionDetails = {
+          id: (aiQuestion as any).id || questionId,
+          questionText: aiQuestion.questionText,
+          correctAnswer: aiQuestion.correctAnswer,
+          explanation: aiQuestion.explanation,
+          difficultyLevel: aiQuestion.difficulty,
+          questionType: aiQuestion.questionType,
+          options: aiQuestion.options
+        };
+      } else {
+        // For database questions, fetch from database
+        const question = await prisma.question.findUnique({
+          where: { id: questionId },
+          include: {
+            categories: {
+              include: {
+                category: true,
+              },
             },
           },
-        },
-      });
+        });
 
-      if (!question) {
-        throw new Error(`Question not found: ${questionId}`);
+        if (!question) {
+          throw new Error(`Question not found: ${questionId}`);
+        }
+        
+        // Check if answer is correct for database question
+        isCorrect = userAnswer === question.correctAnswer;
+        questionDetails = question;
       }
 
-      // Calculate correctness
-      const isCorrect = !skipped && this.isAnswerCorrect(userAnswer, question.correctAnswer);
+      // Final correctness is already calculated above
+      const finalIsCorrect = !skipped && isCorrect;
 
       logger.info('Answer validation debug', {
         sessionId,
         questionId,
-        questionPoints: question.points,
+        questionPoints: questionDetails.points || 10, // Default points for AI questions
         userAnswer,
         userAnswerType: typeof userAnswer,
         userAnswerStringified: JSON.stringify(userAnswer),
-        correctAnswer: question.correctAnswer,
-        correctAnswerType: typeof question.correctAnswer,
-        correctAnswerStringified: JSON.stringify(question.correctAnswer),
-        isCorrect,
+        correctAnswer: questionDetails.correctAnswer,
+        correctAnswerType: typeof questionDetails.correctAnswer,
+        correctAnswerStringified: JSON.stringify(questionDetails.correctAnswer),
+        finalIsCorrect,
         skipped,
         timeTaken,
         hintsUsed,
-        questionText: question.questionText?.substring(0, 50) + '...'
+        questionText: questionDetails.questionText?.substring(0, 50) + '...'
       });
 
       // Calculate score
       const scoring = this.calculateScore({
-        question,
-        isCorrect,
+        question: questionDetails,
+        isCorrect: finalIsCorrect,
         timeTaken,
         hintsUsed,
         currentStreak: await this.getCurrentStreak(sessionId),
@@ -384,37 +487,68 @@ export class QuizSessionService {
         sessionId,
         questionId,
         scoring,
-        isCorrect
+        scoringTotalPoints: scoring?.totalPoints,
+        scoringType: typeof scoring,
+        finalIsCorrect
       });
 
-      // Save the answer
-      await prisma.quizAnswer.create({
-        data: {
-          sessionId,
-          questionId,
-          questionIndex: session.currentQuestionIndex,
-          userAnswer,
-          isCorrect,
-          pointsEarned: scoring.totalPoints,
-          timeTaken,
-          basePoints: scoring.basePoints,
-          timeBonus: scoring.timeBonus,
-          streakBonus: scoring.streakBonus,
-          difficultyBonus: scoring.difficultyBonus,
-          hintsUsed,
-          skipped,
-        },
+      // Ensure scoring has valid properties
+      if (!scoring || typeof scoring.totalPoints !== 'number') {
+        logger.error('Invalid scoring result', { sessionId, questionId, scoring });
+        throw new Error('Score calculation failed - invalid scoring result');
+      }
+
+      // Save the answer - handle AI questions differently since they don't exist in database
+      const isAIQuestion = questionId.startsWith('ai_');
+      
+      if (!isAIQuestion) {
+        // Only save to database for actual database questions
+        await prisma.quizAnswer.create({
+          data: {
+            sessionId,
+            questionId,
+            questionIndex: session.currentQuestionIndex,
+            userAnswer,
+            isCorrect: finalIsCorrect,
+            pointsEarned: scoring.totalPoints,
+            timeTaken,
+            basePoints: scoring.basePoints,
+            timeBonus: scoring.timeBonus,
+            streakBonus: scoring.streakBonus,
+            difficultyBonus: scoring.difficultyBonus,
+            hintsUsed,
+            skipped,
+          },
+        });
+      }
+
+      // Update session progress (works for both AI and database questions)
+      // Add safety checks for undefined values
+      const currentScore = session.totalScore || 0;
+      const earnedPoints = scoring.totalPoints || 0;
+      const currentTimeTaken = session.totalTimeTaken || 0;
+
+      logger.debug('Session update values', {
+        sessionId,
+        currentQuestionIndex: session.currentQuestionIndex,
+        questionsAnswered: session.questionsAnswered,
+        correctAnswers: session.correctAnswers,
+        currentScore,
+        earnedPoints,
+        newTotalScore: currentScore + earnedPoints,
+        currentTimeTaken,
+        timeTaken,
+        newTotalTimeTaken: currentTimeTaken + timeTaken
       });
 
-      // Update session progress
       const updatedSession = await prisma.quizSession.update({
         where: { id: sessionId },
         data: {
           currentQuestionIndex: session.currentQuestionIndex + 1,
           questionsAnswered: session.questionsAnswered + 1,
-          correctAnswers: isCorrect ? session.correctAnswers + 1 : session.correctAnswers,
-          totalScore: session.totalScore + scoring.totalPoints,
-          totalTimeTaken: session.totalTimeTaken + timeTaken,
+          correctAnswers: finalIsCorrect ? session.correctAnswers + 1 : session.correctAnswers,
+          totalScore: currentScore + earnedPoints,
+          totalTimeTaken: currentTimeTaken + timeTaken,
         },
       });
 
@@ -422,18 +556,33 @@ export class QuizSessionService {
       let nextQuestion: QuizQuestion | null = null;
       if (updatedSession.currentQuestionIndex < updatedSession.questionIds.length) {
         const nextQuestionId = updatedSession.questionIds[updatedSession.currentQuestionIndex];
-        const nextQ = await prisma.question.findUnique({
-          where: { id: nextQuestionId },
-          include: {
-            categories: {
-              include: {
-                category: true,
+        
+        // Handle AI vs database questions for next question
+        if (nextQuestionId.startsWith('ai_')) {
+          // For AI questions, get from stored session data
+          if (updatedSession.description && this.isAISession(updatedSession.description)) {
+            const aiData = JSON.parse(updatedSession.description);
+            const aiQuestion = aiData.questions[updatedSession.currentQuestionIndex];
+            
+            if (aiQuestion) {
+              nextQuestion = this.mapAIQuestionToQuizQuestion(aiQuestion, updatedSession.currentQuestionIndex, sessionId);
+            }
+          }
+        } else {
+          // For database questions, fetch from database
+          const nextQ = await prisma.question.findUnique({
+            where: { id: nextQuestionId },
+            include: {
+              categories: {
+                include: {
+                  category: true,
+                },
               },
             },
-          },
-        });
-        if (nextQ) {
-          nextQuestion = this.mapQuestionToQuizQuestion(nextQ);
+          });
+          if (nextQ) {
+            nextQuestion = this.mapQuestionToQuizQuestion(nextQ);
+          }
         }
       } else {
         // Quiz completed - generate results
@@ -441,10 +590,10 @@ export class QuizSessionService {
       }
 
       const response: SubmitAnswerResponse = {
-        isCorrect,
+        isCorrect: finalIsCorrect,
         pointsEarned: scoring.totalPoints,
-        explanation: session.showExplanations ? (question.explanation ?? undefined) : undefined,
-        correctAnswer: session.showExplanations ? question.correctAnswer : undefined,
+        explanation: session.showExplanations ? (questionDetails.explanation ?? undefined) : undefined,
+        correctAnswer: session.showExplanations ? questionDetails.correctAnswer : undefined,
         scoring: {
           basePoints: scoring.basePoints,
           timeBonus: scoring.timeBonus,
@@ -632,8 +781,16 @@ export class QuizSessionService {
       throw new Error('Total questions must be between 1 and 100');
     }
 
-    if (config.categoryIds.length === 0) {
-      throw new Error('At least one category must be selected');
+    // For AI quizzes, categories are optional (AI uses topic instead)
+    // For database quizzes, at least one category is required
+    const isAIQuiz = config.useAI && config.aiTopic;
+    if (!isAIQuiz && config.categoryIds.length === 0) {
+      throw new Error('At least one category must be selected for database questions');
+    }
+
+    // For AI quizzes, ensure aiTopic is provided
+    if (isAIQuiz && (!config.aiTopic || config.aiTopic.trim().length === 0)) {
+      throw new Error('AI topic is required for AI-generated questions');
     }
 
     if (config.difficultyLevels.length === 0) {
@@ -970,6 +1127,38 @@ export class QuizSessionService {
         name: qc.category.name,
         slug: qc.category.slug,
       })),
+    };
+  }
+
+  /**
+   * Check if a session description contains AI data
+   */
+  private isAISession(description: string): boolean {
+    try {
+      const parsed = JSON.parse(description);
+      return parsed.type === 'ai' && parsed.questions && Array.isArray(parsed.questions);
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Map AI question to QuizQuestion format
+   */
+  private mapAIQuestionToQuizQuestion(aiQuestion: AIQuestion, index: number, sessionId?: string): QuizQuestion {
+    // Use consistent ID that matches what was stored in the session
+    const id = (aiQuestion as any).id || `ai_${sessionId || 'session'}_${index}`;
+    return {
+      id,
+      questionText: aiQuestion.questionText,
+      questionType: aiQuestion.questionType as QuestionType,
+      options: aiQuestion.options,
+      explanation: aiQuestion.explanation,
+      hints: {},
+      difficultyLevel: aiQuestion.difficulty,
+      estimatedTime: 30,
+      points: 10,
+      categories: [], // AI questions don't have traditional categories
     };
   }
 }

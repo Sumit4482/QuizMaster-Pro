@@ -5,6 +5,7 @@ import { connectRedis, disconnectRedis } from './config/redis';
 import { disconnectDatabase } from './config/database';
 import { createApp } from './app';
 import { initializeSocketServer, socketServer } from './sockets/socketServer';
+import { InitializationService } from './services/initializationService';
 
 // Global error handlers
 process.on('uncaughtException', (error: Error) => {
@@ -35,6 +36,15 @@ async function startServer(): Promise<void> {
       logger.info('Redis connection established');
     } catch (error) {
       logger.warn('Redis connection failed - continuing without Redis:', error instanceof Error ? error.message : error);
+    }
+
+    // Initialize advanced AI services
+    try {
+      const initService = InitializationService.getInstance();
+      await initService.initializeAdvancedAiServices();
+      logger.info('Advanced AI services initialized');
+    } catch (error) {
+      logger.warn('Advanced AI services initialization failed - continuing without advanced features:', error instanceof Error ? error.message : error);
     }
 
     // Create Express application

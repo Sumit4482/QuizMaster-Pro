@@ -230,24 +230,33 @@ export default function DashboardPage() {
               </div>
 
               {/* Play 1vs1 */}
-              <Card className="transform hover:scale-105 transition-transform duration-200 cursor-pointer border-2 hover:border-red-500 opacity-75">
-                <CardContent className="p-8 text-center">
-                  <div className="mb-6">
-                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center text-4xl mb-4">
-                      ⚔️
+              <div onClick={() => router.push('/1vs1')} className="cursor-pointer">
+                <Card className="transform hover:scale-105 transition-transform duration-200 border-2 hover:border-red-500">
+                  <CardContent className="p-8 text-center">
+                    <div className="mb-6">
+                      <div className="w-20 h-20 mx-auto bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center text-4xl mb-4">
+                        ⚔️
+                      </div>
+                      <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-2">
+                        Play 1 vs 1
+                      </h3>
+                      <p className="text-secondary-600 dark:text-secondary-400">
+                        Challenge another player in real-time. May the best mind win!
+                      </p>
                     </div>
-                    <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-2">
-                      Play 1 vs 1
-                    </h3>
-                    <p className="text-secondary-600 dark:text-secondary-400">
-                      Challenge another player in real-time. May the best mind win!
-                    </p>
-                  </div>
-                  <Button disabled className="w-full bg-gray-400 text-white font-semibold py-3">
-                    🚧 Coming Soon
-                  </Button>
-                </CardContent>
-              </Card>
+                    <Button 
+                      className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3"
+                      disabled={!connectionStatus.isConnected}
+                    >
+                      {connectionStatus.isConnected ? (
+                        <>⚔️ Start 1vs1 Battle</>
+                      ) : (
+                        <>🔌 Connecting...</>
+                      )}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
 
               {/* Play in Room */}
               <div onClick={() => handleTabChange('rooms')} className="cursor-pointer">
