@@ -673,7 +673,7 @@ export function LiveGame({ roomId }: LiveGameProps) {
 
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          {(leaderboard.length > 0 || (currentGame && currentGame.players)) && (
+          {(leaderboard && leaderboard.length > 0 || (currentGame && currentGame.players)) && (
             <LiveScoreboard
               leaderboard={leaderboard}
               players={currentGame?.players || []}

@@ -796,9 +796,23 @@ export class GameManager extends EventEmitter {
     const game = this.games.get(gameId);
     if (!game || !game.settings.showLiveScores) return;
 
+    // Ensure leaderboard exists and is valid before broadcasting
+    if (!game.leaderboard || !Array.isArray(game.leaderboard)) {
+      logger.warn('Attempted to broadcast invalid leaderboard', { 
+        gameId, 
+        leaderboard: game.leaderboard 
+      });
+      return;
+    }
+
     this.broadcastGameEvent(gameId, 'leaderboard_updated', {
       leaderboard: game.leaderboard,
       timestamp: new Date()
+    });
+
+    logger.info('Leaderboard broadcast sent', { 
+      gameId, 
+      leaderboardLength: game.leaderboard.length 
     });
   }
 
@@ -1006,6 +1020,18 @@ export class GameManager extends EventEmitter {
             correctAnswer: gameQuestion.correctAnswer,
             convertedCorrectAnswerType: typeof gameQuestion.correctAnswer
           }
+        });
+        
+        // Store original AI correctAnswer for validation
+        (gameQuestion as any).originalAICorrectAnswer = aiQ.correctAnswer || aiQ.correct_answer;
+        
+        // Log AI question creation for debugging
+        logger.info('AI question created with validation data', {
+          component: 'GameManager.generateGameQuestions',
+          questionId: gameQuestion.id,
+          originalAI: aiQ.correctAnswer || aiQ.correct_answer,
+          convertedAnswer: gameQuestion.correctAnswer,
+          hasOriginalAIAnswer: !!(gameQuestion as any).originalAICorrectAnswer
         });
         
         return gameQuestion;
@@ -1223,7 +1249,7 @@ export class GameManager extends EventEmitter {
   /**
    * Validate player answer - comprehensive validation matching quizSessionService
    */
-  private validateAnswer(correctAnswer: any, userAnswer: any): boolean {
+  private validateAnswer(correctAnswer: any, userAnswer: any, gameQuestion?: GameQuestion): boolean {
     // Enhanced debugging for AI questions
     logger.info('🔍 GameManager Answer validation debug', {
       component: 'GameManager',
@@ -1232,8 +1258,75 @@ export class GameManager extends EventEmitter {
       correctAnswerStringified: JSON.stringify(correctAnswer),
       userAnswer,
       userAnswerType: typeof userAnswer,
-      userAnswerStringified: JSON.stringify(userAnswer)
+      userAnswerStringified: JSON.stringify(userAnswer),
+      originalAICorrectAnswer: gameQuestion ? (gameQuestion as any).originalAICorrectAnswer : undefined
     });
+
+    // Special handling for AI questions - check against original AI answer too
+    if (gameQuestion && (gameQuestion as any).originalAICorrectAnswer !== undefined) {
+      const originalCorrect = (gameQuestion as any).originalAICorrectAnswer;
+      
+      logger.info('🔍 GM AI Question validation - checking original answer', {
+        userAnswer,
+        originalCorrect,
+        userAnswerType: typeof userAnswer,
+        originalCorrectType: typeof originalCorrect
+      });
+      
+      // Try validation against original AI answer first with multiple comparison methods
+      
+      // Method 1: Direct string comparison (case-insensitive)
+      if (String(userAnswer).trim().toLowerCase() === String(originalCorrect).trim().toLowerCase()) {
+        logger.info('✅ GM AI Answer validation SUCCESS (original - string match)', { 
+          userAnswer, 
+          originalCorrect 
+        });
+        return true;
+      }
+      
+      // Method 2: If original is numeric index and user answer is string, try index matching
+      if (typeof originalCorrect === 'number' && gameQuestion.options?.options) {
+        const options = gameQuestion.options.options;
+        if (originalCorrect >= 0 && originalCorrect < options.length) {
+          const indexedOption = options[originalCorrect];
+          if (String(userAnswer).trim().toLowerCase() === String(indexedOption).trim().toLowerCase()) {
+            logger.info('✅ GM AI Answer validation SUCCESS (original - index match)', { 
+              userAnswer, 
+              originalCorrect,
+              indexedOption
+            });
+            return true;
+          }
+        }
+      }
+      
+      // Method 3: If original is string but user selected from options, check if user answer matches any option that contains original
+      if (typeof originalCorrect === 'string' && gameQuestion.options?.options) {
+        const matchingOption = gameQuestion.options.options.find((option: any) => {
+          const optionText = String(option).toLowerCase().trim();
+          const originalText = String(originalCorrect).toLowerCase().trim();
+          return optionText === originalText || 
+                 optionText.includes(originalText) || 
+                 originalText.includes(optionText) ||
+                 String(userAnswer).toLowerCase().trim() === optionText;
+        });
+        
+        if (matchingOption && String(userAnswer).toLowerCase().trim() === String(matchingOption).toLowerCase().trim()) {
+          logger.info('✅ GM AI Answer validation SUCCESS (original - option match)', { 
+            userAnswer, 
+            originalCorrect,
+            matchingOption
+          });
+          return true;
+        }
+      }
+      
+      logger.info('🔍 GM AI Original answer check failed, trying converted answer', { 
+        userAnswer, 
+        originalCorrect, 
+        convertedCorrect: correctAnswer 
+      });
+    }
 
     // Handle different question types
     if (Array.isArray(correctAnswer)) {

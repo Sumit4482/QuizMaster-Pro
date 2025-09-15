@@ -1,0 +1,35 @@
+2025-09-13 19:56:58 [ERROR]: uncaughtException: Cannot find module '@/config/environment'
+Require stack:
+- /Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/middleware/common.ts
+- /Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/app.ts
+- /Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/index.ts
+Error: Cannot find module '@/config/environment'
+Require stack:
+- /Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/middleware/common.ts
+- /Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/app.ts
+- /Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/index.ts
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1410:15)
+    at Module._resolveFilename.sharedData.moduleResolveFilenameHook.installedValue [as _resolveFilename] (/Users/igdclt0379/.npm/_npx/1bf7c3c15bf47d04/node_modules/@cspotcode/source-map-support/source-map-support.js:811:30)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1051:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1056:22)
+    at Module._load (node:internal/modules/cjs/loader:1219:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)
+    at Module.require (node:internal/modules/cjs/loader:1493:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/middleware/common.ts:4:1) | {"error":{"code":"MODULE_NOT_FOUND","requireStack":["/Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/middleware/common.ts","/Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/app.ts","/Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/index.ts"]},"exception":true,"date":"Sat Sep 13 2025 19:56:58 GMT+0530 (India Standard Time)","process":{"pid":14572,"uid":501,"gid":20,"cwd":"/Users/igdclt0379/Downloads/QuizMaster-Pro","execPath":"/opt/homebrew/Cellar/node/24.5.0/bin/node","version":"v24.5.0","argv":["/Users/igdclt0379/.npm/_npx/1bf7c3c15bf47d04/node_modules/.bin/ts-node","/Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/index.ts"],"memoryUsage":{"rss":229326848,"heapTotal":121503744,"heapUsed":76547400,"external":5700179,"arrayBuffers":2601087}},"os":{"loadavg":[3.96923828125,4.95654296875,5.88037109375],"uptime":687156},"trace":[{"column":15,"file":"node:internal/modules/cjs/loader","function":null,"line":1410,"method":null,"native":false},{"column":30,"file":"/Users/igdclt0379/.npm/_npx/1bf7c3c15bf47d04/node_modules/@cspotcode/source-map-support/source-map-support.js","function":"Module._resolveFilename.sharedData.moduleResolveFilenameHook.installedValue [as _resolveFilename]","line":811,"method":"installedValue [as _resolveFilename]","native":false},{"column":19,"file":"node:internal/modules/cjs/loader","function":"defaultResolveImpl","line":1051,"method":null,"native":false},{"column":22,"file":"node:internal/modules/cjs/loader","function":"resolveForCJSWithHooks","line":1056,"method":null,"native":false},{"column":37,"file":"node:internal/modules/cjs/loader","function":"Module._load","line":1219,"method":"_load","native":false},{"column":14,"file":"node:diagnostics_channel","function":"TracingChannel.traceSync","line":322,"method":"traceSync","native":false},{"column":24,"file":"node:internal/modules/cjs/loader","function":"wrapModuleLoad","line":238,"method":null,"native":false},{"column":12,"file":"node:internal/modules/cjs/loader","function":"Module.require","line":1493,"method":"require","native":false},{"column":16,"file":"node:internal/modules/helpers","function":"require","line":152,"method":null,"native":false},{"column":1,"file":"/Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/middleware/common.ts","function":null,"line":4,"method":null,"native":false}]}
+Error: Cannot find module '@/config/environment'
+Require stack:
+- /Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/middleware/common.ts
+- /Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/app.ts
+- /Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/index.ts
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1410:15)
+    at Module._resolveFilename.sharedData.moduleResolveFilenameHook.installedValue [as _resolveFilename] (/Users/igdclt0379/.npm/_npx/1bf7c3c15bf47d04/node_modules/@cspotcode/source-map-support/source-map-support.js:811:30)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1051:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1056:22)
+    at Module._load (node:internal/modules/cjs/loader:1219:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)
+    at Module.require (node:internal/modules/cjs/loader:1493:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/Users/igdclt0379/Downloads/QuizMaster-Pro/backend/src/middleware/common.ts:4:1)

@@ -401,11 +401,17 @@ export class OneVsOneService extends EventEmitter {
     question.player2AnsweredAt = undefined;
 
     // Send question to both players (without correct answer)
+    // Fix: Frontend expects options in { options: { options: Array } } format
     const questionForClient = {
       id: question.id,
-      text: question.text,
-      options: Array.isArray(question.options) ? question.options : [],
+      questionText: question.text, // Use questionText to match frontend expectations
+      text: question.text, // Keep backward compatibility
+      questionType: 'MULTIPLE_CHOICE',
+      options: {
+        options: Array.isArray(question.options) ? question.options : []
+      },
       difficulty: question.difficulty,
+      difficultyLevel: question.difficulty, // Add for consistency with multiplayer format
       timeLimit: question.timeLimit,
     };
 
@@ -414,8 +420,8 @@ export class OneVsOneService extends EventEmitter {
       questionIndex: game.currentQuestionIndex,
       questionId: question.id,
       questionText: question.text,
-      optionsCount: questionForClient.options.length,
-      options: questionForClient.options,
+      optionsCount: questionForClient.options.options.length,
+      options: questionForClient.options.options,
       hasOptions: Array.isArray(question.options) && question.options.length > 0
     });
 

@@ -324,7 +324,24 @@ export class QuestionBroadcastService extends EventEmitter {
     }
 
     // Process the answer
-    const isCorrect = this.validateAnswer(gameState.currentQuestion.correctAnswer, answer);
+    logger.info('Processing answer submission', {
+      component: 'QuestionBroadcastService.processAnswerSubmission',
+      questionId,
+      playerId,
+      userAnswer: answer,
+      questionCorrectAnswer: gameState.currentQuestion.correctAnswer,
+      hasOriginalAICorrectAnswer: !!(gameState.currentQuestion as any).originalAICorrectAnswer
+    });
+    
+    const isCorrect = this.validateAnswer(gameState.currentQuestion.correctAnswer, answer, gameState.currentQuestion);
+    
+    logger.info('Answer validation result', {
+      component: 'QuestionBroadcastService.processAnswerSubmission',
+      questionId,
+      playerId,
+      isCorrect,
+      userAnswer: answer
+    });
     const playerAnswer: PlayerAnswer = {
       questionId,
       questionIndex: gameState.currentQuestion.questionIndex,
@@ -605,7 +622,7 @@ export class QuestionBroadcastService extends EventEmitter {
   /**
    * Validate player answer - comprehensive validation matching quizSessionService
    */
-  private validateAnswer(correctAnswer: any, userAnswer: any): boolean {
+  private validateAnswer(correctAnswer: any, userAnswer: any, gameQuestion?: any): boolean {
     // Enhanced debugging for AI questions
     logger.info('🔍 Answer validation debug', {
       component: 'QuestionBroadcastService',
@@ -614,8 +631,75 @@ export class QuestionBroadcastService extends EventEmitter {
       correctAnswerStringified: JSON.stringify(correctAnswer),
       userAnswer,
       userAnswerType: typeof userAnswer,
-      userAnswerStringified: JSON.stringify(userAnswer)
+      userAnswerStringified: JSON.stringify(userAnswer),
+      originalAICorrectAnswer: gameQuestion ? (gameQuestion as any).originalAICorrectAnswer : undefined
     });
+
+    // Special handling for AI questions - check against original AI answer too
+    if (gameQuestion && (gameQuestion as any).originalAICorrectAnswer !== undefined) {
+      const originalCorrect = (gameQuestion as any).originalAICorrectAnswer;
+      
+      logger.info('🔍 QBS AI Question validation - checking original answer', {
+        userAnswer,
+        originalCorrect,
+        userAnswerType: typeof userAnswer,
+        originalCorrectType: typeof originalCorrect
+      });
+      
+      // Try validation against original AI answer first with multiple comparison methods
+      
+      // Method 1: Direct string comparison (case-insensitive)
+      if (String(userAnswer).trim().toLowerCase() === String(originalCorrect).trim().toLowerCase()) {
+        logger.info('✅ QBS AI Answer validation SUCCESS (original - string match)', { 
+          userAnswer, 
+          originalCorrect 
+        });
+        return true;
+      }
+      
+      // Method 2: If original is numeric index and user answer is string, try index matching
+      if (typeof originalCorrect === 'number' && gameQuestion.options?.options) {
+        const options = gameQuestion.options.options;
+        if (originalCorrect >= 0 && originalCorrect < options.length) {
+          const indexedOption = options[originalCorrect];
+          if (String(userAnswer).trim().toLowerCase() === String(indexedOption).trim().toLowerCase()) {
+            logger.info('✅ QBS AI Answer validation SUCCESS (original - index match)', { 
+              userAnswer, 
+              originalCorrect,
+              indexedOption
+            });
+            return true;
+          }
+        }
+      }
+      
+      // Method 3: If original is string but user selected from options, check if user answer matches any option that contains original
+      if (typeof originalCorrect === 'string' && gameQuestion.options?.options) {
+        const matchingOption = gameQuestion.options.options.find((option: any) => {
+          const optionText = String(option).toLowerCase().trim();
+          const originalText = String(originalCorrect).toLowerCase().trim();
+          return optionText === originalText || 
+                 optionText.includes(originalText) || 
+                 originalText.includes(optionText) ||
+                 String(userAnswer).toLowerCase().trim() === optionText;
+        });
+        
+        if (matchingOption && String(userAnswer).toLowerCase().trim() === String(matchingOption).toLowerCase().trim()) {
+          logger.info('✅ QBS AI Answer validation SUCCESS (original - option match)', { 
+            userAnswer, 
+            originalCorrect,
+            matchingOption
+          });
+          return true;
+        }
+      }
+      
+      logger.info('🔍 QBS AI Original answer check failed, trying converted answer', { 
+        userAnswer, 
+        originalCorrect, 
+        convertedCorrect: correctAnswer 
+      });
+    }
 
     // Handle different question types
     if (Array.isArray(correctAnswer)) {

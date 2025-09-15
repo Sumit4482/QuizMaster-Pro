@@ -514,7 +514,14 @@ export class RealtimeScoringService extends EventEmitter {
     const gameState = this.gameStateSync.getGameState(gameId);
     const leaderboard = this.leaderboards.get(gameId);
     
-    if (!gameState || !leaderboard) return;
+    if (!gameState || !leaderboard || !Array.isArray(leaderboard)) {
+      logger.warn('Invalid leaderboard data for broadcast', { 
+        gameId, 
+        hasGameState: !!gameState, 
+        leaderboard: leaderboard 
+      });
+      return;
+    }
 
     const leaderboardEvent: GameSyncEvent = {
       type: 'leaderboard_update',

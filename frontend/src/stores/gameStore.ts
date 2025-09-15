@@ -372,6 +372,12 @@ export const useGameStore = create<GameStore>()(
       
       // Leaderboard
       updateLeaderboard: (leaderboard: LeaderboardEntry[]) => {
+        // Add null check for leaderboard
+        if (!leaderboard || !Array.isArray(leaderboard)) {
+          console.warn('Invalid leaderboard data received:', leaderboard);
+          return;
+        }
+
         set({ leaderboard });
         
         // Update current game
