@@ -120,7 +120,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       </head>
-      <body className={`${inter.variable} font-sans min-h-screen bg-white text-secondary-900 antialiased dark:bg-secondary-950 dark:text-secondary-100`} suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans min-h-screen bg-gradient-to-br from-surface-50 via-white to-surface-100 text-secondary-800 antialiased dark:bg-gradient-to-br dark:from-secondary-950 dark:via-secondary-900 dark:to-secondary-950 dark:text-secondary-200`} suppressHydrationWarning>
         <ErrorBoundary level="page">
           <PerformanceProvider enableReporting={process.env.NODE_ENV === 'production'}>
             <ThemeProvider>

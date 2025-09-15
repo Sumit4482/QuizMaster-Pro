@@ -36,7 +36,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={inputId} className="form-label mb-2">
+          <label htmlFor={inputId} className="form-label">
             {label}
             {required && <span className="ml-1 text-error-500">*</span>}
           </label>
@@ -44,7 +44,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         
         <div className="relative">
           {leftIcon && (
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-4">
               <span className="text-secondary-400">{leftIcon}</span>
             </div>
           )}
@@ -56,9 +56,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className={clsx(
               'form-input',
               {
-                'pl-10': leftIcon,
-                'pr-10': rightIcon,
-                'border-error-500 focus:border-error-500 focus:ring-error-500': hasError,
+                'pl-11': leftIcon,
+                'pr-11': rightIcon,
+                'bg-error-50 dark:bg-error-900/20 border-error-500 focus:border-error-500 focus:ring-error-500/30': hasError,
               },
               className
             )}
@@ -70,7 +70,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           />
           
           {rightIcon && (
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+            <div className="absolute inset-y-0 right-0 flex items-center pr-4">
               <span className="text-secondary-400">{rightIcon}</span>
             </div>
           )}
@@ -83,7 +83,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         
         {helperText && !error && (
-          <p id={`${inputId}-helper`} className="mt-1 text-sm text-secondary-500">
+          <p id={`${inputId}-helper`} className="mt-2 text-sm text-secondary-500">
             {helperText}
           </p>
         )}

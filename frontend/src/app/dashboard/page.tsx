@@ -103,15 +103,15 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-secondary-50 dark:bg-secondary-950">
+    <div className="min-h-screen bg-gradient-to-br from-surface-50 via-white to-surface-100 dark:from-secondary-950 dark:via-secondary-900 dark:to-secondary-950">
       {/* Header */}
-      <header className="border-b border-secondary-200 bg-white dark:border-secondary-700 dark:bg-secondary-900">
+      <header className="glass border-b border-surface-200/50 dark:border-secondary-800/50 sticky top-0 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-white">
+          <div className="flex h-20 items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-glow">
                 <svg
-                  className="h-5 w-5"
+                  className="h-6 w-6"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -124,9 +124,12 @@ export default function DashboardPage() {
                   />
                 </svg>
               </div>
-              <h1 className="text-xl font-bold text-secondary-900 dark:text-white">
-                QuizMaster Pro
-              </h1>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-secondary-900 to-secondary-700 dark:from-white dark:to-secondary-200 bg-clip-text text-transparent">
+                  QuizMaster Pro
+                </h1>
+                <p className="text-xs text-secondary-500 dark:text-secondary-400 font-medium">Dashboard</p>
+              </div>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -209,20 +212,20 @@ export default function DashboardPage() {
             <div className="grid gap-8 md:grid-cols-3 mb-12">
               {/* Play Alone */}
               <div onClick={handleStartNewQuiz} className="cursor-pointer">
-                <Card className="transform hover:scale-105 transition-transform duration-200 border-2 hover:border-primary-500">
+                <Card className="floating hover:scale-105 group gradient-border">
                   <CardContent className="p-8 text-center">
                   <div className="mb-6">
-                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-4xl mb-4">
+                    <div className="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-5xl mb-6 shadow-glow group-hover:shadow-glow-lg transition-all duration-300">
                       🎯
                     </div>
-                    <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-2">
+                    <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-3">
                       Play Quiz Alone
                     </h3>
-                    <p className="text-secondary-600 dark:text-secondary-400">
+                    <p className="text-secondary-600 dark:text-secondary-400 leading-relaxed">
                       Test your knowledge solo. Choose your favorite categories or go random!
                     </p>
                   </div>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3">
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 shadow-soft">
                     🚀 Start Solo Quiz
                   </Button>
                   </CardContent>
@@ -231,21 +234,21 @@ export default function DashboardPage() {
 
               {/* Play 1vs1 */}
               <div onClick={() => router.push('/1vs1')} className="cursor-pointer">
-                <Card className="transform hover:scale-105 transition-transform duration-200 border-2 hover:border-red-500">
+                <Card className="floating hover:scale-105 group gradient-border">
                   <CardContent className="p-8 text-center">
                     <div className="mb-6">
-                      <div className="w-20 h-20 mx-auto bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center text-4xl mb-4">
+                      <div className="w-24 h-24 mx-auto bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-5xl mb-6 shadow-glow group-hover:shadow-glow-lg transition-all duration-300">
                         ⚔️
                       </div>
-                      <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-2">
+                      <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-3">
                         Play 1 vs 1
                       </h3>
-                      <p className="text-secondary-600 dark:text-secondary-400">
+                      <p className="text-secondary-600 dark:text-secondary-400 leading-relaxed">
                         Challenge another player in real-time. May the best mind win!
                       </p>
                     </div>
                     <Button 
-                      className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3"
+                      className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 shadow-soft"
                       disabled={!connectionStatus.isConnected}
                     >
                       {connectionStatus.isConnected ? (
@@ -260,21 +263,21 @@ export default function DashboardPage() {
 
               {/* Play in Room */}
               <div onClick={() => handleTabChange('rooms')} className="cursor-pointer">
-                <Card className="transform hover:scale-105 transition-transform duration-200 border-2 hover:border-green-500">
+                <Card className="floating hover:scale-105 group gradient-border">
                   <CardContent className="p-8 text-center">
                   <div className="mb-6">
-                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-4xl mb-4">
+                    <div className="w-24 h-24 mx-auto bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-5xl mb-6 shadow-glow group-hover:shadow-glow-lg transition-all duration-300">
                       👥
                     </div>
-                    <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-2">
+                    <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-3">
                       Play in Room
                     </h3>
-                    <p className="text-secondary-600 dark:text-secondary-400">
+                    <p className="text-secondary-600 dark:text-secondary-400 leading-relaxed">
                       Join or create multiplayer quiz rooms. Play with friends or strangers!
                     </p>
                   </div>
                   <Button 
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3"
+                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 shadow-soft"
                     disabled={!connectionStatus.isConnected}
                   >
                     {connectionStatus.isConnected ? (
@@ -290,17 +293,17 @@ export default function DashboardPage() {
 
             {/* Quick Stats Row */}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-              <Card>
-                <CardContent className="p-4">
+              <Card className="floating">
+                <CardContent className="p-6">
                   <div className="flex items-center">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/20">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-glow">
                       <span className="text-2xl">🏆</span>
                     </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-secondary-600 dark:text-secondary-400">
+                    <div className="ml-4">
+                      <p className="text-sm font-semibold text-secondary-600 dark:text-secondary-400">
                         Quizzes Taken
                       </p>
-                      <p className="text-xl font-semibold text-secondary-900 dark:text-white">
+                      <p className="text-2xl font-bold text-secondary-900 dark:text-white">
                         {statsLoading ? '...' : (userStats?.totalQuizzesCompleted || 0)}
                       </p>
                     </div>
@@ -308,17 +311,17 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardContent className="p-4">
+              <Card className="floating">
+                <CardContent className="p-6">
                   <div className="flex items-center">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success-100 dark:bg-success-900/20">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-success-500 to-success-600 shadow-glow">
                       <span className="text-2xl">📊</span>
                     </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-secondary-600 dark:text-secondary-400">
+                    <div className="ml-4">
+                      <p className="text-sm font-semibold text-secondary-600 dark:text-secondary-400">
                         Average Score
                       </p>
-                      <p className="text-xl font-semibold text-secondary-900 dark:text-white">
+                      <p className="text-2xl font-bold text-secondary-900 dark:text-white">
                         {statsLoading ? '...' : userStats?.averageScore ? `${Math.round(userStats.averageScore)}` : '0'}
                       </p>
                     </div>
@@ -326,17 +329,17 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardContent className="p-4">
+              <Card className="floating">
+                <CardContent className="p-6">
                   <div className="flex items-center">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-100 dark:bg-warning-900/20">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-warning-500 to-warning-600 shadow-glow">
                       <span className="text-2xl">🎯</span>
                     </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-secondary-600 dark:text-secondary-400">
+                    <div className="ml-4">
+                      <p className="text-sm font-semibold text-secondary-600 dark:text-secondary-400">
                         Best Streak
                       </p>
-                      <p className="text-xl font-semibold text-secondary-900 dark:text-white">
+                      <p className="text-2xl font-bold text-secondary-900 dark:text-white">
                         {statsLoading ? '...' : (userStats?.longestStreak || 0)}
                       </p>
                     </div>
@@ -344,17 +347,17 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardContent className="p-4">
+              <Card className="floating">
+                <CardContent className="p-6">
                   <div className="flex items-center">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/20">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-glow">
                       <span className="text-2xl">⭐</span>
                     </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-secondary-600 dark:text-secondary-400">
+                    <div className="ml-4">
+                      <p className="text-sm font-semibold text-secondary-600 dark:text-secondary-400">
                         Perfect Scores
                       </p>
-                      <p className="text-xl font-semibold text-secondary-900 dark:text-white">
+                      <p className="text-2xl font-bold text-secondary-900 dark:text-white">
                         {statsLoading ? '...' : (userStats?.perfectQuizzes || 0)}
                       </p>
                     </div>

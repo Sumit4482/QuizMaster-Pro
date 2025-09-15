@@ -50,22 +50,22 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 
     const shadowClasses = {
       none: '',
-      sm: 'shadow-sm',
-      md: 'shadow-md',
-      lg: 'shadow-lg',
-      xl: 'shadow-xl',
+      sm: 'shadow-soft',
+      md: 'shadow-soft-lg',
+      lg: 'shadow-soft-xl',
+      xl: 'shadow-soft-xl',
     };
 
     return (
       <div
         ref={ref}
         className={clsx(
-          'rounded-lg bg-white dark:bg-secondary-900',
+          'rounded-2xl bg-white/90 dark:bg-secondary-900/90 backdrop-blur-sm',
           paddingClasses[padding],
           shadowClasses[shadow],
           {
-            'ring-1 ring-secondary-200 dark:ring-secondary-700': border,
-            'transition-shadow duration-200 hover:shadow-md': hover,
+            'border border-surface-200 dark:border-secondary-800/50': border,
+            'transition-all duration-300 hover:shadow-soft-lg hover:-translate-y-0.5 transform-gpu': hover,
           },
           className
         )}
@@ -85,7 +85,7 @@ const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
         className={clsx(
           'card-header',
           {
-            'border-b border-secondary-200 dark:border-secondary-700 pb-4 mb-4': border,
+            'border-b border-surface-200 dark:border-secondary-800/50 pb-6 mb-6': border,
           },
           className
         )}
@@ -118,7 +118,7 @@ const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
         ref={ref}
         className={clsx(
           {
-            'border-t border-secondary-200 dark:border-secondary-700 pt-4 mt-4': border,
+            'border-t border-surface-200 dark:border-secondary-800/50 pt-6 mt-6': border,
           },
           className
         )}
