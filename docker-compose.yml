@@ -87,7 +87,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: quizmaster-frontend
     ports:
-      - "3000:3000"
+      - "3002:3000"
     environment:
       NODE_ENV: development
       NEXT_PUBLIC_API_URL: http://localhost:3001
