@@ -1,0 +1,31 @@
+app = "quizmaster-pro"
+primary_region = "ord"
+
+[build]
+  dockerfile = "backend/Dockerfile.prod"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+
+  [http_service.checks]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/health"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256
+
+[mounts]
+  source = "quizmaster_data"
+  destination = "/data"

@@ -3,6 +3,11 @@ const nextConfig = {
   // Enable React strict mode
   reactStrictMode: true,
   
+  // Output for static export (Render static site)
+  output: process.env.BUILD_TARGET === 'static' ? 'export' : undefined,
+  trailingSlash: true,
+  distDir: 'out',
+  
   // Environment variables
   env: {
     // Add environment variables here if needed

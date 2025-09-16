@@ -1,0 +1,55 @@
+services:
+  # Backend API Service
+  - type: web
+    name: quizmaster-backend
+    runtime: node
+    plan: free
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: quizmaster-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: quizmaster-redis
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://your-app.vercel.app
+    autoDeploy: true
+
+  # Frontend Static Site
+  - type: static
+    name: quizmaster-frontend
+    runtime: node
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/out
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://quizmaster-backend.onrender.com
+      - key: NEXT_PUBLIC_WEBSOCKET_URL
+        value: wss://quizmaster-backend.onrender.com
+    autoDeploy: true
+
+databases:
+  # PostgreSQL Database
+  - name: quizmaster-db
+    plan: free
+    databaseName: quizmaster
+    user: quizmaster_user
+
+  # Redis Cache
+  - name: quizmaster-redis
+    plan: free
