@@ -32,11 +32,28 @@ npm run dev
 
 ```
 QuizMaster-Pro/
-├── backend/          # Node.js + Express + TypeScript API
-├── frontend/         # Next.js 14 + TypeScript frontend
-├── docker-compose.yml # Development environment
-└── README.md         # This file
+├── backend/              # Node.js + Express + TypeScript API
+├── frontend/             # Next.js 14 + TypeScript frontend
+├── screenshots/             # UI screenshots
+├── docker-compose.yml    # Development environment
+└── README.md             # This file
 ```
+
+## 📸 Screenshots
+
+| | | | |
+|--|--|--|--|
+| [![](screenshots/image%20(18).png)](screenshots/image%20(18).png) | [![](screenshots/image%20(19).png)](screenshots/image%20(19).png) | [![](screenshots/image%20(20).png)](screenshots/image%20(20).png) | [![](screenshots/image%20(21).png)](screenshots/image%20(21).png) |
+| [![](screenshots/image%20(22).png)](screenshots/image%20(22).png) | [![](screenshots/image%20(23).png)](screenshots/image%20(23).png) | [![](screenshots/image%20(24).png)](screenshots/image%20(24).png) | [![](screenshots/image%20(25).png)](screenshots/image%20(25).png) |
+| [![](screenshots/image%20(26).png)](screenshots/image%20(26).png) | [![](screenshots/image%20(27).png)](screenshots/image%20(27).png) | [![](screenshots/image%20(28).png)](screenshots/image%20(28).png) | [![](screenshots/image%20(29).png)](screenshots/image%20(29).png) |
+| [![](screenshots/image%20(30).png)](screenshots/image%20(30).png) | [![](screenshots/image%20(31).png)](screenshots/image%20(31).png) | [![](screenshots/image%20(32).png)](screenshots/image%20(32).png) | [![](screenshots/image%20(33).png)](screenshots/image%20(33).png) |
+| [![](screenshots/image%20(34).png)](screenshots/image%20(34).png) | [![](screenshots/image%20(35).png)](screenshots/image%20(35).png) | [![](screenshots/image%20(36).png)](screenshots/image%20(36).png) | [![](screenshots/image%20(37).png)](screenshots/image%20(37).png) |
+| [![](screenshots/image%20(38).png)](screenshots/image%20(38).png) | [![](screenshots/image%20(39).png)](screenshots/image%20(39).png) | [![](screenshots/image%20(40).png)](screenshots/image%20(40).png) | [![](screenshots/image%20(41).png)](screenshots/image%20(41).png) |
+| [![](screenshots/image%20(42).png)](screenshots/image%20(42).png) | [![](screenshots/image%20(43).png)](screenshots/image%20(43).png) |
+
+*Click any screenshot to open full size.*
+
+---
 
 ## 📊 Current Status
 **Phase 1.3**: ✅ Single-Player Quiz System - Simple & Fun!
